@@ -265,7 +265,7 @@ export const Led = ({ on }: { on: boolean }) => (
 );
 
 /** The prototype's stroke icons. */
-export type IconName = 'home' | 'camps' | 'teams' | 'prints' | 'more' | 'msg' | 'clock' | 'heart' | 'doc';
+export type IconName = 'home' | 'camps' | 'teams' | 'prints' | 'more' | 'msg' | 'clock' | 'heart' | 'doc' | 'people';
 export function Icon({ name, color, size = 23 }: { name: IconName; color: string; size?: number }) {
   const s = { stroke: color, strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
   const shapes: Record<IconName, ReactNode> = {
@@ -278,6 +278,7 @@ export function Icon({ name, color, size = 23 }: { name: IconName; color: string
     clock: <><Circle cx={12} cy={12} r={9} {...s} /><Path d="M12 7v5l3 2" {...s} /></>,
     heart: <Path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" {...s} />,
     doc: <><Path d="M6 3h9l3 3v15H6z" {...s} /><Path d="M9 11h6M9 15h6" {...s} /></>,
+    people: <><Circle cx={9} cy={8} r={3} {...s} /><Path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" {...s} /><Path d="M16 5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6" {...s} /></>,
   };
   return (
     <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -289,4 +290,4 @@ export function Icon({ name, color, size = 23 }: { name: IconName; color: string
 }
 
 /** In-screen back link used on sub-pages (`‹ More`). */
-export const BackLink = ({ onPress }: { onPress: () => void }) => <Link onPress={onPress}>‹ More</Link>;
+export const BackLink = ({ onPress, to = 'More' }: { onPress: () => void; to?: string }) => <Link onPress={onPress}>{`‹ ${to}`}</Link>;

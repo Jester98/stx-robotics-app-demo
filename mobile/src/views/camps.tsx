@@ -15,7 +15,7 @@ const LOCS = ['All', 'Portland', 'Robstown', 'Del Rio', 'Alice'];
 
 export function Camps() {
   const { s, set, sheet } = useApp();
-  const list = s.camps.filter((x) => s.loc === 'All' || x.loc === s.loc);
+  const list = s.camps.filter((x) => !x.staffOnly && (s.loc === 'All' || x.loc === s.loc));
   return (
     <>
       <Pad style={{ paddingBottom: 12 }}>

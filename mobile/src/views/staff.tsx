@@ -177,9 +177,10 @@ function FamilyTexts() {
 export function More() {
   const { s, go } = useApp();
   const pend = s.mentors.filter((m) => m.pending).length;
-  const items: [Parameters<typeof go>[0], 'clock' | 'msg' | 'heart' | 'doc', string, string][] =
+  const items: [Parameters<typeof go>[0], 'clock' | 'msg' | 'heart' | 'doc' | 'people', string, string][] =
     s.role === 'staff'
       ? [
+          ['staffList', 'people', 'Staff list', 'Staff, volunteers and mentors by event'],
           ['mentors', 'clock', 'Mentor hours', pend ? `${pend} to approve` : 'Up to date'],
           ['msgs', 'msg', 'Family texts', 'Send reminders and changes'],
           ['about', 'heart', 'Sponsors & donations', 'Sponsor tiers start at $50'],
@@ -211,7 +212,7 @@ export function More() {
 }
 
 
-function MoreItem({ icon, title, meta, onPress }: { icon: 'clock' | 'msg' | 'heart' | 'doc'; title: string; meta: string; onPress: () => void }) {
+function MoreItem({ icon, title, meta, onPress }: { icon: 'clock' | 'msg' | 'heart' | 'doc' | 'people'; title: string; meta: string; onPress: () => void }) {
   return (
     <Pressable
       accessibilityRole="button"

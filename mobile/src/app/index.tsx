@@ -10,6 +10,8 @@ import { Camps } from '@/views/camps';
 import { Teams } from '@/views/teams';
 import { Prints } from '@/views/prints';
 import { About, Mentors, Messages, More } from '@/views/staff';
+import { EventDetail, StaffCamps, StaffList } from '@/views/events';
+import { useApp } from '@/lib/state';
 
 // One screen, like the prototype: top bar, the current tab's content, tab bar,
 // plus a bottom sheet and a toast drawn over it.
@@ -31,14 +33,24 @@ const TABS: Record<State['role'], [Tab, string, IconName][]> = {
 };
 const VIEWS: Record<Tab, () => ReactNode> = {
   home: Home,
-  camps: Camps,
+  camps: CampsTab,
   teams: Teams,
   prints: Prints,
   msgs: Messages,
   more: More,
   mentors: Mentors,
   about: About,
+  event: EventDetail,
+  staffList: StaffList,
 };
+
+// Parents get the sign-up list; staff get the event-running view.
+function CampsTab() {
+  return useApp().s.role === 'staff' ? <StaffCamps /> : <Camps />;
+}
+
+// Sub-pages and the tab they belong to.
+const PARENT_TAB: Partial<Record<Tab, Tab>> = { mentors: 'more', about: 'more', staffList: 'more', event: 'camps' };
 
 export default function AppScreen() {
   const insets = useSafeAreaInsets();
@@ -63,20 +75,25 @@ export default function AppScreen() {
   const app: App = { s, set: setS, go, toast, sheet: setSheetNode };
 
   const setRole = (role: State['role']) =>
-    setS((p) => ({ ...p, role, tab: role === 'parent' && (p.tab === 'prints' || p.tab === 'mentors') ? 'home' : p.tab }));
+    setS((p) => ({
+      ...p,
+      role,
+      tab: role === 'parent' && ['prints', 'mentors', 'staffList', 'event'].includes(p.tab) ? (p.tab === 'event' ? 'camps' : 'home') : p.tab,
+    }));
 
   // Android back: close the sheet, then leave sub-pages, then go Home.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (sheetNode) return setSheetNode(null), true;
-      if (s.tab === 'mentors' || s.tab === 'about' || (s.role === 'staff' && s.tab === 'msgs')) return go('more'), true;
+      const up = s.role === 'staff' && s.tab === 'msgs' ? 'more' : PARENT_TAB[s.tab];
+      if (up) return go(up), true;
       if (s.tab !== 'home') return go('home'), true;
       return false;
     });
     return () => sub.remove();
   }, [sheetNode, s.tab, s.role]);
 
-  const active: Tab = s.tab === 'mentors' || s.tab === 'about' || (s.role === 'staff' && s.tab === 'msgs') ? 'more' : s.tab;
+  const active: Tab = s.role === 'staff' && s.tab === 'msgs' ? 'more' : (PARENT_TAB[s.tab] ?? s.tab);
   const pend = s.mentors.filter((m) => m.pending).length;
   const View_ = VIEWS[s.tab];
 

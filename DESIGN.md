@@ -409,6 +409,18 @@ Queued, Printing, Ready and Done lanes scroll sideways and snap. Each lane heade
 ### More Items
 Full-width rows with a white background, 1px `line` border and 14px padding (12px gap). Each has a 22px maroon icon, then a 15px title over meta, then a muted 18px chevron. Pressed turns page grey.
 
+### Section Chips (staff event page)
+A row of the same filter chips doubles as in-page navigation on long staff pages: Overview, Staff, Schedule, Kids, Supplies, Notes. One section shows at a time under the page heading; the selected chip is filled black.
+
+### Warning Banners
+Full-width boxes inside a section, square, 1px border in the tone colour on its soft wash: warn (`#8a5a00` on `#fbf1dc`) for safety problems such as too few adults for the number of kids; maroon (`#7b1f1f` on `#f6e9e9`) for staffing gaps. Bold 14 title, regular 13 explanation that names the rule being applied.
+
+### Roster and Checklist Rows
+Lists inside one card, separated by `#e5e9f0` hairlines: name in bold 14 with the age in muted 13, a status tag on the right (Waiver signed / Waiver missing), and a bold 12 warn-coloured "Medical: …" line when a child has a flag. Supply checklists use the Check component, with a black progress bar for how much is packed.
+
+### Confirm Sheet
+Destructive actions (removing someone from an event) open the bottom sheet with the question as the H2, one sentence on what happens, a solid button that names the action, and an outline button to keep things as they are. Never a system alert, so it works the same on web.
+
 ### Desktop Phone Frame and Info Panel
 - **Frame:** a black 390px-wide bezel with 12px padding and 54px corners. The screen inside has 42px corners. A 110×30 black island sits 22px from the top, and a fake status bar shows the live time and signal in 14px bold black. The frame has the layered shadow above. Safe-area insets are faked at 50px top and 20px bottom.
 - **Info panel:** 340px wide. It holds an eyebrow, a 38px display heading, 15px body paragraphs, an "In this demo" list (72px maroon uppercase 11px keys over 14px values, 8px apart), and a 12px fine-print note above a 1px `field` rule. Muted text here uses #4c5d84 for contrast on the backdrop.

@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import { INITIAL_ASSIGN, INITIAL_NOTES, WORKSHOP, type Assignment, type Note } from './events';
 
 // Sample data from the prototype (prototype/stx-robotics-app.html). Only the
 // Summer 2026 totals come from stxrobotics.com; everything else is made up.
@@ -13,13 +14,14 @@ export type Camp = {
   cap: number;
   filled: number;
   wait: number;
+  staffOnly?: boolean; // shown only in the staff Camps view
 };
 export type Reg = { kid: string; age: number; camp: number; status: 'Confirmed' | 'Waitlisted' };
 export type Mentor = { name: string; school: string; hours: number; pending: { date: string; task: string; h: number } | null };
 export type Lane = 'Queued' | 'Printing' | 'Ready' | 'Done';
 export type Job = { id: string; what: string; who: string; hrs: number; lane: Lane; printer?: string; file?: string };
 export type Sent = { to: string; text: string; when: string };
-export type Tab = 'home' | 'camps' | 'teams' | 'msgs' | 'prints' | 'more' | 'mentors' | 'about';
+export type Tab = 'home' | 'camps' | 'teams' | 'msgs' | 'prints' | 'more' | 'mentors' | 'about' | 'event' | 'staffList';
 
 export type State = {
   role: 'parent' | 'staff';
@@ -32,6 +34,12 @@ export type State = {
   sent: Sent[];
   rsvp: Record<'tue' | 'thu' | 'sat', boolean>;
   waiverSigned: boolean;
+  // Staff camp management
+  eventId: number;
+  staffFilter: string;
+  assign: Record<number, Assignment[]>;
+  packed: Record<number, boolean[]>;
+  notes: Record<number, Note[]>;
 };
 
 export const INITIAL: State = {
@@ -45,6 +53,7 @@ export const INITIAL: State = {
     { id: 4, name: '3D Design & Print', loc: 'Alice', ages: '9–13', dates: 'Jun 28–Jul 2, 2027', time: '9:00–12:00', venue: 'Alice Public Library', cap: 16, filled: 14, wait: 0 },
     { id: 5, name: 'First Circuits', loc: 'Robstown', ages: '6–8', dates: 'Jul 12–16, 2027', time: '9:00–11:30', venue: 'Robstown Public Library', cap: 12, filled: 5, wait: 0 },
     { id: 6, name: 'Coding with Robots', loc: 'Portland', ages: '9–12', dates: 'Jul 19–23, 2027', time: '1:00–4:00', venue: 'Bell Whittington Library', cap: 16, filled: 16, wait: 1 },
+    WORKSHOP,
   ],
   regs: [
     { kid: 'Mateo G.', age: 10, camp: 1, status: 'Confirmed' },
@@ -69,6 +78,11 @@ export const INITIAL: State = {
   ],
   rsvp: { tue: false, thu: true, sat: false },
   waiverSigned: false,
+  eventId: 1,
+  staffFilter: 'All',
+  assign: INITIAL_ASSIGN,
+  packed: { 1: [true, true, false, true, false], 2: [true, false, false, true, true], 3: [false, false, false, false, false], 7: [true, true, true, false] },
+  notes: INITIAL_NOTES,
 };
 
 export type App = {

@@ -110,7 +110,9 @@ function ParentHome() {
 }
 
 function StaffHome() {
-  const { s, go } = useApp();
+  const { s: all, go } = useApp();
+  // Home keeps the prototype's summer-camp numbers; staff-only events live in Camps.
+  const s = { ...all, camps: all.camps.filter((x) => !x.staffOnly) };
   const seats = s.camps.reduce((a, x) => a + x.filled, 0);
   const cap = s.camps.reduce((a, x) => a + x.cap, 0);
   const wait = s.camps.reduce((a, x) => a + x.wait, 0);
