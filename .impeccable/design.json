@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-18T08:16:21.682Z",
+  "generatedAt": "2026-10-18T09:03:49.619117Z",
   "title": "Design System: STX Robotics App",
   "extensions": {
     "colorMeta": {
@@ -47,6 +47,21 @@
           "#d39292",
           "#e4bebe",
           "#f8eded"
+        ]
+      },
+      "maroon-on-dark": {
+        "role": "primary",
+        "displayName": "Maroon on Dark",
+        "canonical": "#e29a9a",
+        "tonalRamp": [
+          "#3d1010",
+          "#6b1c1c",
+          "#992828",
+          "#c43a3a",
+          "#d46262",
+          "#e29a9a",
+          "#eebfbf",
+          "#fbeeee"
         ]
       },
       "placeholder-blue": {
@@ -301,7 +316,7 @@
       },
       "h3": {
         "displayName": "H3",
-        "purpose": "List-row names, step-strip camp name, sheet headers."
+        "purpose": "List-row names, step-strip camp name, sheet headers, dashboard section heads, empty-state line."
       },
       "body": {
         "displayName": "Body",
@@ -317,7 +332,7 @@
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Field labels, key/value values, link actions."
+        "purpose": "Field labels, key/value values, link actions, attention-row titles, seat-board camp names, small-button text."
       },
       "button": {
         "displayName": "Button",
@@ -340,6 +355,21 @@
         "name": "confirmation-enter",
         "value": "stack animation 'fade'",
         "purpose": "Confirmation screen entrance; swipe-back disabled."
+      },
+      {
+        "name": "row-collapse",
+        "value": "LayoutAnimation easeInEaseOut preset",
+        "purpose": "An attention row resolving: it collapses in place and the rows below close the gap."
+      },
+      {
+        "name": "row-collapse-reduced",
+        "value": "opacity only, 300ms easeInEaseOut on create and delete",
+        "purpose": "Reduce Motion substitute: crossfade, rows below snap into place."
+      },
+      {
+        "name": "undo-timeout",
+        "value": "5000ms; no timeout while a screen reader is on",
+        "purpose": "How long the Undo bar stays after an action."
       }
     ],
     "breakpoints": []
@@ -416,11 +446,35 @@
       "description": "Persistent black strip on registration steps; 8px solid step squares under a divider, distinct from seat ticks.",
       "html": "<div class=\"ds-strip\"><div class=\"ds-strip-top\"><div><div class=\"ds-strip-h\">Drone Flight Lab</div><div class=\"ds-strip-s\">Del Rio · Jun 14–18, 2027</div></div><div class=\"ds-strip-l\">1 seat left</div></div><div class=\"ds-strip-led\"><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"o\"></i></div><div class=\"ds-steps\"><span class=\"ds-sq\"><i class=\"on\"></i><i class=\"on\"></i><i></i><i></i></span><span class=\"ds-strip-s\">Step 2 of 4 · <b style=\"color:#fff\">Child</b></span></div></div>",
       "css": ".ds-strip{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#000;padding:4px 16px 16px;width:358px;display:flex;flex-direction:column;gap:12px}.ds-strip-top{display:flex;align-items:flex-end;gap:12px;justify-content:space-between}.ds-strip-h{font-size:19px;line-height:24px;font-weight:700;color:#fff}.ds-strip-s{font-size:14px;line-height:20px;color:#a9b3c9}.ds-strip-l{font-size:15px;line-height:20px;font-weight:700;color:#fff}.ds-strip-led{display:flex;gap:3px;max-width:168px}.ds-strip-led i{flex:1;aspect-ratio:1;box-sizing:border-box}.ds-strip-led .t{background:#6b7489}.ds-strip-led .o{border:1.5px solid #a9b3c9}.ds-steps{display:flex;align-items:center;gap:10px;border-top:1px solid #6b7489;padding-top:12px}.ds-sq{display:flex;gap:3px}.ds-sq i{width:8px;height:8px;background:#6b7489}.ds-sq i.on{background:#fff}"
+    },
+    {
+      "name": "Seat Board",
+      "kind": "custom",
+      "refersTo": "seat-board",
+      "description": "Staff black band: one small dark ledger row per camp with a status column, held seats, trailing waitlist ticks and a legend.",
+      "html": "<div class=\"ds-board\"><div class=\"ds-board-h\">Summer 2027 camps</div><div class=\"ds-board-s\">72 of 94 seats taken · 4 on waitlists · sample data</div><div class=\"ds-brow\"><div class=\"ds-brow-top\"><span class=\"ds-brow-n\">Intro to Robotics <span>· Robstown</span></span><span class=\"ds-brow-st ds-offer\">1 seat to offer</span></div><div class=\"ds-brow-t\"><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"h\"><b></b></i><s></s><i class=\"w\"></i><i class=\"w\"></i><i class=\"w\"></i></div></div><div class=\"ds-brow\"><div class=\"ds-brow-top\"><span class=\"ds-brow-n\">Drone Flight Lab <span>· Del Rio</span></span><span class=\"ds-brow-st\">1 left</span></div><div class=\"ds-brow-t\"><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"o\"></i></div></div><div class=\"ds-legend\"><span><i class=\"t\"></i>Taken</span><span><i class=\"o\"></i>Open</span><span><i class=\"h\"><b></b></i>Held for waitlist</span><span><i class=\"w\"></i>Waitlist</span></div></div>",
+      "css": ".ds-board{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#000;padding:14px 16px 0;width:358px}.ds-board-h{font-size:19px;line-height:24px;font-weight:700;color:#fff}.ds-board-s{font-size:14px;line-height:20px;color:#a9b3c9;margin-bottom:8px}.ds-brow{padding:8px 0;display:flex;flex-direction:column;gap:6px;cursor:pointer}.ds-brow+.ds-brow{border-top:1px solid #262a33}.ds-brow:active{opacity:.7}.ds-brow-top{display:flex;gap:12px;align-items:baseline}.ds-brow-n{flex:1;font-size:15px;line-height:20px;font-weight:700;color:#fff}.ds-brow-n span{font-weight:400;color:#a9b3c9}.ds-brow-st{font-size:14px;line-height:20px;font-weight:700;color:#a9b3c9}.ds-brow-st.ds-offer{color:#e29a9a}.ds-brow-t{display:flex;flex-wrap:wrap;align-items:center;gap:3px}.ds-brow-t s{width:6px}.ds-board i{width:9px;height:9px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}.ds-board .t{background:#6b7489}.ds-board .o{border:1.5px solid #a9b3c9}.ds-board .h{border:1.5px solid #e29a9a}.ds-board .h b{width:40%;height:40%;background:#e29a9a}.ds-board .w{border:1.5px solid #e29a9a}.ds-legend{display:flex;flex-wrap:wrap;column-gap:14px;row-gap:6px;padding:12px 0}.ds-legend span{display:flex;align-items:center;gap:6px;font-size:14px;line-height:20px;color:#a9b3c9}.ds-legend i{width:11px;height:11px}"
+    },
+    {
+      "name": "Attention List and Undo Bar",
+      "kind": "custom",
+      "refersTo": "attention-row",
+      "description": "Ruled to-do rows with inline 44pt small buttons; a resolved row collapses in place and the black Undo bar appears.",
+      "html": "<div class=\"ds-att-wrap\"><div class=\"ds-att-head\"><span class=\"ds-att-h\">Needs attention</span><span class=\"ds-att-n\">5</span></div><div class=\"ds-att\"><div class=\"ds-att-row\"><div class=\"ds-att-t\">Isabella M. · 3 h</div><div class=\"ds-att-m\">Led build session · Oct 15 · Portland student mentor</div><div class=\"ds-att-a\"><button class=\"ds-sm ds-sm-solid\">Approve</button><button class=\"ds-sm ds-sm-out\">Return</button></div></div><div class=\"ds-att-row\"><div class=\"ds-att-t\">Ready for pickup: Gear set</div><div class=\"ds-att-m\">Sample student · P-104</div><div class=\"ds-att-a\"><button class=\"ds-sm ds-sm-out\">Mark picked up</button></div></div></div><div class=\"ds-undo\"><span>Approved 3 h · Isabella M.</span><button>Undo</button></div></div>",
+      "css": ".ds-att-wrap{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;width:360px;background:#f7fafc;padding-bottom:12px}.ds-att-head{display:flex;align-items:baseline;gap:10px;padding:24px 16px 12px}.ds-att-h{font-size:19px;line-height:24px;font-weight:700;color:#111827}.ds-att-n{font-size:14px;color:#60739f}.ds-att{background:#fff;border-top:1px solid #e5e9f0;border-bottom:1px solid #e5e9f0}.ds-att-row{padding:16px;display:flex;flex-direction:column;gap:3px}.ds-att-row+.ds-att-row{border-top:1px solid #e5e9f0}.ds-att-t{font-size:15px;line-height:20px;font-weight:700;color:#111827}.ds-att-m{font-size:14px;line-height:20px;color:#60739f}.ds-att-a{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}.ds-sm{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:44px;padding:0 14px;font-size:15px;font-weight:700;border-radius:0;cursor:pointer}.ds-sm-solid{background:#7b1f1f;color:#fff;border:none}.ds-sm-solid:active{background:#5a1515}.ds-sm-out{background:transparent;color:#000;border:1.5px solid #000}.ds-sm-out:active{background:#e5e9f0}.ds-sm:focus-visible{outline:2px solid #000;outline-offset:2px}.ds-undo{margin:12px 16px 0;background:#000;min-height:56px;display:flex;align-items:center;gap:12px;padding-left:16px}.ds-undo span{flex:1;font-size:16px;line-height:23px;color:#fff;padding:10px 0}.ds-undo button{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:48px;padding:0 16px;background:none;border:none;color:#e29a9a;font-size:16px;font-weight:700;cursor:pointer}.ds-undo button:focus-visible{outline:2px solid #e29a9a;outline-offset:-4px}"
+    },
+    {
+      "name": "Demo Role Switch",
+      "kind": "nav",
+      "refersTo": "role-switch",
+      "description": "Demo-only segmented Parent/Staff switch beside the wordmark; square, 1.5px black outline, labelled Demo.",
+      "html": "<div class=\"ds-top\"><span class=\"ds-wm\">STX <span>Robotics</span></span><div class=\"ds-rs\"><span class=\"ds-rs-l\">Demo</span><div class=\"ds-rs-g\" role=\"tablist\"><button role=\"tab\">Parent</button><button role=\"tab\" aria-selected=\"true\" class=\"on\">Staff</button></div></div></div>",
+      "css": ".ds-top{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;width:358px}.ds-wm{font-size:22px;font-weight:700;letter-spacing:-.6px;color:#000}.ds-wm span{color:#7b1f1f}.ds-rs{display:flex;align-items:center;gap:8px}.ds-rs-l{font-size:12px;color:#60739f}.ds-rs-g{display:flex;border:1.5px solid #000}.ds-rs-g button{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:36px;min-width:64px;padding:0 10px;font-size:14px;font-weight:700;background:transparent;color:#000;border:none;border-radius:0;cursor:pointer}.ds-rs-g button.on{background:#000;color:#fff}.ds-rs-g button:focus-visible{outline:2px solid #7b1f1f;outline-offset:2px}"
     }
   ],
   "narrative": {
     "northStar": "The Seat Ledger",
-    "overview": "The app is stxrobotics.com carried onto a phone: a light, cool page (#f7fafc), white fields, cool hairlines, one maroon voice, and black bands that hold the numbers that matter. Its own idea is the seat ledger, a row of square ticks with one per seat. It shows up wherever a session is in play: on the camp list, in the camp detail band, in the strip above every registration step, and on the confirmation, where the parent's own seat fills maroon. The parent should always be able to see what they are holding.\n\nThe density is calm and editorial. Lists are ruled with hairlines rather than stacked as cards. Corners are square everywhere. There are no shadows. Typography is Atkinson Hyperlegible alone, using weight and size instead of a second face. One shared custom look runs on iOS and Android. It does not adapt per OS, but it keeps each OS's hard guarantees (see Layout).\n\nAnything the client has not decided is shown, not invented: it sits in a dashed blue placeholder frame that says it is a placeholder.",
+    "overview": "The app is stxrobotics.com carried onto a phone: a light, cool page (#f7fafc), white fields, cool hairlines, one maroon voice, and black bands that hold the numbers that matter. Its own idea is the seat ledger, a row of square ticks with one per seat. It shows up wherever a session is in play: on the camp list, in the camp detail band, in the strip above every registration step, and on the confirmation, where the parent's own seat fills maroon. The parent should always be able to see what they are holding. On the staff side the same ledger becomes the seat board, every camp stacked in one black band, with the waitlist trailing behind each row.\n\nThe density is calm and editorial. Lists are ruled with hairlines rather than stacked as cards. Corners are square everywhere. There are no shadows. Typography is Atkinson Hyperlegible alone, using weight and size instead of a second face. One shared custom look runs on iOS and Android. It does not adapt per OS, but it keeps each OS's hard guarantees (see Layout).\n\nAnything the client has not decided is shown, not invented: it sits in a dashed blue placeholder frame that says it is a placeholder.",
     "keyCharacteristics": [
       "Square seat ticks as the core information graphic; one tick per seat.",
       "Black bands for headline numbers and context; light page for detail and forms.",
@@ -432,12 +486,17 @@
     "rules": [
       {
         "name": "The One Voice Rule",
-        "body": "Maroon is the only color that asks for action or marks ownership. In the ledger, maroon means \"yours\" and nothing else.",
+        "body": "Maroon is the only color that asks for action or marks a claim on a seat. In the ledger, maroon means a family's claim and nothing else: a filled tick is the parent's own seat or a seat just offered, an outlined tick with a center square is a seat held for the waitlist, and an outlined trailing tick is a place on the waitlist.",
+        "section": "colors"
+      },
+      {
+        "name": "The Maroon on Dark Rule",
+        "body": "On black, every maroon mark or action uses maroon-on-dark. Brick maroon is never drawn on black, and maroon-on-dark is never drawn on light ground.",
         "section": "colors"
       },
       {
         "name": "The Tuned Ground Rule",
-        "body": "Ledger tones are chosen per ground. On black, use band-taken and band-muted. On light, use seat-taken and muted. Never move a light tick onto black or the reverse. Both taken tones hold at least 3:1 against their own ground.",
+        "body": "Ledger tones are chosen per ground. On black, use band-taken, band-muted and maroon-on-dark. On light, use seat-taken, muted and maroon. Never move a light tick onto black or the reverse. Both taken tones hold at least 3:1 against their own ground.",
         "section": "colors"
       },
       {
@@ -452,7 +511,7 @@
       },
       {
         "name": "The Capped Display Rule",
-        "body": "Every text style follows the OS font size up to 2x. Display is capped at 1.3x so the numeral and its ledger stay on screen.",
+        "body": "Every text style follows the OS font size up to 2x. Display is capped at 1.3x so the numeral and its ledger stay on screen. The demo role switch is capped at 1.5x so it stays beside the wordmark.",
         "section": "typography"
       },
       {
@@ -463,14 +522,18 @@
     ],
     "dos": [
       "**Do** show the seat ledger wherever a specific session is in play, tuned to its ground (dark tones on black, light tones on paper).",
-      "**Do** give the parent's own seat maroon and nothing else in the ledger maroon.",
+      "**Do** reserve maroon in the ledger for a family's claim: an own or offered seat (filled), a held seat (outline plus center square), a waitlist place (outline).",
+      "**Do** use maroon-on-dark (#e29a9a) for every maroon mark or action on black.",
       "**Do** put the meta line (12 bold uppercase, 1.4 tracking) directly below the heading it qualifies.",
       "**Do** open session screens on a black band with the display numeral and ledger, then continue on the light page.",
       "**Do** pin the single solid maroon action at the bottom safe area, with outline buttons for secondary actions.",
+      "**Do** put inline row actions in 44pt small buttons, at most one solid per row.",
+      "**Do** clear to-dos in place and offer Undo for 5s, held while a screen reader is on.",
       "**Do** rule lists with #e5e9f0 hairlines on a full-bleed white body.",
       "**Do** frame every undecided client fact in the dashed #2337ff placeholder, labelled \"Placeholder · topic\".",
-      "**Do** keep targets at 44 to 52pt, honor safe areas, cap Display scaling at 1.3x, and fade instead of scaling under Reduce Motion.",
-      "**Do** set the status bar per band: light over black, dark over paper."
+      "**Do** send unbuilt destinations to the \"Not in this demo\" stub with its placeholder.",
+      "**Do** keep targets at 44 to 52pt, honor safe areas, cap Display scaling at 1.3x, and fade instead of scaling or sliding under Reduce Motion.",
+      "**Do** set the status bar per band: light over black, dark over paper, with a page-colored scrim where black content scrolls under the top inset."
     ],
     "donts": [
       "**Don't** round any corner.",
@@ -478,10 +541,12 @@
       "**Don't** stack content in cards. Use ruled lists and key/value rows.",
       "**Don't** place a meta line, eyebrow or kicker above a heading.",
       "**Don't** use #2337ff for anything but placeholder frames.",
+      "**Don't** draw brick maroon on black or maroon-on-dark on paper.",
       "**Don't** fill a placeholder with an invented answer or present sample data as real.",
       "**Don't** make step markers look like seat ticks. Keep them 8pt, solid, and under the divider.",
-      "**Don't** fire a haptic for anything but a confirmed seat.",
-      "**Don't** pre-check consent boxes."
+      "**Don't** fire the success haptic for anything but a confirmed seat. Staff actions in the attention list get one light impact each; nothing else buzzes.",
+      "**Don't** pre-check consent boxes.",
+      "**Don't** show the role switch without its \"Demo\" label."
     ]
   }
 }

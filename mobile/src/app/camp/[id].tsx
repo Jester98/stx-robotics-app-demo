@@ -2,7 +2,7 @@ import { ScrollView, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { isFull, seatsLeft, useStore } from '@/lib/store';
+import { isFull, seatToOffer, seatsLeft, useStore } from '@/lib/store';
 import { Btn, Ledger, Placeholder, T } from '@/ui/kit';
 import { c, space } from '@/ui/theme';
 
@@ -43,8 +43,13 @@ export default function CampDetail() {
                 : `of ${camp.cap} seats left`}
             </T>
           </View>
-          <View style={{ marginTop: 14 }}>
+          <View style={{ marginTop: 14, gap: 10 }}>
             <Ledger camp={camp} />
+            {seatToOffer(camp) && (
+              <T v="small" style={{ color: c.bandMuted }}>
+                A seat just opened. It goes to the first family on the waitlist.
+              </T>
+            )}
           </View>
         </View>
 

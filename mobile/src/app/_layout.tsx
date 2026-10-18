@@ -29,7 +29,9 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: c.bg },
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'fade' }} />
+        <Stack.Screen name="(staff)" options={{ headerShown: false, animation: 'fade' }} />
+        <Stack.Screen name="soon" options={{ title: '' }} />
         <Stack.Screen name="camp/[id]" options={{ title: '' }} />
         <Stack.Screen name="register/[id]/phone" options={{ title: 'Register' }} />
         <Stack.Screen name="register/[id]/child" options={{ title: 'Register' }} />

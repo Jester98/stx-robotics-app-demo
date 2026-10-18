@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { COMMUNITIES, useStore } from '@/lib/store';
-import { Btn, Ledger, T, Tag } from '@/ui/kit';
+import { Btn, Ledger, RoleSwitch, T, Tag, Wordmark } from '@/ui/kit';
 import { c, f, space } from '@/ui/theme';
 
 export default function Camps() {
@@ -15,12 +15,10 @@ export default function Camps() {
   return (
     <ScrollView style={{ backgroundColor: c.bg }} contentContainerStyle={{ paddingTop: insets.top + 12, paddingBottom: 32 }}>
       <View style={{ paddingHorizontal: space, gap: 10 }}>
-        <Text
-          accessibilityRole="header"
-          style={{ fontFamily: f.bold, fontSize: 22, letterSpacing: -0.6, color: c.black }}
-        >
-          STX <Text style={{ color: c.maroon }}>Robotics</Text>
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+          <Wordmark />
+          <RoleSwitch />
+        </View>
         <T v="title" accessibilityRole="header" style={{ marginTop: 14 }}>
           Find a camp
         </T>

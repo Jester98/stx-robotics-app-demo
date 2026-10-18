@@ -18,7 +18,8 @@ export const COMMUNITIES = ['Portland', 'Robstown', 'Del Rio', 'Alice'] as const
 export type Community = (typeof COMMUNITIES)[number];
 
 const CAMPS: Camp[] = [
-  { id: '1', name: 'Intro to Robotics', loc: 'Robstown', ages: [8, 11], dates: 'Jun 7–11, 2027', time: '9:00–12:00', venue: 'Robstown partner library', cap: 16, filled: 16, wait: 3 },
+  // A family cancelled: 1 seat is open but held for the 3-family waitlist (staff "Offer seat" demo).
+  { id: '1', name: 'Intro to Robotics', loc: 'Robstown', ages: [8, 11], dates: 'Jun 7–11, 2027', time: '9:00–12:00', venue: 'Robstown partner library', cap: 16, filled: 15, wait: 3 },
   // 1 seat left: the demo's "seat taken mid-flow" case runs on this camp.
   { id: '2', name: 'Drone Flight Lab', loc: 'Del Rio', ages: [11, 14], dates: 'Jun 14–18, 2027', time: '1:00–4:00', venue: 'Del Rio partner library', cap: 14, filled: 13, wait: 0 },
   { id: '3', name: 'VEX V5 Bootcamp', loc: 'Portland', ages: [12, 17], dates: 'Jun 21–25, 2027', time: '9:00–3:00', venue: 'Portland partner library', cap: 20, filled: 9, wait: 0 },
@@ -38,6 +39,30 @@ export type Registration = {
 };
 export type Draft = { child?: Child; guardian?: string; notes?: string };
 
+export type Mentor = {
+  id: string;
+  name: string; // first name + initial only
+  loc: Community;
+  hours: number; // approved this season
+  log?: { date: string; task: string; h: number; state: 'pending' | 'approved' | 'returned'; reason?: string };
+};
+const MENTORS: Mentor[] = [
+  { id: 'm1', name: 'Isabella M.', loc: 'Portland', hours: 42, log: { date: 'Oct 15', task: 'Led build session, Team 2A', h: 3, state: 'pending' } },
+  { id: 'm2', name: 'Diego T.', loc: 'Robstown', hours: 36, log: { date: 'Oct 14', task: 'Notebook review with rookies', h: 2, state: 'pending' } },
+  { id: 'm3', name: 'Sofia L.', loc: 'Alice', hours: 28 },
+  { id: 'm4', name: 'Noah P.', loc: 'Portland', hours: 19, log: { date: 'Oct 12', task: 'Library STEM workshop helper', h: 4, state: 'pending' } },
+];
+
+export type Print = { id: string; what: string; who: string; lane: 'Queued' | 'Printing' | 'Ready' | 'Done'; printer?: string };
+const PRINTS: Print[] = [
+  { id: 'P-118', what: 'Keychain robot ×24', who: 'Alice camp', lane: 'Queued' },
+  { id: 'P-119', what: 'Drive gear spacers', who: 'Team 2A', lane: 'Queued' },
+  { id: 'P-116', what: 'Name plates ×16', who: 'Robstown camp', lane: 'Printing', printer: 'Prusa #2' },
+  { id: 'P-117', what: 'Intake roller mount', who: 'Team 2B', lane: 'Printing', printer: 'Bambu #1' },
+  { id: 'P-115', what: 'Mini drone frames ×6', who: 'Del Rio camp', lane: 'Ready' },
+];
+export const PRINTERS = ['Prusa #2', 'Bambu #1'];
+
 type Store = {
   camps: Camp[];
   regs: Registration[];
@@ -47,12 +72,25 @@ type Store = {
   draft: Draft;
   filter: Community | 'All';
   stolen: string[]; // camps where the demo already took the last seat
+  role: 'parent' | 'staff'; // demo switch; the real app gates staff behind sign-in
+  mentors: Mentor[];
+  prints: Print[];
 };
 
 const Ctx = createContext<{ s: Store; set: (fn: (s: Store) => Store) => void } | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [s, setS] = useState<Store>({ camps: CAMPS, regs: [], kids: [], draft: {}, filter: 'All', stolen: [] });
+  const [s, setS] = useState<Store>({
+    camps: CAMPS,
+    regs: [],
+    kids: [],
+    draft: {},
+    filter: 'All',
+    stolen: [],
+    role: 'parent',
+    mentors: MENTORS,
+    prints: PRINTS,
+  });
   return <Ctx.Provider value={{ s, set: setS }}>{children}</Ctx.Provider>;
 }
 
@@ -62,7 +100,38 @@ export function useStore() {
   return v;
 }
 
-export const seatsLeft = (c: Camp) => Math.max(0, c.cap - c.filled);
+// Open seats go to the waitlist first, so a camp with a line has none for new families.
+export const seatsLeft = (c: Camp) => (c.wait > 0 ? 0 : Math.max(0, c.cap - c.filled));
+export const seatToOffer = (c: Camp) => c.wait > 0 && c.filled < c.cap;
+
+// Staff: give the open seat to waitlist #1. A parent-flow child at #1 becomes Confirmed.
+export function offerSeat(s: Store, campId: string): Store {
+  const camp = s.camps.find((c) => c.id === campId)!;
+  if (!seatToOffer(camp)) return s;
+  const regs = s.regs.map((r) =>
+    r.campId !== campId || r.status !== 'Waitlisted'
+      ? r
+      : r.position === 1
+        ? { ...r, status: 'Confirmed' as const, position: undefined, seat: camp.filled }
+        : { ...r, position: r.position! - 1 },
+  );
+  const camps = s.camps.map((c) => (c.id === campId ? { ...c, filled: c.filled + 1, wait: c.wait - 1 } : c));
+  return { ...s, camps, regs };
+}
+
+export function resolveLog(s: Store, id: string, state: 'approved' | 'returned', reason?: string): Store {
+  return {
+    ...s,
+    mentors: s.mentors.map((m) =>
+      m.id !== id || !m.log ? m : { ...m, hours: state === 'approved' ? m.hours + m.log.h : m.hours, log: { ...m.log, state, reason } },
+    ),
+  };
+}
+
+export const pickedUp = (s: Store, id: string): Store => ({
+  ...s,
+  prints: s.prints.map((p) => (p.id === id ? { ...p, lane: 'Done' } : p)),
+});
 export const isFull = (c: Camp) => seatsLeft(c) === 0;
 
 // Returns the new registration. Seats are re-checked here, at submit time.

@@ -20,6 +20,7 @@ export const c = {
   bandMuted: '#a9b3c9',
   bandTaken: '#6b7489', // >=3:1 on black
   taken: '#7d8aa3', // >=3:1 on white and bg
+  maroonOnDark: '#e29a9a', // maroon tint for marks on the black band (>=3:1)
 };
 
 export const f = {

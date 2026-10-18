@@ -19,7 +19,8 @@ import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { Feather } from '@expo/vector-icons';
 import { c, f, space } from './theme';
-import { seatsLeft, type Camp } from '@/lib/store';
+import { seatsLeft, useStore, type Camp } from '@/lib/store';
+import { useRouter } from 'expo-router';
 
 type Variant = 'display' | 'title' | 'h3' | 'body' | 'small' | 'meta' | 'label';
 const V: Record<Variant, TextStyle> = {
@@ -43,12 +44,14 @@ export function Btn({
   kind = 'solid',
   disabled,
   icon,
+  size = 'md',
 }: {
   children: string;
   onPress: () => void;
   kind?: 'solid' | 'outline' | 'white';
   disabled?: boolean;
   icon?: keyof typeof Feather.glyphMap;
+  size?: 'md' | 'sm';
 }) {
   const fg = kind === 'solid' ? c.white : kind === 'white' ? c.maroon : c.black;
   return (
@@ -58,8 +61,8 @@ export function Btn({
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => ({
-        minHeight: 52,
-        paddingHorizontal: 20,
+        minHeight: size === 'sm' ? 44 : 52,
+        paddingHorizontal: size === 'sm' ? 14 : 20,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -72,7 +75,7 @@ export function Btn({
       })}
     >
       {icon && <Feather name={icon} size={18} color={fg} />}
-      <Text style={{ fontFamily: f.bold, fontSize: 17, color: fg }}>{children}</Text>
+      <Text style={{ fontFamily: f.bold, fontSize: size === 'sm' ? 15 : 17, color: fg }}>{children}</Text>
     </Pressable>
   );
 }
@@ -203,6 +206,9 @@ export function Ledger({
 
   const taken = tone === 'dark' ? c.bandTaken : c.taken;
   const open = tone === 'dark' ? c.bandMuted : c.muted;
+  const accent = tone === 'dark' ? c.maroonOnDark : c.maroon;
+  // With a waitlist, open seats are held for it, not available to new families.
+  const held = camp.wait > 0 ? Math.max(0, camp.cap - camp.filled) : 0;
   const gap = size === 'lg' ? 5 : 3;
   const n = perRow ?? camp.cap;
   const rows = Array.from({ length: Math.ceil(camp.cap / n) }, (_, r) =>
@@ -212,7 +218,10 @@ export function Ledger({
     <View
       accessible
       accessibilityRole="image"
-      accessibilityLabel={label ?? `${camp.filled} of ${camp.cap} seats taken, ${seatsLeft(camp)} left${mine !== undefined ? '. One is yours.' : ''}`}
+      accessibilityLabel={
+        label ??
+        `${camp.filled} of ${camp.cap} seats taken, ${held ? `${held} held for the waitlist` : `${seatsLeft(camp)} left`}${mine !== undefined ? '. One is yours.' : ''}`
+      }
       style={{ gap, maxWidth: perRow ? undefined : size === 'lg' ? camp.cap * 22 : camp.cap * 12 }}
     >
       {rows.map((row, r) => (
@@ -220,6 +229,7 @@ export function Ledger({
       {row.map((i) => {
         const isMine = i === mine;
         const isTaken = i < camp.filled && !isMine;
+        const isHeld = !isTaken && !isMine && held > 0;
         return (
           <View
             key={i}
@@ -228,14 +238,18 @@ export function Ledger({
               aspectRatio: 1,
               backgroundColor: isTaken ? taken : 'transparent',
               borderWidth: isTaken ? 0 : 1.5,
-              borderColor: isMine ? c.maroon : open,
+              borderColor: isMine || isHeld ? accent : open,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
+            {isHeld && <View style={{ width: '40%', height: '40%', backgroundColor: accent }} />}
             {isMine && (
               <Animated.View
                 style={{
+                  alignSelf: 'stretch',
                   flex: 1,
-                  backgroundColor: c.maroon,
+                  backgroundColor: accent,
                   opacity: fill,
                   // Reduce Motion: opacity crossfade only
                   transform: [{ scale: reduce ? 1 : fill.interpolate({ inputRange: [0, 1], outputRange: [0.2, 1] }) }],
@@ -350,5 +364,51 @@ export function Notice({ tone, title, children }: { tone: 'warn' | 'info'; title
       </View>
       {children}
     </View>
+  );
+}
+
+// Demo-only switch between the parent and staff views. The real app gates staff behind sign-in.
+export function RoleSwitch() {
+  const { s, set } = useStore();
+  const router = useRouter();
+  const go = (role: 'parent' | 'staff') => {
+    if (role === s.role) return;
+    set((p) => ({ ...p, role }));
+    router.replace(role === 'staff' ? '/today' : '/');
+  };
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      <Text style={{ fontFamily: f.regular, fontSize: 12, color: c.muted }} maxFontSizeMultiplier={1.5}>
+        Demo
+      </Text>
+      <View style={{ flexDirection: 'row', borderWidth: 1.5, borderColor: c.black }} accessibilityRole="tablist">
+        {(['parent', 'staff'] as const).map((r) => {
+          const on = s.role === r;
+          return (
+            <Pressable
+              key={r}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={`${r === 'parent' ? 'Parent' : 'Staff'} view (demo)`}
+              onPress={() => go(r)}
+              hitSlop={{ top: 6, bottom: 6 }}
+              style={{ minHeight: 36, minWidth: 64, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: on ? c.black : 'transparent' }}
+            >
+              <Text style={{ fontFamily: f.bold, fontSize: 14, color: on ? c.white : c.black }} maxFontSizeMultiplier={1.5}>
+                {r === 'parent' ? 'Parent' : 'Staff'}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+export function Wordmark() {
+  return (
+    <Text accessibilityRole="header" style={{ fontFamily: f.bold, fontSize: 22, letterSpacing: -0.6, color: c.black }}>
+      STX <Text style={{ color: c.maroon }}>Robotics</Text>
+    </Text>
   );
 }
