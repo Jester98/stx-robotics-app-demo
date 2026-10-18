@@ -28,6 +28,9 @@
       "expo-splash-screen",
       "expo-status-bar"
     ],
-    "scheme": "stxrobotics"
+    "scheme": "stxrobotics",
+    "experiments": {
+      "baseUrl": "/stx-robotics-app-demo"
+    }
   }
 }
