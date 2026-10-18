@@ -64,6 +64,7 @@ Open decisions:
 
 - Name: South Texas Robotics (short form STX Robotics). 501(c)(3), Corpus Christi, TX.
 - The existing stxrobotics.com brand is binding for the app (font, palette, button style, eyebrow labels, stat bands); the specifics are recorded in CLAUDE.md.
+- The clickable prototype at `prototype/stx-robotics-app.html` is the binding visual and interaction reference for the app (user decision, 2026-10-18). Where it disagrees with DESIGN.md or the Impeccable rules, the prototype wins.
 - Sponsor tiers: STEM Friend $100, Robotics Advocate $250, Engineering Champion $500, Program Sponsor $1,000+. Sponsorships start at $50 and are tax-deductible.
 
 ## Evidence on Hand

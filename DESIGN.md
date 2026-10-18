@@ -1,401 +1,435 @@
 ---
 name: STX Robotics App
-description: The seat is the interface. stxrobotics.com's light editorial world, on a phone, with black bands and a ledger of square seats.
+description: The stxrobotics.com look in an app for South Texas Robotics families and staff, ported 1:1 from the clickable prototype.
 colors:
+  page: "#f7fafc"
+  white: "#ffffff"
+  ink: "#222939"
+  head: "#111827"
+  muted: "#60739f"
+  line: "#e5e9f0"
+  field: "#cfd6e2"
   maroon: "#7b1f1f"
   maroon-dark: "#5a1515"
   maroon-soft: "#f6e9e9"
-  maroon-on-dark: "#e29a9a"
-  placeholder-blue: "#2337ff"
-  placeholder-blue-soft: "#eef0ff"
-  band-black: "#000000"
-  page: "#f7fafc"
-  surface: "#ffffff"
-  hairline: "#e5e9f0"
-  ink: "#222939"
-  heading: "#111827"
-  muted: "#60739f"
-  seat-taken: "#7d8aa3"
-  band-muted: "#a9b3c9"
-  band-taken: "#6b7489"
+  black: "#000000"
   good: "#1d6b3a"
   good-soft: "#e3f1e8"
   warn: "#8a5a00"
   warn-soft: "#fbf1dc"
+  blue: "#2337ff"
+  blue-soft: "#e8ebff"
+  idle: "#b6c0d1"
+  bubble: "#e9e9eb"
 typography:
-  display:
-    fontFamily: "Atkinson Hyperlegible"
-    fontSize: "104px"
-    fontWeight: 700
-    lineHeight: "100px"
-    letterSpacing: "-4px"
-  title:
-    fontFamily: "Atkinson Hyperlegible"
-    fontSize: "30px"
-    fontWeight: 700
-    lineHeight: "34px"
-    letterSpacing: "-0.4px"
-  h3:
-    fontFamily: "Atkinson Hyperlegible"
-    fontSize: "19px"
+  logo:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "22px"
     fontWeight: 700
     lineHeight: "24px"
-  body:
-    fontFamily: "Atkinson Hyperlegible"
+    letterSpacing: "-0.88px"
+  display:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "38px"
+    fontWeight: 700
+    lineHeight: "41px"
+    letterSpacing: "-0.38px"
+  headline:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "26px"
+    fontWeight: 700
+    lineHeight: "29px"
+    letterSpacing: "-0.26px"
+  stat:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "24px"
+    fontWeight: 700
+    lineHeight: "26px"
+    fontFeature: "tnum"
+  title:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
     fontSize: "16px"
-    fontWeight: 400
+    fontWeight: 700
     lineHeight: "23px"
-  small:
-    fontFamily: "Atkinson Hyperlegible"
+  body:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "15px"
+    fontWeight: 400
+    lineHeight: "22px"
+  lead:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
     fontSize: "14px"
     fontWeight: 400
     lineHeight: "20px"
   meta:
-    fontFamily: "Atkinson Hyperlegible"
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 400
+    lineHeight: "19px"
+  section-title:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "13px"
+    fontWeight: 700
+    letterSpacing: "1.56px"
+  field-label:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
     fontSize: "12px"
     fontWeight: 700
-    lineHeight: "16px"
-    letterSpacing: "1.4px"
+    letterSpacing: "0.72px"
+  chip:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 700
+    letterSpacing: "0.96px"
+  eyebrow:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 700
+    letterSpacing: "1.54px"
   label:
-    fontFamily: "Atkinson Hyperlegible"
-    fontSize: "15px"
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "11px"
     fontWeight: 700
-    lineHeight: "20px"
-  button:
-    fontFamily: "Atkinson Hyperlegible"
-    fontSize: "17px"
+    letterSpacing: "1.32px"
+  tag:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "10.5px"
     fontWeight: 700
+    letterSpacing: "0.84px"
+  tab:
+    fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
+    fontSize: "10.5px"
+    fontWeight: 700
+    letterSpacing: "0.63px"
 rounded:
   none: "0px"
+  bubble: "18px"
+  phone: "54px"
 spacing:
-  gutter: "16px"
-  frame: "14px"
-  row: "18px"
-  form-gap: "22px"
-  section: "24px"
+  gutter: "18px"
+  card: "14px"
+  stack: "10px"
+  section-top: "20px"
+  row: "12px"
+  chip-gap: "6px"
 components:
   button-primary:
     backgroundColor: "{colors.maroon}"
-    textColor: "{colors.surface}"
-    typography: "{typography.button}"
+    textColor: "{colors.white}"
+    typography: "{typography.lead}"
     rounded: "{rounded.none}"
-    padding: "0 20px"
-    height: "52px"
+    padding: "11px 16px"
   button-primary-pressed:
     backgroundColor: "{colors.maroon-dark}"
-    textColor: "{colors.surface}"
   button-primary-sm:
     backgroundColor: "{colors.maroon}"
-    textColor: "{colors.surface}"
-    typography: "{typography.label}"
+    textColor: "{colors.white}"
     rounded: "{rounded.none}"
-    padding: "0 14px"
-    height: "44px"
+    padding: "7px 11px"
   button-outline:
     backgroundColor: "transparent"
-    textColor: "{colors.band-black}"
-    typography: "{typography.button}"
+    textColor: "{colors.black}"
     rounded: "{rounded.none}"
-    padding: "0 20px"
-    height: "52px"
-  button-outline-pressed:
-    backgroundColor: "{colors.hairline}"
-  button-outline-sm:
-    backgroundColor: "transparent"
-    textColor: "{colors.band-black}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "0 14px"
-    height: "44px"
+    padding: "11px 16px"
   button-white:
-    backgroundColor: "{colors.surface}"
+    backgroundColor: "{colors.white}"
     textColor: "{colors.maroon}"
-    typography: "{typography.button}"
     rounded: "{rounded.none}"
-    padding: "0 20px"
-    height: "52px"
+    padding: "7px 11px"
+  card:
+    backgroundColor: "{colors.white}"
+    rounded: "{rounded.none}"
+    padding: "{spacing.card}"
+  stats-band:
+    backgroundColor: "{colors.black}"
+    textColor: "{colors.white}"
+    typography: "{typography.stat}"
+    padding: "16px 18px"
+  maroon-band:
+    backgroundColor: "{colors.maroon}"
+    textColor: "{colors.white}"
+    padding: "16px 18px"
+  chip:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.black}"
+    typography: "{typography.chip}"
+    rounded: "{rounded.none}"
+    padding: "6px 12px"
+  chip-selected:
+    backgroundColor: "{colors.black}"
+    textColor: "{colors.white}"
   field:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.heading}"
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
     rounded: "{rounded.none}"
-    padding: "0 14px"
-    height: "52px"
-  filter-chip:
-    backgroundColor: "transparent"
-    textColor: "{colors.band-black}"
-    typography: "{typography.label}"
-    rounded: "{rounded.none}"
-    padding: "0 16px"
-    height: "44px"
-  filter-chip-selected:
-    backgroundColor: "{colors.band-black}"
-    textColor: "{colors.surface}"
-  role-switch:
-    backgroundColor: "transparent"
-    textColor: "{colors.band-black}"
-    rounded: "{rounded.none}"
-    padding: "0 10px"
-    height: "36px"
-  role-switch-selected:
-    backgroundColor: "{colors.band-black}"
-    textColor: "{colors.surface}"
-  placeholder-frame:
-    backgroundColor: "{colors.placeholder-blue-soft}"
-    textColor: "{colors.placeholder-blue}"
-    rounded: "{rounded.none}"
-    padding: "{spacing.frame}"
-  status-tag-open:
+    padding: "10px"
+  tag-open:
     backgroundColor: "{colors.good-soft}"
     textColor: "{colors.good}"
-    rounded: "{rounded.none}"
-    padding: "3px 8px"
-  status-tag-few:
+    typography: "{typography.tag}"
+    padding: "3px 7px"
+  tag-few:
     backgroundColor: "{colors.warn-soft}"
     textColor: "{colors.warn}"
-    rounded: "{rounded.none}"
-    padding: "3px 8px"
-  status-tag-full:
+    padding: "3px 7px"
+  tag-full:
     backgroundColor: "{colors.maroon-soft}"
     textColor: "{colors.maroon}"
+    padding: "3px 7px"
+  tag-blue:
+    backgroundColor: "{colors.blue-soft}"
+    textColor: "{colors.blue}"
+    padding: "3px 7px"
+  tag-mute:
+    backgroundColor: "{colors.page}"
+    textColor: "{colors.muted}"
+    padding: "3px 7px"
+  progress-bar:
+    backgroundColor: "{colors.line}"
+    height: "5px"
+  app-bar:
+    backgroundColor: "{colors.white}"
+    padding: "8px 18px 12px"
+  role-switch-selected:
+    backgroundColor: "{colors.black}"
+    textColor: "{colors.white}"
+    typography: "{typography.label}"
+    padding: "5px 10px"
+  tab-bar:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.muted}"
+    typography: "{typography.tab}"
+    padding: "6px 6px 8px"
+  tab-bar-active:
+    textColor: "{colors.maroon}"
+  bottom-sheet:
+    backgroundColor: "{colors.page}"
     rounded: "{rounded.none}"
-    padding: "3px 8px"
-  step-strip:
-    backgroundColor: "{colors.band-black}"
-    textColor: "{colors.surface}"
-    padding: "4px 16px 16px"
-  seat-board:
-    backgroundColor: "{colors.band-black}"
-    textColor: "{colors.surface}"
-    padding: "14px 16px 0"
-  attention-row:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.heading}"
-    padding: "16px"
-  undo-bar:
-    backgroundColor: "{colors.band-black}"
-    textColor: "{colors.surface}"
-    rounded: "{rounded.none}"
-    padding: "0 0 0 16px"
-    height: "56px"
+    padding: "8px 18px 28px"
+  toast:
+    backgroundColor: "{colors.black}"
+    textColor: "{colors.white}"
+    typography: "{typography.lead}"
+    padding: "12px 14px"
+  sms-bubble:
+    backgroundColor: "{colors.bubble}"
+    textColor: "#111111"
+    typography: "{typography.lead}"
+    rounded: "{rounded.bubble}"
+    padding: "10px 13px"
+  more-item:
+    backgroundColor: "{colors.white}"
+    padding: "14px"
+  printer-led:
+    backgroundColor: "{colors.good}"
+    size: "9px"
+  printer-led-idle:
+    backgroundColor: "{colors.idle}"
+    size: "9px"
 ---
 
 # Design System: STX Robotics App
 
 ## Overview
 
-**Creative North Star: "The Seat Ledger"**
+**Creative North Star: "The Club Website, In Your Pocket"**
 
-The app is stxrobotics.com carried onto a phone: a light, cool page (#f7fafc), white fields, cool hairlines, one maroon voice, and black bands that hold the numbers that matter. Its own idea is the seat ledger, a row of square ticks with one per seat. It shows up wherever a session is in play: on the camp list, in the camp detail band, in the strip above every registration step, and on the confirmation, where the parent's own seat fills maroon. The parent should always be able to see what they are holding. On the staff side the same ledger becomes the seat board, every camp stacked in one black band, with the waitlist trailing behind each row.
+The app wears stxrobotics.com's clothes. The user chose the clickable prototype (`prototype/stx-robotics-app.html`) as the binding reference. Where it disagrees with an earlier DESIGN.md or with general craft rules, the prototype wins. The React Native port in `mobile/src` follows its CSS classes 1:1, and this file describes that port.
 
-The density is calm and editorial. Lists are ruled with hairlines rather than stacked as cards. Corners are square everywhere. There are no shadows. Typography is Atkinson Hyperlegible alone, using weight and size instead of a second face. One shared custom look runs on iOS and Android. It does not adapt per OS, but it keeps each OS's hard guarantees (see Layout).
+It reads like a clean, light editorial page shrunk to a phone. The page is light grey, cards are white with a thin border, and the ink is near-black. Maroon is the brand voice and black gives the structure. Every corner is square. Most screen tops follow the website's pattern: an uppercase eyebrow with a short rule before it, a bold heading, then a lead line. Big numbers sit in a full-bleed black band. Small uppercase letter-spaced labels (tags, chips, tab labels, section titles) do the sorting work.
 
-Anything the client has not decided is shown, not invented: it sits in a dashed blue placeholder frame that says it is a placeholder.
+Information is dense but legible. Atkinson Hyperlegible is the only typeface, in two weights plus a bold italic for the logo.
 
 **Key Characteristics:**
-- Square seat ticks as the core information graphic; one tick per seat.
-- Black bands for headline numbers and context; light page for detail and forms.
-- Maroon is the only action color; blue appears only in placeholder frames.
-- Square corners on every surface, control and tick.
-- Hairline-ruled lists, flat surfaces, no shadows.
-- One family, Atkinson Hyperlegible, at 400 and 700.
+- Atkinson Hyperlegible throughout, with bold headings and tight leading.
+- Square corners on every control and container. The only rounded shapes are the SMS bubble, the printer LED, the tab badge and the desktop phone frame.
+- White cards with 1px #e5e9f0 borders on a #f7fafc page, with no shadows inside the app.
+- Maroon solid buttons, 1.5px black outline buttons, and black-filled selected states.
+- Eyebrow, then heading, then lead at the top of screens. A black stats band carries the big numbers.
+- An 18px gutter, 14px card padding, 10px stack gaps and 20px section tops.
 
 ## Colors
 
-A cool, near-white editorial palette with one deep maroon, true-black bands, and a quiet set of seat and status tones that are each tuned against their own ground.
+The palette is high contrast: grey paper, near-black ink, one maroon voice, black for structure, and soft tinted status pairs.
 
 ### Primary
-- **Brick Maroon** (maroon): The one action and claim color on light ground. It's used for primary buttons, the meta line, the active tab, the tab badge, link-style actions ("Edit", donate), error text and focused error borders, the parent's own seat and held seats in the light ledger, and "Robotics" in the wordmark.
-- **Deep Maroon** (maroon-dark): The pressed state of the primary button only.
-- **Maroon Wash** (maroon-soft): The fill behind the "Full" status tag.
-- **Maroon on Dark** (maroon-on-dark): Maroon's form on black, about 9:1 against it. It marks claims on the dark ledger and the seat board (held seats, waitlist ticks, a seat just offered), colors the board's "1 seat to offer" status and the legend keys for those marks, and is the "Undo" action in the Undo bar.
+- **STX Maroon** (`maroon`): solid buttons, the X in the logo, the active tab and its top bar, the tab badge, links, eyebrows on team cards, the community label on camp cards, the more-item icons, the bottom-sheet top edge, progress bar fill and the donate band.
+- **Pressed Maroon** (`maroon-dark`): the pressed state of solid buttons only.
+- **Maroon Wash** (`maroon-soft`): the background of the "full" tag.
 
 ### Secondary
-- **Placeholder Blue** (placeholder-blue) on **Placeholder Wash** (placeholder-blue-soft): Reserved for client-pending content frames. This is the site's sparing secondary accent, given exactly one job here.
+- **Band Black** (`black`): the stats band, the toast, outline-button and chip strokes, selected chips and the selected role, print lane header rules, black progress bars and the logo's "ST".
+- **Site Blue** (`blue`, `blue-soft`): used sparingly, only for the informational tag (for example the SMS audience tag).
 
 ### Neutral
-- **Band Black** (band-black): The camp detail band, the step strip, the seat board, the Undo bar, the stack header, the selected filter chip and role-switch segment, the checked checkbox, and the outline-button and role-switch stroke.
-- **Cool Paper** (page): The page ground behind every screen, the pinned footers, the status-bar scrim, and the pressed state of list rows.
-- **White** (surface): Fields, list bodies, the tab bar and the waiver sheet header.
-- **Hairline** (hairline): Every rule: list separators, footer top borders, the tab bar border, and the info notice border.
-- **Heading Ink** (heading): Titles, h3 and labels, the text typed into fields, and tool-row icons.
-- **Body Ink** (ink): Running text.
-- **Slate Muted** (muted): Small text, key columns in key/value rows, placeholder text, inactive tabs, chevrons, the "Demo" label, and the open ticks on light ground. It measures about 4.7:1 on white.
+- **Paper Grey** (`page`): the page ground and bottom-sheet surface. It also fills the "mute" tag and the pressed more-item.
+- **Card White** (`white`): cards, the app bar, the tab bar, the hello block, fields and chips.
+- **Ink** (`ink`): body text. **Heading Ink** (`head`): headings, section titles and field labels.
+- **Slate Muted** (`muted`): meta text, eyebrows, inactive tabs, the more-item chevron and the unchecked checkbox stroke.
+- **Hairline** (`line`): card borders, app bar and tab bar dividers, progress bar track, and the desktop backdrop.
+- **Field Stroke** (`field`): input borders, the sheet grabber and the fine-print rule in the info panel.
+- **Idle Light** (`idle`): an idle printer LED.
+- **Bubble Grey** (`bubble`): the SMS preview bubble, with #111 text.
 
-### Seat and status tones
-- **Seat Taken, light** (seat-taken): Filled ticks on white or the page. It's tuned to stay at or above 3:1 on both (about 3.5:1 on white, 3.3:1 on page), as theme.ts notes.
-- **Band Muted** (band-muted): Secondary text on black, the seat board's status column and legend text, and open-tick outlines on black.
-- **Band Taken** (band-taken): Filled ticks on black, the pending step squares, and the step-strip divider. It's tuned to stay at or above 3:1 on black (about 4.5:1).
-- **Good / Good Wash**, **Warn / Warn Wash**: These drive the status tags (Open, few left, Confirmed / Waitlist) and the seat-taken warning notice. The tone is always the text and 1px border, and the wash is always the fill.
+### Status tones
+Each tag pairs a strong foreground with its soft wash: **good / good-soft** (open), **warn / warn-soft** (few seats left), **maroon / maroon-soft** (full or waitlist), **blue / blue-soft** (info), **muted / page** (neutral). `good` also lights an active printer LED and marks match wins. Maroon marks losses.
 
 ### Named Rules
-**The One Voice Rule.** Maroon is the only color that asks for action or marks a claim on a seat. In the ledger, maroon means a family's claim and nothing else: a filled tick is the parent's own seat or a seat just offered, an outlined tick with a center square is a seat held for the waitlist, and an outlined trailing tick is a place on the waitlist.
+**The Maroon Speaks, Black Holds Rule.** Maroon is for brand and action: the primary button, the active state and links. Black is for structure and selection: bands, outlines, chips and the role switch. Do not swap them.
 
-**The Maroon on Dark Rule.** On black, every maroon mark or action uses maroon-on-dark. Brick maroon is never drawn on black, and maroon-on-dark is never drawn on light ground.
-
-**The Tuned Ground Rule.** Ledger tones are chosen per ground. On black, use band-taken, band-muted and maroon-on-dark. On light, use seat-taken, muted and maroon. Never move a light tick onto black or the reverse. Both taken tones hold at least 3:1 against their own ground.
-
-**The Blue Means Undecided Rule.** #2337ff appears only in placeholder frames. Don't use it for links or emphasis.
+**The Muted On Grey Rule.** `muted` on `page` just meets 4.5:1, but on the darker `line` backdrop it does not. Text on the desktop backdrop uses the darker step #4c5d84.
 
 ## Typography
 
-**Display Font:** Atkinson Hyperlegible 700
+**Display Font:** Atkinson Hyperlegible (the site self-hosts it as "Atkinson"), falling back to system-ui
 **Body Font:** Atkinson Hyperlegible 400
-**Label Font:** Atkinson Hyperlegible 700
+**Logo:** Atkinson Hyperlegible 700 Italic
 
-**Character:** One hyperlegible family, as the site self-hosts it. Hierarchy comes from weight, size and tight negative tracking at the top, never from a second face.
+**Character:** A single humanist sans built for legibility. Bold weight and uppercase tracking do the hierarchy work, so no second face is needed.
 
 ### Hierarchy
-- **Display** (700, 104/100, -4 tracking): The single headline numeral. Seats left in the camp detail band (white) and the waitlist position "#n" on the confirmation (maroon). It holds a number, never words.
-- **Title** (700, 30/34, -0.4): One per screen, marked as the header. The confirmation sentence enlarges it once to 36/40.
-- **H3** (700, 19/24): List-row names, the camp name in the step strip, sheet headers, section heads on the dashboard ("Needs attention", "Print shop"), the seat board heading and the empty-state line.
-- **Body** (400, 16/23): Running copy and the Undo bar message.
-- **Small** (400, 14/20, muted): Hints, secondary lines, key columns, footnotes, attention-row meta and section counts. Set bold for the seat board's status column.
-- **Meta** (700, 12/16, 1.4 tracking, uppercase, maroon): The community · dates line. On black it switches to band-muted.
-- **Label** (700, 15/20, heading): Field labels, values in key/value rows, the seats-left count in the step strip, link actions (in maroon), attention-row titles, camp names on the seat board (white), and small-button text.
-- **Button** (700, 17): Button text and the base for the stack header title (17).
+- **Logo** (700 italic, 22/24, -0.88px): "ST" in black and "X" in maroon, used in the app bar only.
+- **Display** (700, 38/41, -0.38px): the desktop info panel heading only.
+- **Headline** (700, 26/29, -0.26px, 8px above and 4px below): the screen title (H2).
+- **Stat** (700, 24/26, tabular figures): numbers in the stats band.
+- **Title** (700, 16/23): card titles (H3). More-item rows use 15px.
+- **Body** (400, 15/22): running text.
+- **Lead** (400, 14/20, 4px above): the line under a headline. Toast text, button labels (700) and SMS bubble text also use 14px.
+- **Meta** (400, 13/19, muted): secondary facts such as dates, venues and counts. Small buttons, links and checkbox sentences are also 13px.
+- **Section title** (700, 13px, 1.56px tracking, uppercase, head): the header of each section, with an optional link on the right.
+- **Field label** (700, 12px, 0.72px, uppercase, head). **Chip** (700, 12px, 0.96px, uppercase).
+- **Eyebrow** (700, 11px, 1.54px, uppercase, muted, or maroon on team cards). **Label** (700, 11px, 1.32px, uppercase): role switch (1.1px), print lane headers, camp community and info-panel keys.
+- **Tag** (700, 10.5px, 0.84px, uppercase). **Tab** (700, 10.5px, 0.63px, uppercase). **Band label** (400, 10.5/14, 1.05px, uppercase, white at 75%).
+- **Job id** (400, 11px, muted, tabular). **Badge** (700, 9.5px).
 
 ### Named Rules
-**The Meta Below Rule.** The meta line always sits directly under the heading it qualifies, never above it as a kicker or eyebrow. Test: the first text in any block is the heading.
+**The Tracked Caps Rule.** Uppercase text is always 10.5 to 13px, bold (band labels are the one regular-weight case), and tracked at roughly 0.06 to 0.14em. Headings and body text are never uppercase.
 
-**The Capped Display Rule.** Every text style follows the OS font size up to 2x. Display is capped at 1.3x so the numeral and its ledger stay on screen. The demo role switch is capped at 1.5x so it stays beside the wordmark.
+**The Tabular Numbers Rule.** Stats, scores, seat counts and job ids use tabular figures.
 
 ## Layout
 
-The layout is a single column with a 16pt gutter. Content sits on the page ground, and lists run full-bleed in white with hairlines above and below. Sections are spaced 24pt apart. Form fields are 22pt apart. Framed blocks (placeholders, notices) pad 14pt. List rows pad 18pt vertically.
+The layout is a single phone column: a white app bar, scrolling content (20px bottom padding) and a white tab bar. The bottom sheet and toast draw over everything.
 
-**The black band pattern.** A screen that introduces a session opens on a black band that runs flush under the black stack header. It holds the title, then the meta line, then the display numeral with a body-size caption on its baseline, then the ledger. Detail continues on light ground below. The registration steps open on the same black as a persistent strip.
+- **Gutter** (`spacing.gutter`): every horizontal page edge, including the app bar, sections, bands and the sheet.
+- **Sections** start 20px down (`spacing.section-top`). A section header row sits 10px above its content.
+- **Stacks** of cards are 10px apart (`spacing.stack`). **Rows** use a 12px gap. **Chips** sit 6px apart in a horizontal row that runs from gutter to gutter.
+- **Hello block:** white with an 18px pad and a bottom hairline. It holds the eyebrow, headline and lead at the top of Home.
+- **Full-bleed bands:** the black stats band and the maroon donate band are 16px tall and 18px wide, with equal flex columns 8px apart.
+- **Print lanes** scroll sideways. Each lane is 78% of the width (up to 366) with a 10px gap and snapping, so the next stage peeks in.
+- **Forms** stack fields 11px apart. A field label sits 4px above its input.
 
-**Top-level screens.** Tab screens have no stack header. They start at the top safe-area inset plus 12, with the wordmark at the left and the demo role switch at the right (wrapping under it when space runs out), then the screen title. Section heads on a scrolling dashboard are an h3, optionally followed on its baseline by a small count, padded 24 above and 12 below the ruled list they introduce.
-
-**Pinned action.** The primary action sits in a footer pinned at the bottom. The footer uses the page ground, has a hairline top border, 12pt top padding and bottom padding of max(safe-area inset, 12). On forms it rides above the keyboard (KeyboardAvoidingView offset by the header height on iOS).
-
-**OS guarantees honored.** These hold on both platforms:
-- Safe-area insets on top (tab screens, confirmation) and bottom (every pinned footer and sheet).
-- The native stack: an arrow-only back button (minimal display mode) and the native edge swipe.
-- Touch targets from 44pt (filter chips, small buttons, Edit, sheet close, all with hitSlop) up to 52pt (buttons, fields). The checkbox row is 48, the Undo action is 48, and role-switch segments are 36 with 6pt hitSlop above and below.
-- Font scaling up to 2x, with Display capped at 1.3x and the role switch at 1.5x.
-- Status bar handling per band: light over the black detail band, step strip and the black stack header of the "Not in this demo" screen; dark on light screens and the confirmation.
-- **Status-bar scrim.** On a headerless screen where black content can scroll under the top inset, a non-interactive page-colored bar the height of the inset sits over the content, so the dark status bar always reads against light ground.
-- On the confirmation, the Android hardware back button dismisses the whole flow instead of reopening the spent form. iOS swipe-back is disabled there, and the screen fades in.
-- Reduce Motion is respected (see Seat Ledger and Attention List), and VoiceOver and TalkBack get a spoken summary for the ledger, each seat board row and the step marker.
+**Desktop web** (wider than 820px): the app renders inside a 390×812 phone frame (the height shrinks to fit the window) on the `line` backdrop. From 960px wide, the info panel sits to its left with a 56px gap and 32px page padding. Native apps and narrow browsers render the app full screen with no frame.
 
 ## Elevation & Depth
 
-The system is flat. There are no shadows anywhere, and the stack header's shadow is turned off. Depth comes from ground changes: black band against light page, white list body against cool paper, and hairline rules between them. The Undo bar floats over content as a black block, with no shadow. A pressed row drops from white to the page tone; a pressed row on black, which has no lighter ground to drop to, dims to 70% opacity. A pressed primary button darkens to maroon-dark. A pressed outline button fills with hairline.
+Inside the app everything is flat. Depth comes from tone: white cards on the grey page, hairline borders, and solid black or maroon bands. Overlays add one layer: the sheet backdrop is black at 45% and the toast is solid black. The only shadow is the layered drop shadow on the desktop phone frame.
+
+### Shadow Vocabulary
+- **Phone frame** (`box-shadow: 0 2px 6px rgba(96,115,159,.25), 0 8px 24px rgba(96,115,159,.33), 0 30px 60px rgba(34,41,57,.3)`): the desktop phone frame only.
 
 ### Named Rules
-**The Flat Ground Rule.** Separate things with a change of ground or a hairline, never with a shadow.
+**The Flat Phone Rule.** No component inside the screen casts a shadow. Separation comes from borders, tone and bands.
 
 ## Shapes
 
-Every corner is square (0 radius): buttons, fields, chips, tags, frames, checkboxes, the role switch, the Undo bar, ledger ticks and step squares. Strokes come in a few fixed weights. 1.5pt is for interactive outlines (outline button, chip, role switch, checkbox, field at rest, open, held and waitlist ticks, placeholder dash). 2pt is for a field with focus or an error. 1pt is for tags, notices and hairlines. The square is the system's one silhouette, and it appears at four scales: seat tick, step square, checkbox, button. A held seat nests a square inside the square.
+All corners are 0px: buttons, cards, chips, tags, fields, the role switch, bands, the sheet and the toast. Borders come in three weights. 1px hairlines are for containers and fields. 1.5px black is for interactive outlines (outline button, chip, role switch, checkbox, eyebrow rule). The heavy edges are the 2px black lane header rule, the 3px maroon active-tab bar and the 4px maroon sheet top edge. Rounded shapes appear in only four places. The SMS bubble is 18px with a 4px bottom-left tail. The LED is a 9px circle. The tab badge is a 16px pill. The phone frame has 54px corners outside and 42px inside, with a 110×30 island.
 
 ## Components
 
+### Eyebrow
+A small uppercase label with a short line before it, taken from the website. It is a 22×1.5px rule in the label color, then a 10px gap, then 11px bold text with 1.54px tracking in muted (maroon on team cards for the team number). Use it above a screen's headline. It is part of the brand, not decoration.
+
+### Headings, Lead and Meta
+H2 is the screen title, H3 is the card title, Lead goes under H2 and Meta is muted secondary text. The section title is the uppercase 13px header of a section, with an optional maroon link (13px bold) on the right.
+
+### Cards / Containers
+- **Corner Style:** square (0)
+- **Background:** white
+- **Border:** 1px `line`
+- **Shadow Strategy:** none (see Elevation)
+- **Internal Padding:** 14px. Content is usually a Row: the main block grows, and a tag or small button sits on the right.
+
+### Row
+A horizontal, center-aligned row with a 12px gap. The main block flexes and stays min-width 0.
+
+### Tags
+A square tag with a 1px border in its own foreground color on a soft wash, padded 3×7, uppercase 10.5px and kept to one line. Variants: open, few, full, blue, mute.
+
 ### Buttons
-Square and heavy, with one per job.
-- **Shape:** square (0), min height 52, 20 horizontal padding, optional 18pt Feather icon with an 8pt gap. Full width in pinned footers.
-- **Primary (solid):** maroon fill with white 17 bold text, pressed to maroon-dark. Use one per screen, in the pinned footer.
-- **Secondary (outline):** 1.5pt black stroke, transparent fill, black text, pressed to a hairline fill.
-- **Small (sm):** min height 44, 14 horizontal padding, 15 bold text, in the solid or outline style. For inline actions inside list rows: sized to content, 8pt apart, wrapping. A row has at most one solid small button, its main action; the rest are outline.
-- **White:** white fill with maroon text. It's defined in the kit for use on black bands and isn't placed on any screen yet, so treat it as provisional.
-- **Disabled:** 45% opacity.
+- **Shape:** square (0)
+- **Primary (solid):** maroon with white text, 14px bold, padded 11×16. Pressed turns `maroon-dark`.
+- **Outline:** transparent with a 1.5px black border and black text. Pressed drops to 70% opacity.
+- **White:** white with maroon text, used on the maroon band.
+- **Small (sm):** 13px text padded 7×11. It keeps that visual size but the hit area extends to at least 44pt (8pt above and below, 4pt to the sides).
+- **Block:** stretches to full width. Sheet actions stack a block solid button over a block outline button.
+- **Focus:** the prototype uses a 2px maroon outline offset 2px.
 
-### Filter chips
-- **Style:** a square 1.5pt black outline, min height 44, label type, scrolling in a horizontal row.
-- **State:** selected is black fill with white text, and this is announced as selected.
+### Progress Bar
+A 5px `line` track with a maroon fill (black for the alternate series), capped at 100%. It shows seats filled and notebook progress.
 
-### Status tags
-- **Style:** 1pt border and text in the tone, with the wash fill. 12 bold uppercase text, 0.8 tracking, 3/8 padding.
-- **States:** Open (good), "n left" when 3 or fewer seats remain (warn), "Full · n waiting" (maroon). The My kids list reuses the same recipe for Confirmed (good) and Waitlist #n (warn). A camp with a waitlist has no seats left for new families: any open seat is held for the line, so it reads Full.
+### Bands
+- **Stats band:** full-bleed black with equal columns 8px apart, each a 24px bold tabular number over a 10.5px uppercase white-at-75% label (5px gap). Use it for headline numbers.
+- **Maroon band:** full-bleed maroon with 14px bold white text that grows, and a small white button on the right. It is the donate prompt.
+
+### Chips
+- **Style:** 1.5px black border, white background, 12px bold uppercase text, padded 6×12.
+- **State:** selected is black with white text. Chips filter by community in a horizontal row.
+- **Choice:** a field label over a wrapping row of chips that picks one value. It replaces a select (React Native has no native select).
 
 ### Inputs / Fields
-- **Style:** white, square, min height 52, 14 padding, 17 regular text in heading ink, label above and optional small hint between. Multiline grows to 96. The caret and selection are maroon.
-- **Focus:** the border goes to 2pt black.
-- **Error:** the border goes to 2pt maroon, with an error line below (alert-circle icon plus bold small maroon text, announced politely).
+- **Style:** an uppercase 12px label 4px above the input. The input has a 1px `field` border, white background, 10px padding and 15px body text. Placeholder text is muted. Multiline fields are at least 90px tall.
+- **Focus:** the border turns maroon and the selection color is maroon.
+- **Check:** an 18px square box with a 1.5px border (muted, or maroon when ticked) and a white check, next to a 13px sentence. Opt-ins start unticked.
 
-### Checkbox
-A 26pt square with a 1.5pt black stroke. When checked it fills black with a white check. The whole row (min 48) is the target. Consent boxes start unchecked.
+### Printer LED
+A 9px circle: `good` when printing, `idle` when idle.
 
-### Lists
-- **Hairline-ruled list:** a full-bleed white body with hairlines top and bottom and between rows. Rows pad 16/18 and press to the page tone. Camp rows read h3, meta, small, with the light ledger and status tag below, and a muted chevron.
-- **Tool rows:** the same ruled list with a 22pt Feather outline icon in heading ink, an h3 over a small line, and a muted chevron. 14pt between icon and text.
-- **Key/value rows:** a hairline above the group and under each row. The key is small at a fixed width (64 to 76), the value is label. An optional maroon "Edit" action sits at the end.
-
-### Attention List
-A ruled list of to-dos that clear in place.
-- **Row:** 16 padding, a label title over a small meta line (3pt apart), then the row's small buttons 12pt below. A row may expand in place into a form (an optional field plus its own small buttons) and collapse back.
-- **Resolve:** acting on a row removes it with a layout ease-in-out, and the rows below close the gap. Under Reduce Motion it is an opacity crossfade only (300ms), and the rows below snap into place. Every resolve shows the Undo bar.
-- **Count:** the section head shows the open count as small text on its baseline, hidden at zero.
-- **Empty:** the list body keeps its rules and holds an h3 "Nothing needs you right now." over a small line naming what will show up, padded 24 vertically.
-
-### Undo Bar
-A black bar floating 16pt in from each side and 12pt above the bottom of the screen, min height 56. It holds the result in white body text and an "Undo" action (16 bold, maroon-on-dark, min 48 tall, 16 horizontal padding) at the right. It dismisses after 5s; while a screen reader is on it stays until the user undoes or acts again. It is a polite live region on Android and is announced explicitly on iOS. Scroll content gains bottom padding while it shows so nothing hides under it. Undo restores the snapshot taken before the action.
-
-### Notices
-A framed block with 14 padding, 1pt border, and an 18pt Feather icon beside a label title. Warn uses warn on warn-soft and is announced assertively. Info uses ink on white with a hairline border.
-
-### Placeholder Frame
-A 1.5pt dashed blue border on blue wash, 14 padding. Its title is 12 bold uppercase, 1.2 tracking, blue, and reads "Placeholder · topic". The body is body type in blue. It announces itself as a placeholder. Use it for every open client decision (cost, payment, waiver text, signature, what to bring, description). Never fill it with an invented answer.
-
-### Not in this demo
-The stub for any destination the demo does not build. It is a stack screen titled with the destination's name, on the page ground with a light status bar under the black header. It shows the title "Not in this demo", one body line naming the destination and what the demo covers, then a placeholder frame titled "Placeholder · coming later" that reads "[Destination] goes here."
-
-### Seat Ledger (signature)
-One square tick per seat, laid out in a flexible row.
-- **Tone:** `dark` on black (taken = band-taken fill; open = 1.5pt band-muted outline; accent = maroon-on-dark) or `light` on paper (taken = seat-taken fill; open = 1.5pt muted outline; accent = maroon).
-- **Size:** `lg` has a 5pt gap and a max width of 22 per seat. `sm` has a 3pt gap and 12 per seat, and is used in the list, the step strip and the seat board.
-- **perRow:** wraps into rows of n. The last row keeps the same tick size by taking a proportional width. The confirmation uses rows of 10. A waitlist renders as its own ledger.
-- **held:** when a camp has a waitlist, every open seat is held for it. A held tick is a 1.5pt accent outline with a solid accent square at its center (40% of the tick).
-- **mine:** the claimed tick gets an accent outline, and an accent fill grows into it (scale 0.2 to 1 plus opacity, 700ms after a 350ms delay). With Reduce Motion on, it is an opacity crossfade only (300ms, no scale). On the confirmation it is the parent's own seat; on the seat board it is the seat just offered to waitlist #1.
-- **Haptic:** one success haptic when the fill finishes, and only for a confirmed seat (`celebrate`). A waitlist position or an offered seat does not trigger it.
-- **Accessibility:** one image element that reads "n of N seats taken, k left" (or "k held for the waitlist"), plus "One is yours." when it applies.
-
-### Seat Board
-The staff form of the black band: the whole season's seats in one place.
-- **Band:** black, 14 top padding, 16 gutter. An h3 heading in white over a small band-muted summary line (seats taken, on waitlists, "sample data").
-- **Rows:** one per camp, 8pt vertical padding, divided by a 1pt dark rule. Each row reads the camp name (label, white) with "· community" in regular band-muted on the same line, a status column at the right, and below it the small dark ledger.
-- **Status column:** small bold, band-muted: "n left", "Full", "Full · n waiting", or "1 seat to offer" in maroon-on-dark.
-- **Waitlist ticks:** after a 6pt break, one 9pt tick per waiting family with a 1.5pt maroon-on-dark outline and no fill, trailing the ledger on the same wrapping line.
-- **Legend:** closes the band with 12 vertical padding: 11pt key squares beside small band-muted labels (Taken, Open, Held for waitlist, Waitlist), wrapping with 14 between and 6 between lines.
-- **Behavior:** a row opens that camp's detail and dims to 70% while pressed. Each row speaks one summary (name, community, taken of total, waitlist count, status) and hides the ticks from the screen reader. Offering a seat scrolls its row into view and plays the ledger's mine fill on the new seat.
-
-### Step Strip
-A black band under the stack header, on every registration step. It shows the camp name (h3, white) over a community · dates line (small, band-muted), the seats-left count at the right (label, white), and the small dark ledger. Under a 1pt band-taken divider sit four 8pt step squares with a 3pt gap (done and current in white, pending in band-taken) beside "Step n of 4 · **Name**". The step squares are deliberately smaller, gap-tighter and always solid so they never read as seats. It sets the status bar to light.
+### Icons
+Stroke icons on a 24 grid with a 1.8 stroke and round caps and joins, drawn as SVG: home, camps, teams, prints, more, msg, clock, heart and doc. They are 23px in the tab bar and 22px in maroon on more-items. They are decorative and hidden from accessibility.
 
 ### Navigation
-- **Stack header:** black, white tint, 17 bold title, no shadow, arrow-only back.
-- **Tab bar:** white with a hairline top border. Active is maroon, inactive is muted, labels are 12 bold, icons are Feather outline. The badge is maroon. Parent and staff each get their own tab set in the same style.
-- **Wordmark:** "STX Robotics", 22 bold, -0.6 tracking, "STX" in black and "Robotics" in maroon, marked as the header. It heads every top-level screen.
-- **Role switch (demo only):** a small muted "Demo" label beside a segmented control with a 1.5pt black outline and square segments (min 36 tall, min 64 wide, 10 padding, 14 bold). The selected segment is black with white text; the other is black text on no fill. It is a tab list, and each segment reads "Parent view (demo)" or "Staff view (demo)". It stands in for sign-in and never ships as a real control.
-- **Sheet:** the waiver opens as a native page sheet with a white header, an h3 title and a 44pt close button.
+- **App bar:** white with a bottom hairline, padded 8/18/12. The italic STX logo sits on the left. On the right is the role switch: a 1.5px black box holding PARENT and STAFF segments (11px bold uppercase, padded 5×10). The selected segment is black with white text. It is a radio group with a 10pt vertical hit slop.
+- **Tab bar:** white with a top hairline and five equal tabs, padded 6px with 8px or the safe area at the bottom. Each tab is an icon over a 10.5px uppercase label in muted. The active tab turns maroon with a 3px maroon bar 7px above the tab, inset 28% on each side. The staff More tab carries a maroon 16px pill badge (9.5px white count) showing pending mentor approvals.
+- **Back link:** a maroon "More" link at the top of sub-pages.
+
+### Bottom Sheet
+The backdrop is black at 45% and tapping it closes the sheet. The sheet is the page grey with a 4px maroon top edge and square corners, at most 88% tall. It is padded 8/18/28 plus the safe area. A 40×4 grabber in `field` sits centered with 4px above and 12px below. It slides up over 260ms (instantly with reduce motion) and is modal for accessibility.
+
+### Toast
+Solid black and square with 14px white text, padded 12×14, inset 16px each side, 12px above the tab bar. It fades and rises 10px over 250ms, stays 2.4s and is announced to screen readers.
+
+### SMS Bubble
+`bubble` grey with #111 14/20 text. Corners are 18px except a 4px bottom-left tail. It is padded 10×13, at most 92% wide and aligned left, inside a card titled "Phone preview" with a blue audience tag. The message always ends with "Reply STOP to opt out."
+
+### Print Lanes
+Queued, Printing, Ready and Done lanes scroll sideways and snap. Each lane header is the 11px label in head color with the lane name and count at either end, over a 2px black rule. Job cards are spaced 6px inside and show the job id and hours (11px muted tabular), the item (14px bold head), and meta.
+
+### More Items
+Full-width rows with a white background, 1px `line` border and 14px padding (12px gap). Each has a 22px maroon icon, then a 15px title over meta, then a muted 18px chevron. Pressed turns page grey.
+
+### Desktop Phone Frame and Info Panel
+- **Frame:** a black 390px-wide bezel with 12px padding and 54px corners. The screen inside has 42px corners. A 110×30 black island sits 22px from the top, and a fake status bar shows the live time and signal in 14px bold black. The frame has the layered shadow above. Safe-area insets are faked at 50px top and 20px bottom.
+- **Info panel:** 340px wide. It holds an eyebrow, a 38px display heading, 15px body paragraphs, an "In this demo" list (72px maroon uppercase 11px keys over 14px values, 8px apart), and a 12px fine-print note above a 1px `field` rule. Muted text here uses #4c5d84 for contrast on the backdrop.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** show the seat ledger wherever a specific session is in play, tuned to its ground (dark tones on black, light tones on paper).
-- **Do** reserve maroon in the ledger for a family's claim: an own or offered seat (filled), a held seat (outline plus center square), a waitlist place (outline).
-- **Do** use maroon-on-dark (#e29a9a) for every maroon mark or action on black.
-- **Do** put the meta line (12 bold uppercase, 1.4 tracking) directly below the heading it qualifies.
-- **Do** open session screens on a black band with the display numeral and ledger, then continue on the light page.
-- **Do** pin the single solid maroon action at the bottom safe area, with outline buttons for secondary actions.
-- **Do** put inline row actions in 44pt small buttons, at most one solid per row.
-- **Do** clear to-dos in place and offer Undo for 5s, held while a screen reader is on.
-- **Do** rule lists with #e5e9f0 hairlines on a full-bleed white body.
-- **Do** frame every undecided client fact in the dashed #2337ff placeholder, labelled "Placeholder · topic".
-- **Do** send unbuilt destinations to the "Not in this demo" stub with its placeholder.
-- **Do** keep targets at 44 to 52pt, honor safe areas, cap Display scaling at 1.3x, and fade instead of scaling or sliding under Reduce Motion.
-- **Do** set the status bar per band: light over black, dark over paper, with a page-colored scrim where black content scrolls under the top inset.
+- **Do** open screens with eyebrow, H2 and lead, as stxrobotics.com does.
+- **Do** put headline numbers in the black stats band with 24px bold tabular figures.
+- **Do** group content in white cards (1px `line`, 14px padding) stacked 10px apart.
+- **Do** use the 18px gutter, 20px section top and 10px stack gap on every screen.
+- **Do** keep every corner square (0) except the SMS bubble, LED, badge and phone frame.
+- **Do** use small 13px buttons inside cards and bands, and keep their hit area at least 44pt.
+- **Do** use a solid maroon button for the main action and a 1.5px black outline for the secondary one.
+- **Do** mark state with the tag pairs: open, few, full, blue, mute.
+- **Do** start SMS opt-ins unticked and end every text with the STOP line.
 
 ### Don't:
-- **Don't** round any corner.
-- **Don't** add shadows. Separate with ground or hairlines.
-- **Don't** stack content in cards. Use ruled lists and key/value rows.
-- **Don't** place a meta line, eyebrow or kicker above a heading.
-- **Don't** use #2337ff for anything but placeholder frames.
-- **Don't** draw brick maroon on black or maroon-on-dark on paper.
-- **Don't** fill a placeholder with an invented answer or present sample data as real.
-- **Don't** make step markers look like seat ticks. Keep them 8pt, solid, and under the divider.
-- **Don't** fire the success haptic for anything but a confirmed seat. Staff actions in the attention list get one light impact each; nothing else buzzes.
-- **Don't** pre-check consent boxes.
-- **Don't** show the role switch without its "Demo" label.
+- **Don't** add shadows inside the phone screen. The only shadow is the desktop frame.
+- **Don't** round buttons, cards, chips, fields or sheets.
+- **Don't** introduce a second typeface. Use Atkinson Hyperlegible 400/700 only, with italic for the logo.
+- **Don't** use site blue for actions or large areas. It is only for the info tag.
+- **Don't** set muted #60739f text on the `line` backdrop. Use #4c5d84 there.
+- **Don't** use maroon for structure or black for the primary action.

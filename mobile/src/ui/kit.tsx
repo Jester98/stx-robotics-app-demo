@@ -1,414 +1,292 @@
-import { useEffect, useState, type ReactNode } from 'react';
-import {
-  AccessibilityInfo,
-  Animated,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-  type TextInputProps,
-  type TextProps,
-  type TextStyle,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useHeaderHeight } from 'expo-router/react-navigation';
-import { StatusBar } from 'expo-status-bar';
-import * as Haptics from 'expo-haptics';
-import { Feather } from '@expo/vector-icons';
-import { c, f, space } from './theme';
-import { seatsLeft, useStore, type Camp } from '@/lib/store';
-import { useRouter } from 'expo-router';
+import { useState, type ReactNode } from 'react';
+import { Pressable, Text, TextInput, View, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
+import { c, f, gutter } from './theme';
 
-type Variant = 'display' | 'title' | 'h3' | 'body' | 'small' | 'meta' | 'label';
-const V: Record<Variant, TextStyle> = {
-  display: { fontFamily: f.bold, fontSize: 104, lineHeight: 100, letterSpacing: -4, color: c.white },
-  title: { fontFamily: f.bold, fontSize: 30, lineHeight: 34, letterSpacing: -0.4, color: c.head },
-  h3: { fontFamily: f.bold, fontSize: 19, lineHeight: 24, color: c.head },
-  body: { fontFamily: f.regular, fontSize: 16, lineHeight: 23, color: c.ink },
-  small: { fontFamily: f.regular, fontSize: 14, lineHeight: 20, color: c.muted },
-  // Community · dates line, as on the site's camp listings
-  meta: { fontFamily: f.bold, fontSize: 12, lineHeight: 16, letterSpacing: 1.4, textTransform: 'uppercase', color: c.maroon },
-  label: { fontFamily: f.bold, fontSize: 15, lineHeight: 20, color: c.head },
-};
+// Components ported 1:1 from the prototype's CSS classes.
 
-export function T({ v = 'body', style, ...p }: TextProps & { v?: Variant }) {
-  return <Text {...p} style={[V[v], style]} maxFontSizeMultiplier={v === 'display' ? 1.3 : 2} />;
-}
+const SLOP = { top: 8, bottom: 8, left: 4, right: 4 }; // small controls keep a 44pt touch area
 
-export function Btn({
-  children,
-  onPress,
-  kind = 'solid',
-  disabled,
-  icon,
-  size = 'md',
-}: {
-  children: string;
-  onPress: () => void;
-  kind?: 'solid' | 'outline' | 'white';
-  disabled?: boolean;
-  icon?: keyof typeof Feather.glyphMap;
-  size?: 'md' | 'sm';
-}) {
-  const fg = kind === 'solid' ? c.white : kind === 'white' ? c.maroon : c.black;
+type TP = { children: ReactNode; style?: StyleProp<TextStyle> };
+
+export const Body = ({ children, style }: TP) => (
+  <Text style={[{ fontFamily: f.regular, fontSize: 15, lineHeight: 22, color: c.ink }, style]}>{children}</Text>
+);
+
+/** `.eyebrow`: small uppercase label with a short line before it. */
+export function Eyebrow({ children, color = c.muted, style }: { children: ReactNode; color?: string; style?: StyleProp<ViewStyle> }) {
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled }}
-      disabled={disabled}
-      onPress={onPress}
-      style={({ pressed }) => ({
-        minHeight: size === 'sm' ? 44 : 52,
-        paddingHorizontal: size === 'sm' ? 14 : 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        opacity: disabled ? 0.45 : 1,
-        backgroundColor:
-          kind === 'solid' ? (pressed ? c.maroonDark : c.maroon) : kind === 'white' ? c.white : pressed ? c.line : 'transparent',
-        borderWidth: kind === 'outline' ? 1.5 : 0,
-        borderColor: c.black,
-      })}
-    >
-      {icon && <Feather name={icon} size={18} color={fg} />}
-      <Text style={{ fontFamily: f.bold, fontSize: size === 'sm' ? 15 : 17, color: fg }}>{children}</Text>
-    </Pressable>
-  );
-}
-
-export function Field({ label, hint, error, ...p }: TextInputProps & { label: string; hint?: string; error?: string }) {
-  const [focus, setFocus] = useState(false);
-  return (
-    <View style={{ gap: 6 }}>
-      <T v="label">{label}</T>
-      {hint && <T v="small">{hint}</T>}
-      <TextInput
-        {...p}
-        accessibilityLabel={label}
-        placeholderTextColor={c.muted}
-        selectionColor={c.maroon}
-        cursorColor={c.maroon}
-        onFocus={(e) => (setFocus(true), p.onFocus?.(e))}
-        onBlur={(e) => (setFocus(false), p.onBlur?.(e))}
-        style={{
-          minHeight: 52,
-          paddingHorizontal: 14,
-          backgroundColor: c.white,
-          borderWidth: focus || error ? 2 : 1.5,
-          borderColor: error ? c.maroon : focus ? c.black : c.taken,
-          fontFamily: f.regular,
-          fontSize: 17,
-          color: c.head,
-          ...(p.multiline ? { paddingTop: 14, minHeight: 96, textAlignVertical: 'top' } : null),
-        }}
-      />
-      {error && <ErrorLine>{error}</ErrorLine>}
+    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 10 }, style]}>
+      <View style={{ width: 22, height: 1.5, backgroundColor: color }} />
+      <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.54, textTransform: 'uppercase', color }}>{children}</Text>
     </View>
   );
 }
 
-export function ErrorLine({ children }: { children: string }) {
+export const H2 = ({ children, style }: TP) => (
+  <Text
+    role="heading"
+    style={[{ fontFamily: f.bold, fontSize: 26, lineHeight: 29, letterSpacing: -0.26, color: c.head, marginTop: 8, marginBottom: 4 }, style]}
+  >
+    {children}
+  </Text>
+);
+export const H3 = ({ children, style }: TP) => (
+  <Text style={[{ fontFamily: f.bold, fontSize: 16, lineHeight: 23, color: c.head }, style]}>{children}</Text>
+);
+export const Lead = ({ children, style }: TP) => (
+  <Text style={[{ fontFamily: f.regular, fontSize: 14, lineHeight: 20, color: c.ink, marginTop: 4 }, style]}>{children}</Text>
+);
+export const Meta = ({ children, style }: TP) => (
+  <Text style={[{ fontFamily: f.regular, fontSize: 13, lineHeight: 19, color: c.muted }, style]}>{children}</Text>
+);
+export const Score = ({ children, style }: TP) => (
+  <Text style={[{ fontFamily: f.bold, fontSize: 15, color: c.ink, fontVariant: ['tabular-nums'] }, style]}>{children}</Text>
+);
+
+/** `.pad`: page heading block. */
+export const Pad = ({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) => (
+  <View style={[{ padding: gutter }, style]}>{children}</View>
+);
+
+/** `.sec` with optional `.sec-h` header. */
+export function Sec({ title, right, children, style }: { title?: string; right?: ReactNode; children: ReactNode; style?: StyleProp<ViewStyle> }) {
   return (
-    <View style={{ flexDirection: 'row', gap: 6, alignItems: 'flex-start' }} accessibilityLiveRegion="polite">
-      <Feather name="alert-circle" size={16} color={c.maroon} style={{ marginTop: 2 }} />
-      <T v="small" style={{ color: c.maroon, flex: 1, fontFamily: f.bold }}>
-        {children}
-      </T>
-    </View>
-  );
-}
-
-export function Check({ on, onChange, children }: { on: boolean; onChange: (v: boolean) => void; children: ReactNode }) {
-  return (
-    <Pressable
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: on }}
-      onPress={() => onChange(!on)}
-      style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start', minHeight: 48, paddingVertical: 4 }}
-    >
-      <View
-        style={{
-          width: 26,
-          height: 26,
-          borderWidth: 1.5,
-          borderColor: c.black,
-          backgroundColor: on ? c.black : c.white,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: 1,
-        }}
-      >
-        {on && <Feather name="check" size={18} color={c.white} />}
-      </View>
-      <View style={{ flex: 1 }}>{children}</View>
-    </Pressable>
-  );
-}
-
-// Client-pending content. Never filled with invented answers.
-export function Placeholder({ children, title = 'Placeholder' }: { children: string; title?: string }) {
-  return (
-    <View
-      style={{ borderWidth: 1.5, borderStyle: 'dashed', borderColor: c.blue, backgroundColor: c.blueSoft, padding: 14, gap: 4 }}
-      accessibilityLabel={`${title}: ${children}`}
-    >
-      <Text style={{ fontFamily: f.bold, fontSize: 12, letterSpacing: 1.2, textTransform: 'uppercase', color: c.blue }}>{title}</Text>
-      <T style={{ color: c.blue }}>{children}</T>
-    </View>
-  );
-}
-
-export function Tag({ camp }: { camp: Camp }) {
-  const left = seatsLeft(camp);
-  const [txt, fg, bg] =
-    left === 0
-      ? [camp.wait ? `Full · ${camp.wait} waiting` : 'Full', c.maroon, c.maroonSoft]
-      : left <= 3
-        ? [`${left} left`, c.warn, c.warnSoft]
-        : ['Open', c.good, c.goodSoft];
-  return (
-    <View style={{ borderWidth: 1, borderColor: fg, backgroundColor: bg, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' }}>
-      <Text style={{ fontFamily: f.bold, fontSize: 12, letterSpacing: 0.8, textTransform: 'uppercase', color: fg }}>{txt}</Text>
-    </View>
-  );
-}
-
-// The seat ledger: one square per seat.
-export function Ledger({
-  camp,
-  tone = 'dark',
-  mine,
-  size = 'lg',
-  perRow,
-  label,
-  celebrate,
-}: {
-  camp: Camp;
-  tone?: 'dark' | 'light';
-  mine?: number;
-  size?: 'lg' | 'sm';
-  perRow?: number;
-  label?: string;
-  celebrate?: boolean; // success haptic when the seat fills
-}) {
-  const reduce = useReduceMotion();
-  const [fill] = useState(() => new Animated.Value(mine === undefined ? 1 : 0));
-  useEffect(() => {
-    if (mine === undefined) return;
-    Animated.timing(fill, { toValue: 1, duration: reduce ? 300 : 700, delay: 350, useNativeDriver: true }).start(
-      ({ finished }) => finished && celebrate && Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}),
-    );
-  }, [mine, reduce]);
-
-  const taken = tone === 'dark' ? c.bandTaken : c.taken;
-  const open = tone === 'dark' ? c.bandMuted : c.muted;
-  const accent = tone === 'dark' ? c.maroonOnDark : c.maroon;
-  // With a waitlist, open seats are held for it, not available to new families.
-  const held = camp.wait > 0 ? Math.max(0, camp.cap - camp.filled) : 0;
-  const gap = size === 'lg' ? 5 : 3;
-  const n = perRow ?? camp.cap;
-  const rows = Array.from({ length: Math.ceil(camp.cap / n) }, (_, r) =>
-    Array.from({ length: Math.min(n, camp.cap - r * n) }, (_, j) => r * n + j),
-  );
-  return (
-    <View
-      accessible
-      accessibilityRole="image"
-      accessibilityLabel={
-        label ??
-        `${camp.filled} of ${camp.cap} seats taken, ${held ? `${held} held for the waitlist` : `${seatsLeft(camp)} left`}${mine !== undefined ? '. One is yours.' : ''}`
-      }
-      style={{ gap, maxWidth: perRow ? undefined : size === 'lg' ? camp.cap * 22 : camp.cap * 12 }}
-    >
-      {rows.map((row, r) => (
-      <View key={r} style={{ flexDirection: 'row', gap, width: perRow ? `${(row.length / n) * 100}%` : undefined }}>
-      {row.map((i) => {
-        const isMine = i === mine;
-        const isTaken = i < camp.filled && !isMine;
-        const isHeld = !isTaken && !isMine && held > 0;
-        return (
-          <View
-            key={i}
-            style={{
-              flex: 1,
-              aspectRatio: 1,
-              backgroundColor: isTaken ? taken : 'transparent',
-              borderWidth: isTaken ? 0 : 1.5,
-              borderColor: isMine || isHeld ? accent : open,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {isHeld && <View style={{ width: '40%', height: '40%', backgroundColor: accent }} />}
-            {isMine && (
-              <Animated.View
-                style={{
-                  alignSelf: 'stretch',
-                  flex: 1,
-                  backgroundColor: accent,
-                  opacity: fill,
-                  // Reduce Motion: opacity crossfade only
-                  transform: [{ scale: reduce ? 1 : fill.interpolate({ inputRange: [0, 1], outputRange: [0.2, 1] }) }],
-                }}
-              />
-            )}
-          </View>
-        );
-      })}
-      </View>
-      ))}
-    </View>
-  );
-}
-
-export function useReduceMotion() {
-  const [r, setR] = useState(false);
-  useEffect(() => {
-    AccessibilityInfo.isReduceMotionEnabled().then(setR);
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setR);
-    return () => sub.remove();
-  }, []);
-  return r;
-}
-
-const STEPS = ['Phone', 'Child', 'Details', 'Review'];
-
-// Black strip under the header: which camp, how many seats, which step.
-export function StepStrip({ camp, step }: { camp: Camp; step: 1 | 2 | 3 | 4 }) {
-  const left = seatsLeft(camp);
-  return (
-    <View style={{ backgroundColor: c.black, paddingHorizontal: space, paddingBottom: 16, paddingTop: 4, gap: 12 }}>
-      <StatusBar style="light" />
-      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12 }}>
-        <View style={{ flex: 1 }}>
-          <T v="h3" style={{ color: c.white }}>
-            {camp.name}
-          </T>
-          <T v="small" style={{ color: c.bandMuted }}>
-            {camp.loc} · {camp.dates}
-          </T>
+    <View style={[{ paddingTop: 20, paddingHorizontal: gutter }, style]}>
+      {title !== undefined && (
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
+          <Text role="heading" style={{ fontFamily: f.bold, fontSize: 13, letterSpacing: 1.56, textTransform: 'uppercase', color: c.head }}>
+            {title}
+          </Text>
+          {right}
         </View>
-        <T v="label" style={{ color: c.white }}>
-          {left === 0 ? (camp.wait ? `Full · ${camp.wait} waiting` : 'Full') : `${left} ${left === 1 ? 'seat' : 'seats'} left`}
-        </T>
-      </View>
-      <Ledger camp={camp} size="sm" />
-      <View
-        style={{ flexDirection: 'row', gap: 10, alignItems: 'center', borderTopWidth: 1, borderColor: c.bandTaken, paddingTop: 12 }}
-        accessible
-        accessibilityLabel={`Step ${step} of 4, ${STEPS[step - 1]}`}
-      >
-        <View style={{ flexDirection: 'row', gap: 3 }}>
-          {STEPS.map((s, i) => (
-            <View key={s} style={{ width: 8, height: 8, backgroundColor: i < step ? c.white : c.bandTaken }} />
-          ))}
-        </View>
-        <T v="small" style={{ color: c.bandMuted }}>
-          Step {step} of 4 · <Text style={{ color: c.white, fontFamily: f.bold }}>{STEPS[step - 1]}</Text>
-        </T>
-      </View>
-    </View>
-  );
-}
-
-// Scrolling form body with the primary action pinned above the keyboard.
-export function FormScreen({ top, children, footer }: { top?: ReactNode; children: ReactNode; footer: ReactNode }) {
-  const insets = useSafeAreaInsets();
-  const header = useHeaderHeight();
-  return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: c.bg }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={header}
-    >
-      {top}
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ padding: space, paddingTop: 24, gap: 22, paddingBottom: 32 }}
-      >
-        {children}
-      </ScrollView>
-      <View
-        style={{
-          paddingHorizontal: space,
-          paddingTop: 12,
-          paddingBottom: Math.max(insets.bottom, 12),
-          backgroundColor: c.bg,
-          borderTopWidth: 1,
-          borderTopColor: c.line,
-          gap: 10,
-        }}
-      >
-        {footer}
-      </View>
-    </KeyboardAvoidingView>
-  );
-}
-
-export function Notice({ tone, title, children }: { tone: 'warn' | 'info'; title: string; children: ReactNode }) {
-  const fg = tone === 'warn' ? c.warn : c.ink;
-  return (
-    <View
-      accessibilityLiveRegion="assertive"
-      style={{ backgroundColor: tone === 'warn' ? c.warnSoft : c.white, borderWidth: 1, borderColor: tone === 'warn' ? c.warn : c.line, padding: 14, gap: 6 }}
-    >
-      <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-        <Feather name={tone === 'warn' ? 'alert-triangle' : 'info'} size={18} color={fg} />
-        <T v="label" style={{ color: fg, flex: 1 }}>
-          {title}
-        </T>
-      </View>
+      )}
       {children}
     </View>
   );
 }
 
-// Demo-only switch between the parent and staff views. The real app gates staff behind sign-in.
-export function RoleSwitch() {
-  const { s, set } = useStore();
-  const router = useRouter();
-  const go = (role: 'parent' | 'staff') => {
-    if (role === s.role) return;
-    set((p) => ({ ...p, role }));
-    router.replace(role === 'staff' ? '/today' : '/');
-  };
+export const Stack = ({ children, gap = 10, style }: { children: ReactNode; gap?: number; style?: StyleProp<ViewStyle> }) => (
+  <View style={[{ gap }, style]}>{children}</View>
+);
+
+export const Card = ({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) => (
+  <View style={[{ backgroundColor: c.white, borderWidth: 1, borderColor: c.line, padding: 14 }, style]}>{children}</View>
+);
+
+export const Row = ({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) => (
+  <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 12 }, style]}>{children}</View>
+);
+
+export function Link({ children, onPress }: { children: string; onPress: () => void }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-      <Text style={{ fontFamily: f.regular, fontSize: 12, color: c.muted }} maxFontSizeMultiplier={1.5}>
-        Demo
+    <Pressable accessibilityRole="link" onPress={onPress} hitSlop={SLOP} style={{ alignSelf: 'flex-start' }}>
+      <Text style={{ fontFamily: f.bold, fontSize: 13, color: c.maroon }}>{children}</Text>
+    </Pressable>
+  );
+}
+
+type TagKind = 'open' | 'few' | 'full' | 'blue' | 'mute';
+const TAGS: Record<TagKind, [string, string]> = {
+  open: [c.good, c.goodSoft],
+  few: [c.warn, c.warnSoft],
+  full: [c.maroon, c.maroonSoft],
+  blue: [c.blue, c.blueSoft],
+  mute: [c.muted, c.bg],
+};
+export function Tag({ kind, children }: { kind: TagKind; children: ReactNode }) {
+  const [fg, bg] = TAGS[kind];
+  return (
+    <View style={{ borderWidth: 1, borderColor: fg, backgroundColor: bg, paddingHorizontal: 7, paddingVertical: 3, alignSelf: 'center' }}>
+      <Text numberOfLines={1} style={{ fontFamily: f.bold, fontSize: 10.5, letterSpacing: 0.84, textTransform: 'uppercase', color: fg }}>
+        {children}
       </Text>
-      <View style={{ flexDirection: 'row', borderWidth: 1.5, borderColor: c.black }} accessibilityRole="tablist">
-        {(['parent', 'staff'] as const).map((r) => {
-          const on = s.role === r;
-          return (
-            <Pressable
-              key={r}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: on }}
-              accessibilityLabel={`${r === 'parent' ? 'Parent' : 'Staff'} view (demo)`}
-              onPress={() => go(r)}
-              hitSlop={{ top: 6, bottom: 6 }}
-              style={{ minHeight: 36, minWidth: 64, paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: on ? c.black : 'transparent' }}
-            >
-              <Text style={{ fontFamily: f.bold, fontSize: 14, color: on ? c.white : c.black }} maxFontSizeMultiplier={1.5}>
-                {r === 'parent' ? 'Parent' : 'Staff'}
-              </Text>
-            </Pressable>
-          );
-        })}
+    </View>
+  );
+}
+
+/** `.btn`: solid maroon; `out` black outline; `white` on maroon bands. */
+export function Btn({
+  children,
+  onPress,
+  kind = 'solid',
+  sm,
+  block,
+}: {
+  children: string;
+  onPress: () => void;
+  kind?: 'solid' | 'out' | 'white';
+  sm?: boolean;
+  block?: boolean;
+}) {
+  const fg = kind === 'solid' ? c.white : kind === 'white' ? c.maroon : c.black;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      hitSlop={sm ? SLOP : undefined}
+      style={({ pressed }) => ({
+        backgroundColor: kind === 'solid' ? (pressed ? c.maroonDark : c.maroon) : kind === 'white' ? c.white : 'transparent',
+        borderWidth: kind === 'out' ? 1.5 : 0,
+        borderColor: c.black,
+        paddingVertical: sm ? 7 : 11,
+        paddingHorizontal: sm ? 11 : 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: block ? 'stretch' : 'auto',
+        opacity: pressed && kind !== 'solid' ? 0.7 : 1,
+      })}
+    >
+      <Text style={{ fontFamily: f.bold, fontSize: sm ? 13 : 14, lineHeight: sm ? 17 : 19, color: fg }}>{children}</Text>
+    </Pressable>
+  );
+}
+
+/** `.bar`: thin progress bar, maroon or black. */
+export const Bar = ({ pct, black }: { pct: number; black?: boolean }) => (
+  <View style={{ height: 5, backgroundColor: c.line }}>
+    <View style={{ height: 5, width: `${Math.min(100, pct)}%`, backgroundColor: black ? c.black : c.maroon }} />
+  </View>
+);
+
+/** `.band`: black stats band. */
+export function Band({ items }: { items: [ReactNode, string][] }) {
+  return (
+    <View style={{ backgroundColor: c.black, paddingVertical: 16, paddingHorizontal: gutter, flexDirection: 'row', gap: 8 }}>
+      {items.map(([n, l], i) => (
+        <View key={i} style={{ flex: 1 }}>
+          <Text style={{ fontFamily: f.bold, fontSize: 24, lineHeight: 26, color: c.white, fontVariant: ['tabular-nums'] }}>{n}</Text>
+          <Text style={{ fontFamily: f.regular, fontSize: 10.5, lineHeight: 14, letterSpacing: 1.05, textTransform: 'uppercase', color: 'rgba(255,255,255,0.75)', marginTop: 5 }}>
+            {l}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+export function Chip({ children, on, onPress }: { children: string; on: boolean; onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: on }}
+      onPress={onPress}
+      hitSlop={SLOP}
+      style={{ borderWidth: 1.5, borderColor: c.black, backgroundColor: on ? c.black : c.white, paddingVertical: 6, paddingHorizontal: 12 }}
+    >
+      <Text style={{ fontFamily: f.bold, fontSize: 12, letterSpacing: 0.96, textTransform: 'uppercase', color: on ? c.white : c.black }}>
+        {children}
+      </Text>
+    </Pressable>
+  );
+}
+
+/** Form `label` + `input`. */
+export function Field({ label, style, ...p }: TextInputProps & { label: string; style?: StyleProp<ViewStyle> }) {
+  const [focus, setFocus] = useState(false);
+  return (
+    <View style={[{ gap: 4 }, style]}>
+      <Text style={{ fontFamily: f.bold, fontSize: 12, letterSpacing: 0.72, textTransform: 'uppercase', color: c.head }}>{label}</Text>
+      <TextInput
+        {...p}
+        accessibilityLabel={label}
+        placeholderTextColor={c.muted}
+        selectionColor={c.maroon}
+        onFocus={(e) => (setFocus(true), p.onFocus?.(e))}
+        onBlur={(e) => (setFocus(false), p.onBlur?.(e))}
+        style={{
+          borderWidth: 1,
+          borderColor: focus ? c.maroon : c.field,
+          backgroundColor: c.white,
+          padding: 10,
+          fontFamily: f.regular,
+          fontSize: 15,
+          color: c.ink,
+          ...(p.multiline ? { minHeight: 90, textAlignVertical: 'top' } : null),
+        }}
+      />
+    </View>
+  );
+}
+
+/** `select` replacement: one choice from a row of chips. */
+export function Choice<T extends string>({ label, options, value, onChange }: { label: string; options: T[]; value: T; onChange: (v: T) => void }) {
+  return (
+    <View style={{ gap: 6 }} accessibilityRole="radiogroup" accessibilityLabel={label}>
+      <Text style={{ fontFamily: f.bold, fontSize: 12, letterSpacing: 0.72, textTransform: 'uppercase', color: c.head }}>{label}</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+        {options.map((o) => (
+          <Chip key={o} on={o === value} onPress={() => onChange(o)}>
+            {o}
+          </Chip>
+        ))}
       </View>
     </View>
   );
 }
 
-export function Wordmark() {
+/** `.check`: checkbox with a sentence label. */
+export function Check({ on, onChange, children }: { on: boolean; onChange: (v: boolean) => void; children: string }) {
   return (
-    <Text accessibilityRole="header" style={{ fontFamily: f.bold, fontSize: 22, letterSpacing: -0.6, color: c.black }}>
-      STX <Text style={{ color: c.maroon }}>Robotics</Text>
-    </Text>
+    <Pressable
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: on }}
+      onPress={() => onChange(!on)}
+      hitSlop={{ top: 6, bottom: 6 }}
+      style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}
+    >
+      <View
+        style={{
+          width: 18,
+          height: 18,
+          marginTop: 1,
+          borderWidth: 1.5,
+          borderColor: on ? c.maroon : c.muted,
+          backgroundColor: on ? c.maroon : c.white,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {on && (
+          <Svg width={12} height={12} viewBox="0 0 24 24">
+            <Path d="M5 12l5 5 9-10" stroke={c.white} strokeWidth={3} fill="none" />
+          </Svg>
+        )}
+      </View>
+      <Text style={{ flex: 1, fontFamily: f.regular, fontSize: 13, lineHeight: 19, color: c.ink }}>{children}</Text>
+    </Pressable>
   );
 }
+
+export const Empty = ({ children }: { children: string }) => <Meta>{children}</Meta>;
+
+export const Led = ({ on }: { on: boolean }) => (
+  <View style={{ width: 9, height: 9, borderRadius: 4.5, backgroundColor: on ? c.good : c.idle }} />
+);
+
+/** The prototype's stroke icons. */
+export type IconName = 'home' | 'camps' | 'teams' | 'prints' | 'more' | 'msg' | 'clock' | 'heart' | 'doc';
+export function Icon({ name, color, size = 23 }: { name: IconName; color: string; size?: number }) {
+  const s = { stroke: color, strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
+  const shapes: Record<IconName, ReactNode> = {
+    home: <><Path d="M3 11l9-7 9 7" {...s} /><Path d="M5 10v10h14V10" {...s} /><Path d="M10 20v-6h4v6" {...s} /></>,
+    camps: <><Rect x={3} y={5} width={18} height={16} {...s} /><Path d="M3 10h18M8 3v4M16 3v4" {...s} /></>,
+    teams: <><Rect x={5} y={8} width={14} height={10} {...s} /><Path d="M12 4v4M9 13h.01M15 13h.01M3 12v3M21 12v3M9 18v2M15 18v2" {...s} /></>,
+    prints: <><Path d="M6 9V3h12v6" {...s} /><Rect x={3} y={9} width={18} height={8} {...s} /><Path d="M7 17v4h10v-4" {...s} /></>,
+    more: <><Circle cx={5} cy={12} r={1.3} {...s} /><Circle cx={12} cy={12} r={1.3} {...s} /><Circle cx={19} cy={12} r={1.3} {...s} /></>,
+    msg: <Path d="M4 5h16v11H8l-4 4z" {...s} />,
+    clock: <><Circle cx={12} cy={12} r={9} {...s} /><Path d="M12 7v5l3 2" {...s} /></>,
+    heart: <Path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" {...s} />,
+    doc: <><Path d="M6 3h9l3 3v15H6z" {...s} /><Path d="M9 11h6M9 15h6" {...s} /></>,
+  };
+  return (
+    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <Svg width={size} height={size} viewBox="0 0 24 24">
+        {shapes[name]}
+      </Svg>
+    </View>
+  );
+}
+
+/** In-screen back link used on sub-pages (`‹ More`). */
+export const BackLink = ({ onPress }: { onPress: () => void }) => <Link onPress={onPress}>‹ More</Link>;
