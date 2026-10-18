@@ -1,0 +1,487 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T08:16:21.682Z",
+  "title": "Design System: STX Robotics App",
+  "extensions": {
+    "colorMeta": {
+      "maroon": {
+        "role": "primary",
+        "displayName": "Brick Maroon",
+        "canonical": "#7b1f1f",
+        "tonalRamp": [
+          "#3d0f0f",
+          "#6a1b1b",
+          "#972626",
+          "#c43131",
+          "#d55858",
+          "#e08585",
+          "#edb6b6",
+          "#faebeb"
+        ]
+      },
+      "maroon-dark": {
+        "role": "primary",
+        "displayName": "Deep Maroon",
+        "canonical": "#5a1515",
+        "tonalRamp": [
+          "#3e0e0e",
+          "#6c1919",
+          "#992424",
+          "#c62e2e",
+          "#d75555",
+          "#e28383",
+          "#eeb5b5",
+          "#faeaea"
+        ]
+      },
+      "maroon-soft": {
+        "role": "primary",
+        "displayName": "Maroon Wash",
+        "canonical": "#f6e9e9",
+        "tonalRamp": [
+          "#361616",
+          "#5e2626",
+          "#863737",
+          "#ae4747",
+          "#c26b6b",
+          "#d39292",
+          "#e4bebe",
+          "#f8eded"
+        ]
+      },
+      "placeholder-blue": {
+        "role": "secondary",
+        "displayName": "Placeholder Blue",
+        "canonical": "#2337ff",
+        "tonalRamp": [
+          "#00074d",
+          "#000c85",
+          "#0011bd",
+          "#0016f5",
+          "#2e41ff",
+          "#6674ff",
+          "#a3acff",
+          "#e5e8ff"
+        ]
+      },
+      "placeholder-blue-soft": {
+        "role": "secondary",
+        "displayName": "Placeholder Wash",
+        "canonical": "#eef0ff",
+        "tonalRamp": [
+          "#00094d",
+          "#001085",
+          "#0016bd",
+          "#001df5",
+          "#2e46ff",
+          "#6678ff",
+          "#a3aeff",
+          "#e5e8ff"
+        ]
+      },
+      "band-black": {
+        "role": "neutral",
+        "displayName": "Band Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b3b3b3",
+          "#d1d1d1",
+          "#f2f2f2"
+        ]
+      },
+      "page": {
+        "role": "neutral",
+        "displayName": "Cool Paper",
+        "canonical": "#f7fafc",
+        "tonalRamp": [
+          "#152a38",
+          "#244860",
+          "#336789",
+          "#4386b2",
+          "#67a0c6",
+          "#90b9d5",
+          "#bcd5e6",
+          "#ecf3f8"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b3b3b3",
+          "#d1d1d1",
+          "#f2f2f2"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e5e9f0",
+        "tonalRamp": [
+          "#1c2331",
+          "#313d54",
+          "#455778",
+          "#5a719b",
+          "#7a8fb2",
+          "#9eadc7",
+          "#c5cedd",
+          "#eff1f6"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Body Ink",
+        "canonical": "#222939",
+        "tonalRamp": [
+          "#1d2230",
+          "#323c53",
+          "#475576",
+          "#5b6e99",
+          "#7c8cb1",
+          "#9fabc6",
+          "#c5cddd",
+          "#eff1f5"
+        ]
+      },
+      "heading": {
+        "role": "neutral",
+        "displayName": "Heading Ink",
+        "canonical": "#111827",
+        "tonalRamp": [
+          "#172135",
+          "#28395c",
+          "#395183",
+          "#4a69aa",
+          "#6d88c0",
+          "#94a8d1",
+          "#bfcbe3",
+          "#edf0f7"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate Muted",
+        "canonical": "#60739f",
+        "tonalRamp": [
+          "#1d2330",
+          "#323c53",
+          "#475576",
+          "#5c6e99",
+          "#7d8cb0",
+          "#a0abc5",
+          "#c6cddc",
+          "#eff1f5"
+        ]
+      },
+      "seat-taken": {
+        "role": "neutral",
+        "displayName": "Seat Taken (light ground)",
+        "canonical": "#7d8aa3",
+        "tonalRamp": [
+          "#20242d",
+          "#373f4e",
+          "#4e596f",
+          "#65748f",
+          "#8591a8",
+          "#a5aec0",
+          "#c9cfd9",
+          "#f0f2f4"
+        ]
+      },
+      "band-muted": {
+        "role": "neutral",
+        "displayName": "Band Muted",
+        "canonical": "#a9b3c9",
+        "tonalRamp": [
+          "#1e232f",
+          "#333d51",
+          "#495674",
+          "#5e7096",
+          "#7f8dae",
+          "#a1acc4",
+          "#c7cddc",
+          "#eff1f5"
+        ]
+      },
+      "band-taken": {
+        "role": "neutral",
+        "displayName": "Band Taken",
+        "canonical": "#6b7489",
+        "tonalRamp": [
+          "#22242b",
+          "#3a3f4a",
+          "#535a6a",
+          "#6b7489",
+          "#8a91a3",
+          "#a9afbc",
+          "#cbcfd7",
+          "#f1f2f4"
+        ]
+      },
+      "good": {
+        "role": "status",
+        "displayName": "Good",
+        "canonical": "#1d6b3a",
+        "tonalRamp": [
+          "#103c21",
+          "#1c6839",
+          "#289450",
+          "#34c168",
+          "#5ad287",
+          "#87dea7",
+          "#b7ebca",
+          "#ebfaf0"
+        ]
+      },
+      "good-soft": {
+        "role": "status",
+        "displayName": "Good Wash",
+        "canonical": "#e3f1e8",
+        "tonalRamp": [
+          "#1a3323",
+          "#2c583c",
+          "#3f7e55",
+          "#52a36f",
+          "#74b98c",
+          "#99ccab",
+          "#c2e0cd",
+          "#eef7f1"
+        ]
+      },
+      "warn": {
+        "role": "status",
+        "displayName": "Warn",
+        "canonical": "#8a5a00",
+        "tonalRamp": [
+          "#4d3200",
+          "#855600",
+          "#bd7b00",
+          "#f5a000",
+          "#ffb62e",
+          "#ffca66",
+          "#ffdfa3",
+          "#fff6e5"
+        ]
+      },
+      "warn-soft": {
+        "role": "status",
+        "displayName": "Warn Wash",
+        "canonical": "#fbf1dc",
+        "tonalRamp": [
+          "#453108",
+          "#77550e",
+          "#a97913",
+          "#dc9d19",
+          "#eab443",
+          "#efc876",
+          "#f6dead",
+          "#fcf6e8"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The single headline numeral (seats left, waitlist #n). Font scaling capped at 1.3x."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "One per screen, marked as header."
+      },
+      "h3": {
+        "displayName": "H3",
+        "purpose": "List-row names, step-strip camp name, sheet headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running copy."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Hints, secondary lines, key columns; muted."
+      },
+      "meta": {
+        "displayName": "Meta",
+        "purpose": "Uppercase community · dates line, maroon (band-muted on black), always below its heading."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, key/value values, link actions."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button text; stack header title."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "seat-fill",
+        "value": "scale 0.2 to 1 + opacity 0 to 1, 700ms, 350ms delay, native driver",
+        "purpose": "The parent's own seat filling maroon on confirmation. Followed by a success haptic only for a confirmed seat."
+      },
+      {
+        "name": "seat-fill-reduced",
+        "value": "opacity 0 to 1, 300ms, 350ms delay",
+        "purpose": "Reduce Motion substitute: crossfade only, no scale."
+      },
+      {
+        "name": "confirmation-enter",
+        "value": "stack animation 'fade'",
+        "purpose": "Confirmation screen entrance; swipe-back disabled."
+      }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid maroon, square, 52 tall. One per screen, pinned at the bottom safe area.",
+      "html": "<button class=\"ds-btn-primary\">Register</button>",
+      "css": ".ds-btn-primary{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:52px;padding:0 20px;font-size:17px;font-weight:700;border-radius:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;background:#7b1f1f;color:#fff;border:none;width:320px}.ds-btn-primary:active{background:#5a1515}.ds-btn-primary:focus-visible{outline:2px solid #000;outline-offset:2px}.ds-btn-primary:disabled{opacity:.45}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action: 1.5px black stroke, square.",
+      "html": "<button class=\"ds-btn-outline\">Register another child</button>",
+      "css": ".ds-btn-outline{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:52px;padding:0 20px;font-size:17px;font-weight:700;border-radius:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;background:transparent;color:#000;border:1.5px solid #000;width:320px}.ds-btn-outline:active{background:#e5e9f0}.ds-btn-outline:focus-visible{outline:2px solid #7b1f1f;outline-offset:2px}"
+    },
+    {
+      "name": "White Button",
+      "kind": "button",
+      "refersTo": "button-white",
+      "description": "Maroon on white, for black bands. Defined in the kit, not yet placed on a screen.",
+      "html": "<div style=\"background:#000;padding:16px\"><button class=\"ds-btn-white\">Register</button></div>",
+      "css": ".ds-btn-white{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:52px;padding:0 20px;font-size:17px;font-weight:700;border-radius:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;background:#fff;color:#7b1f1f;border:none;width:320px}.ds-btn-white:focus-visible{outline:2px solid #fff;outline-offset:2px}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Label above, white square field; 2px black on focus, 2px maroon on error.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Guardian name</span><input class=\"ds-field-input\" placeholder=\"First and last name\"></label>",
+      "css": ".ds-field{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;display:flex;flex-direction:column;gap:6px;width:320px}.ds-field-label{font-size:15px;line-height:20px;font-weight:700;color:#111827}.ds-field-input{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:52px;padding:0 14px;background:#fff;border:1.5px solid #7d8aa3;border-radius:0;font-size:17px;color:#111827;caret-color:#7b1f1f}.ds-field-input::placeholder{color:#60739f}.ds-field-input:focus,.ds-field-input:focus-visible{outline:none;border:2px solid #000}"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "filter-chip",
+      "description": "Community filter: square black outline, black fill when selected.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-chip ds-chip-on\">All</button><button class=\"ds-chip\">Portland</button><button class=\"ds-chip\">Alice</button></div>",
+      "css": ".ds-chip{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;min-height:44px;padding:0 16px;border:1.5px solid #000;background:transparent;color:#000;font-size:15px;font-weight:700;border-radius:0;cursor:pointer}.ds-chip-on{background:#000;color:#fff}.ds-chip:focus-visible{outline:2px solid #7b1f1f;outline-offset:2px}"
+    },
+    {
+      "name": "Placeholder Frame",
+      "kind": "card",
+      "refersTo": "placeholder-frame",
+      "description": "Dashed blue frame for client-pending content; never filled with invented answers.",
+      "html": "<div class=\"ds-ph\"><div class=\"ds-ph-t\">Placeholder · cost</div><div class=\"ds-ph-b\">Cost goes here. Free or paid has not been decided.</div></div>",
+      "css": ".ds-ph{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;border:1.5px dashed #2337ff;background:#eef0ff;padding:14px;display:flex;flex-direction:column;gap:4px;width:320px}.ds-ph-t{font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#2337ff}.ds-ph-b{font-size:16px;line-height:23px;color:#2337ff}"
+    },
+    {
+      "name": "Ruled Camp List",
+      "kind": "custom",
+      "refersTo": "status-tag-few",
+      "description": "Hairline-ruled list row: h3, meta below it, small line, light ledger and status tag.",
+      "html": "<div class=\"ds-list\"><div class=\"ds-row\"><div class=\"ds-h3\">Drone Flight Lab</div><div class=\"ds-meta\">Del Rio · Jun 14–18, 2027</div><div class=\"ds-small\">Ages 11–14 · 1:00–4:00</div><div class=\"ds-row-foot\"><div class=\"ds-led-sm\"><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"o\"></i><i class=\"o\"></i><i class=\"o\"></i></div><span class=\"ds-tag\">3 left</span></div></div></div>",
+      "css": ".ds-list{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#fff;border-top:1px solid #e5e9f0;border-bottom:1px solid #e5e9f0;width:360px}.ds-row{padding:18px 16px;display:flex;flex-direction:column;gap:4px;cursor:pointer}.ds-row:hover{background:#f7fafc}.ds-h3{font-size:19px;line-height:24px;font-weight:700;color:#111827}.ds-meta{font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#7b1f1f}.ds-small{font-size:14px;line-height:20px;color:#60739f}.ds-row-foot{display:flex;align-items:center;gap:12px;margin-top:8px}.ds-led-sm{display:flex;gap:3px;flex:1;max-width:168px}.ds-led-sm i{flex:1;aspect-ratio:1;box-sizing:border-box}.ds-led-sm .t{background:#7d8aa3}.ds-led-sm .o{border:1.5px solid #60739f}.ds-tag{border:1px solid #8a5a00;background:#fbf1dc;color:#8a5a00;padding:3px 8px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}"
+    },
+    {
+      "name": "Seat Ledger Band",
+      "kind": "custom",
+      "refersTo": "step-strip",
+      "description": "Black band: title, meta below, display numeral, dark ledger; the parent's own seat fills maroon.",
+      "html": "<div class=\"ds-band\"><div class=\"ds-band-title\">Drone Flight Lab</div><div class=\"ds-band-meta\">Del Rio · Jun 14–18, 2027</div><div class=\"ds-band-num\"><span class=\"ds-display\">1</span><span class=\"ds-band-cap\">of 14 seats left</span></div><div class=\"ds-led\"><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"m\"><b></b></i></div></div>",
+      "css": ".ds-band{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#000;padding:16px 16px 28px;width:358px;display:flex;flex-direction:column;gap:6px}.ds-band-title{font-size:30px;line-height:34px;letter-spacing:-.4px;font-weight:700;color:#fff}.ds-band-meta{font-size:12px;line-height:16px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#a9b3c9}.ds-band-num{display:flex;align-items:flex-end;gap:14px;margin-top:18px}.ds-display{font-size:104px;line-height:100px;letter-spacing:-4px;font-weight:700;color:#fff}.ds-band-cap{font-size:16px;line-height:23px;color:#a9b3c9;padding-bottom:12px}.ds-led{display:flex;gap:5px;margin-top:14px}.ds-led i{flex:1;aspect-ratio:1;box-sizing:border-box;display:block}.ds-led .t{background:#6b7489}.ds-led .m{border:1.5px solid #7b1f1f}.ds-led .m b{display:block;width:100%;height:100%;background:#7b1f1f;animation:ds-fill .7s .35s both}@keyframes ds-fill{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){.ds-led .m b{animation:ds-fade .3s .35s both}}@keyframes ds-fade{from{opacity:0}to{opacity:1}}"
+    },
+    {
+      "name": "Step Strip",
+      "kind": "nav",
+      "refersTo": "step-strip",
+      "description": "Persistent black strip on registration steps; 8px solid step squares under a divider, distinct from seat ticks.",
+      "html": "<div class=\"ds-strip\"><div class=\"ds-strip-top\"><div><div class=\"ds-strip-h\">Drone Flight Lab</div><div class=\"ds-strip-s\">Del Rio · Jun 14–18, 2027</div></div><div class=\"ds-strip-l\">1 seat left</div></div><div class=\"ds-strip-led\"><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"t\"></i><i class=\"o\"></i></div><div class=\"ds-steps\"><span class=\"ds-sq\"><i class=\"on\"></i><i class=\"on\"></i><i></i><i></i></span><span class=\"ds-strip-s\">Step 2 of 4 · <b style=\"color:#fff\">Child</b></span></div></div>",
+      "css": ".ds-strip{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#000;padding:4px 16px 16px;width:358px;display:flex;flex-direction:column;gap:12px}.ds-strip-top{display:flex;align-items:flex-end;gap:12px;justify-content:space-between}.ds-strip-h{font-size:19px;line-height:24px;font-weight:700;color:#fff}.ds-strip-s{font-size:14px;line-height:20px;color:#a9b3c9}.ds-strip-l{font-size:15px;line-height:20px;font-weight:700;color:#fff}.ds-strip-led{display:flex;gap:3px;max-width:168px}.ds-strip-led i{flex:1;aspect-ratio:1;box-sizing:border-box}.ds-strip-led .t{background:#6b7489}.ds-strip-led .o{border:1.5px solid #a9b3c9}.ds-steps{display:flex;align-items:center;gap:10px;border-top:1px solid #6b7489;padding-top:12px}.ds-sq{display:flex;gap:3px}.ds-sq i{width:8px;height:8px;background:#6b7489}.ds-sq i.on{background:#fff}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Seat Ledger",
+    "overview": "The app is stxrobotics.com carried onto a phone: a light, cool page (#f7fafc), white fields, cool hairlines, one maroon voice, and black bands that hold the numbers that matter. Its own idea is the seat ledger, a row of square ticks with one per seat. It shows up wherever a session is in play: on the camp list, in the camp detail band, in the strip above every registration step, and on the confirmation, where the parent's own seat fills maroon. The parent should always be able to see what they are holding.\n\nThe density is calm and editorial. Lists are ruled with hairlines rather than stacked as cards. Corners are square everywhere. There are no shadows. Typography is Atkinson Hyperlegible alone, using weight and size instead of a second face. One shared custom look runs on iOS and Android. It does not adapt per OS, but it keeps each OS's hard guarantees (see Layout).\n\nAnything the client has not decided is shown, not invented: it sits in a dashed blue placeholder frame that says it is a placeholder.",
+    "keyCharacteristics": [
+      "Square seat ticks as the core information graphic; one tick per seat.",
+      "Black bands for headline numbers and context; light page for detail and forms.",
+      "Maroon is the only action color; blue appears only in placeholder frames.",
+      "Square corners on every surface, control and tick.",
+      "Hairline-ruled lists, flat surfaces, no shadows.",
+      "One family, Atkinson Hyperlegible, at 400 and 700."
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "Maroon is the only color that asks for action or marks ownership. In the ledger, maroon means \"yours\" and nothing else.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tuned Ground Rule",
+        "body": "Ledger tones are chosen per ground. On black, use band-taken and band-muted. On light, use seat-taken and muted. Never move a light tick onto black or the reverse. Both taken tones hold at least 3:1 against their own ground.",
+        "section": "colors"
+      },
+      {
+        "name": "The Blue Means Undecided Rule",
+        "body": "#2337ff appears only in placeholder frames. Don't use it for links or emphasis.",
+        "section": "colors"
+      },
+      {
+        "name": "The Meta Below Rule",
+        "body": "The meta line always sits directly under the heading it qualifies, never above it as a kicker or eyebrow. Test: the first text in any block is the heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Capped Display Rule",
+        "body": "Every text style follows the OS font size up to 2x. Display is capped at 1.3x so the numeral and its ledger stay on screen.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Ground Rule",
+        "body": "Separate things with a change of ground or a hairline, never with a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** show the seat ledger wherever a specific session is in play, tuned to its ground (dark tones on black, light tones on paper).",
+      "**Do** give the parent's own seat maroon and nothing else in the ledger maroon.",
+      "**Do** put the meta line (12 bold uppercase, 1.4 tracking) directly below the heading it qualifies.",
+      "**Do** open session screens on a black band with the display numeral and ledger, then continue on the light page.",
+      "**Do** pin the single solid maroon action at the bottom safe area, with outline buttons for secondary actions.",
+      "**Do** rule lists with #e5e9f0 hairlines on a full-bleed white body.",
+      "**Do** frame every undecided client fact in the dashed #2337ff placeholder, labelled \"Placeholder · topic\".",
+      "**Do** keep targets at 44 to 52pt, honor safe areas, cap Display scaling at 1.3x, and fade instead of scaling under Reduce Motion.",
+      "**Do** set the status bar per band: light over black, dark over paper."
+    ],
+    "donts": [
+      "**Don't** round any corner.",
+      "**Don't** add shadows. Separate with ground or hairlines.",
+      "**Don't** stack content in cards. Use ruled lists and key/value rows.",
+      "**Don't** place a meta line, eyebrow or kicker above a heading.",
+      "**Don't** use #2337ff for anything but placeholder frames.",
+      "**Don't** fill a placeholder with an invented answer or present sample data as real.",
+      "**Don't** make step markers look like seat ticks. Keep them 8pt, solid, and under the divider.",
+      "**Don't** fire a haptic for anything but a confirmed seat.",
+      "**Don't** pre-check consent boxes."
+    ]
+  }
+}

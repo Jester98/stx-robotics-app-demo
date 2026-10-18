@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>STX Robotics App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Matches stxrobotics.com: Atkinson type, light gray ground, near-black ink, maroon square buttons, black bands */
+:root{
+  --bg:#f7fafc; --white:#ffffff; --ink:#222939; --head:#111827; --muted:#60739f; --line:#e5e9f0;
+  --maroon:#7b1f1f; --maroon-dark:#5a1515; --maroon-soft:#f6e9e9; --black:#000000;
+  --good:#1d6b3a; --good-soft:#e3f1e8; --warn:#8a5a00; --warn-soft:#fbf1dc; --blue:#2337ff; --blue-soft:#e8ebff;
+  --font:"Atkinson Hyperlegible","Atkinson",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#e5e9f0;color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--maroon);outline-offset:2px}
+
+/* Desktop stage: phone frame + caption. Phone: full screen */
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding:32px 24px}
+.pitch{max-width:340px}
+.pitch .eyebrow{margin-bottom:12px}
+.pitch h1{font-size:38px;line-height:1.08;color:var(--head);margin:0 0 14px;font-weight:700;letter-spacing:-.01em}
+.pitch p{color:var(--ink);margin:0 0 12px}
+.pitch ul{padding:0;margin:18px 0 0;list-style:none;display:grid;gap:8px;font-size:14px}
+.pitch li{display:flex;gap:10px}
+.pitch li b{color:var(--maroon);min-width:72px;text-transform:uppercase;font-size:11px;letter-spacing:.12em;padding-top:2px}
+.pitch .fine{font-size:12px;color:var(--muted);margin-top:22px;border-top:1px solid #cfd6e2;padding-top:12px}
+.phone{width:390px;height:812px;background:var(--black);border-radius:54px;padding:12px;box-shadow:0 2px 6px rgba(96,115,159,.25),0 8px 24px rgba(96,115,159,.33),0 30px 60px rgba(34,41,57,.3);flex:none;position:relative}
+.phone::before{content:"";position:absolute;top:22px;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#000;border-radius:20px;z-index:30}
+.screen{width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--bg);position:relative;display:flex;flex-direction:column}
+
+/* App chrome */
+.statusbar{height:50px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 6px;font-size:14px;font-weight:700;background:var(--white)}
+.appbar{flex:none;background:var(--white);border-bottom:1px solid var(--line);padding:8px 18px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{font-weight:700;font-size:22px;letter-spacing:-.04em;color:var(--black);line-height:1;font-style:italic}
+.logo span{color:var(--maroon)}
+.role{display:flex;border:1.5px solid var(--black)}
+.role button{all:unset;cursor:pointer;padding:5px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.role button[aria-pressed="true"]{background:var(--black);color:#fff}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+.tabbar{flex:none;background:var(--white);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px 22px}
+.tabbar button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;position:relative}
+.tabbar svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-current="true"]{color:var(--maroon)}
+.tabbar button[aria-current="true"]::before{content:"";position:absolute;top:-7px;left:28%;right:28%;height:3px;background:var(--maroon)}
+.tabbar .badge{position:absolute;top:2px;right:22%;background:var(--maroon);color:#fff;font-size:9.5px;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;padding:0 4px;letter-spacing:0}
+
+/* Content pieces */
+.pad{padding:18px}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow::before{content:"";width:22px;height:1.5px;background:currentColor}
+h2{font-size:26px;line-height:1.1;color:var(--head);margin:8px 0 4px;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:16px;margin:0;color:var(--head);font-weight:700}
+.lead{color:var(--ink);margin:4px 0 0;font-size:14px}
+.band{background:var(--black);color:#fff;padding:16px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.band .n{font-size:24px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.band .l{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-top:5px}
+.maroonband{background:var(--maroon);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px}
+.maroonband p{margin:0;font-size:14px;flex:1}
+.sec{padding:20px 18px 0}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.sec-h h3{font-size:13px;text-transform:uppercase;letter-spacing:.12em}
+.link{all:unset;cursor:pointer;font-size:13px;font-weight:700;color:var(--maroon)}
+.card{background:var(--white);border:1px solid var(--line);padding:14px}
+.stack{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:12px}
+.row .grow{flex:1;min-width:0}
+.meta{color:var(--muted);font-size:13px}
+.tag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 7px;white-space:nowrap;border:1px solid currentColor}
+.t-open{color:var(--good);background:var(--good-soft)}
+.t-few{color:var(--warn);background:var(--warn-soft)}
+.t-full{color:var(--maroon);background:var(--maroon-soft)}
+.t-blue{color:var(--blue);background:var(--blue-soft)}
+.t-mute{color:var(--muted);background:var(--bg)}
+.btn{cursor:pointer;border:0;background:var(--maroon);color:#fff;font-weight:700;font-size:14px;padding:11px 16px;border-radius:0;text-align:center}
+.btn:active{background:var(--maroon-dark)}
+.btn.out{background:transparent;color:var(--black);border:1.5px solid var(--black)}
+.btn.white{background:#fff;color:var(--maroon)}
+.btn.sm{padding:7px 11px;font-size:13px}
+.btn.block{width:100%}
+.bar{height:5px;background:var(--line)}
+.bar i{display:block;height:100%;background:var(--maroon)}
+.bar.blk i{background:var(--black)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{cursor:pointer;flex:none;border:1.5px solid var(--black);background:var(--white);padding:6px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.chip[aria-pressed="true"]{background:var(--black);color:#fff}
+.camp .loc{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--maroon)}
+.camp dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:10px 0;font-size:13px}
+.camp dt{color:var(--muted)} .camp dd{margin:0}
+.seats{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.match{display:grid;grid-template-columns:38px 1fr auto;gap:8px;align-items:center;font-size:13px;padding:9px 0;border-top:1px solid var(--line)}
+.match:first-child{border-top:0;padding-top:0}
+.score{font-weight:700;font-variant-numeric:tabular-nums}
+.w{color:var(--good)} .lo{color:var(--maroon)}
+.lanes{display:flex;gap:10px;overflow-x:auto;padding:0 18px 6px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.lane{flex:0 0 78%;scroll-snap-align:start;display:grid;gap:8px;align-content:start}
+.lane-h{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;display:flex;justify-content:space-between;color:var(--head);border-bottom:2px solid var(--black);padding-bottom:6px}
+.job b{display:block;font-size:14px;color:var(--head)}
+.job .id{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.led{width:9px;height:9px;border-radius:50%;background:var(--good);flex:none}
+.led.idle{background:#b6c0d1}
+form{display:grid;gap:11px}
+label{display:grid;gap:4px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--head)}
+input,select,textarea{border:1px solid #cfd6e2;background:var(--white);padding:10px;font-size:15px;border-radius:0;width:100%;text-transform:none;letter-spacing:0;font-weight:400}
+textarea{min-height:90px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check{display:flex;gap:8px;align-items:flex-start;text-transform:none;letter-spacing:0;font-weight:400;font-size:13px;color:var(--ink)}
+.check input{width:auto;margin-top:3px}
+.sms{background:#e9e9eb;color:#111;border-radius:18px 18px 18px 4px;padding:10px 13px;font-size:14px;white-space:pre-wrap;max-width:92%}
+.empty{color:var(--muted);font-size:13px;margin:0}
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:40;display:flex;align-items:flex-end}
+.sheet{background:var(--bg);width:100%;max-height:88%;overflow-y:auto;padding:8px 18px 28px;border-top:4px solid var(--maroon)}
+.grab{width:40px;height:4px;background:#cfd6e2;margin:4px auto 12px}
+.toast{position:absolute;left:16px;right:16px;bottom:98px;background:var(--black);color:#fff;padding:12px 14px;font-size:14px;z-index:50;transform:translateY(10px);opacity:0;transition:.25s;pointer-events:none}
+.toast.show{transform:none;opacity:1}
+.more-item{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px;background:var(--white);border:1px solid var(--line);width:100%;box-sizing:border-box}
+.more-item svg{width:22px;height:22px;stroke:var(--maroon);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.chev{color:var(--muted);font-size:18px}
+.hello{background:var(--white);padding:18px;border-bottom:1px solid var(--line)}
+
+@media (max-width:820px){
+  body{background:var(--bg)}
+  .stage{display:block;padding:0;min-height:100%;height:100%}
+  .pitch{display:none}
+  .phone{width:100%;height:100%;border-radius:0;padding:0;box-shadow:none;background:var(--bg)}
+  .phone::before{display:none}
+  .screen{border-radius:0}
+  .statusbar{height:env(safe-area-inset-top,0px);padding:0}
+  .statusbar *{display:none}
+  .tabbar{padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <section class="pitch">
+    <div class="eyebrow">App concept · South Texas Robotics</div>
+    <h1>The STX Robotics app.</h1>
+    <p>One app for families, students, mentors and staff. It's built in the same look as stxrobotics.com, so it feels like part of the brand.</p>
+    <p>Tap through it on the phone. Use the <b>Parent / Staff</b> switch at the top to see each side.</p>
+    <ul>
+      <li><b>Camps</b><span>Register by community, with automatic waitlists</span></li>
+      <li><b>Teams</b><span>VEX V5 tournaments, matches and practice RSVPs</span></li>
+      <li><b>Prints</b><span>3D print requests from queue to pickup</span></li>
+      <li><b>Mentors</b><span>Log and approve student mentor hours</span></li>
+      <li><b>Texts</b><span>Reminders to families who opted in</span></li>
+    </ul>
+    <p class="fine">Concept prototype. Everything except the Summer 2026 totals from stxrobotics.com is sample data: names, dates, team numbers and events. Nothing is saved or sent.</p>
+  </section>
+
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="statusbar"><span id="clock">9:41</span><span>5G ▮▮▮</span></div>
+      <header class="appbar">
+        <div class="logo">ST<span>X</span></div>
+        <div class="role" role="group" aria-label="View as">
+          <button id="r-parent" aria-pressed="true">Parent</button>
+          <button id="r-staff" aria-pressed="false">Staff</button>
+        </div>
+      </header>
+      <main class="content" id="content"></main>
+      <nav class="tabbar" id="tabbar" aria-label="App sections"></nav>
+      <div class="toast" id="toast" role="status"></div>
+      <div id="sheet"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICONS={
+  home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  camps:'<rect x="3" y="5" width="18" height="16"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  teams:'<rect x="5" y="8" width="14" height="10"/><path d="M12 4v4M9 13h.01M15 13h.01M3 12v3M21 12v3M9 18v2M15 18v2"/>',
+  prints:'<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8"/><path d="M7 17v4h10v-4"/>',
+  more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+  msg:'<path d="M4 5h16v11H8l-4 4z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  doc:'<path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/>'
+};
+const S={
+  role:'parent', tab:'home', loc:'All',
+  camps:[
+    {id:1,name:'Intro to Robotics',loc:'Robstown',ages:'8–11',dates:'Jun 7–11, 2027',time:'9:00–12:00',venue:'Robstown Public Library',cap:16,filled:16,wait:3},
+    {id:2,name:'Drone Flight Lab',loc:'Del Rio',ages:'11–14',dates:'Jun 14–18, 2027',time:'1:00–4:00',venue:'Val Verde County Library',cap:14,filled:11,wait:0},
+    {id:3,name:'VEX V5 Bootcamp',loc:'Portland',ages:'12–17',dates:'Jun 21–25, 2027',time:'9:00–3:00',venue:'Bell Whittington Library',cap:20,filled:9,wait:0},
+    {id:4,name:'3D Design & Print',loc:'Alice',ages:'9–13',dates:'Jun 28–Jul 2, 2027',time:'9:00–12:00',venue:'Alice Public Library',cap:16,filled:14,wait:0},
+    {id:5,name:'First Circuits',loc:'Robstown',ages:'6–8',dates:'Jul 12–16, 2027',time:'9:00–11:30',venue:'Robstown Public Library',cap:12,filled:5,wait:0},
+    {id:6,name:'Coding with Robots',loc:'Portland',ages:'9–12',dates:'Jul 19–23, 2027',time:'1:00–4:00',venue:'Bell Whittington Library',cap:16,filled:16,wait:1},
+  ],
+  regs:[{kid:'Mateo G.',age:10,camp:1,status:'Confirmed'},{kid:'Ava G.',age:13,camp:2,status:'Confirmed'}],
+  mentors:[
+    {name:'Isabella M.',school:'Calallen HS',hours:42,pending:{date:'Oct 15',task:'Led build session, Team 2A',h:3}},
+    {name:'Diego T.',school:'Robstown HS',hours:36,pending:{date:'Oct 14',task:'Notebook review with rookies',h:2}},
+    {name:'Sofia L.',school:'Alice HS',hours:28,pending:null},
+    {name:'Noah P.',school:'Gregory-Portland HS',hours:19,pending:{date:'Oct 12',task:'Library STEM workshop helper',h:4}},
+  ],
+  jobs:[
+    {id:'P-118',what:'Keychain robot ×24',who:'Alice camp',hrs:6.5,lane:'Queued'},
+    {id:'P-119',what:'Drive gear spacers',who:'Team 2A',hrs:1.2,lane:'Queued'},
+    {id:'P-116',what:'Name plates ×16',who:'Robstown camp',hrs:4.0,lane:'Printing',printer:'Prusa #2'},
+    {id:'P-117',what:'Intake roller mount',who:'Team 2B',hrs:2.3,lane:'Printing',printer:'Bambu #1'},
+    {id:'P-115',what:'Mini drone frame ×6',who:'Del Rio camp',hrs:3.1,lane:'Ready'},
+    {id:'P-112',what:'Phone stand ×20',who:'Keach workshop',hrs:5.4,lane:'Done'},
+  ],
+  sent:[{to:'Robstown · Intro to Robotics',text:'Reminder: camp starts Monday at 9:00 at Robstown Public Library. Bring a water bottle!',when:'Oct 16'}],
+  rsvp:{tue:false,thu:true,sat:false},
+};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ico=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2400)}
+function tag(c){const left=c.cap-c.filled;if(left<=0)return `<span class="tag t-full">Waitlist ${c.wait}</span>`;if(left<=3)return `<span class="tag t-few">${left} left</span>`;return `<span class="tag t-open">Open</span>`}
+function regRow(r){const c=S.camps.find(x=>x.id===r.camp);return `<div class="card row"><div class="grow"><h3>${esc(r.kid)} · ${c.name}</h3><div class="meta">${c.loc} · ${c.dates}<br>${c.time} · ${c.venue}</div></div><span class="tag ${r.status==='Waitlisted'?'t-few':'t-open'}">${r.status}</span></div>`}
+
+const TABS={parent:[['home','Home','home'],['camps','Camps','camps'],['teams','Teams','teams'],['msgs','Updates','msg'],['more','More','more']],
+            staff:[['home','Home','home'],['camps','Camps','camps'],['teams','Teams','teams'],['prints','Prints','prints'],['more','More','more']]};
+
+const V={
+home(){
+  if(S.role==='parent') return `
+  <div class="hello"><div class="eyebrow">Welcome back</div><h2>Hi, Garza family</h2><p class="lead">Two kids, two camps this summer.</p></div>
+  <div class="band"><div><div class="n">300+</div><div class="l">Kids, Summer '26</div></div><div><div class="n">4</div><div class="l">Communities</div></div><div><div class="n">17</div><div class="l">STEM classes</div></div></div>
+  <div class="sec"><div class="sec-h"><h3>Your kids</h3><button class="link" data-tab="camps">+ Register</button></div><div class="stack">${S.regs.map(regRow).join('')}</div></div>
+  <div class="sec"><div class="sec-h"><h3>Before camp</h3></div><div class="stack">
+    <div class="card row"><div class="grow"><h3>Photo & media waiver</h3><div class="meta">Needed for Mateo G.</div></div><button class="btn sm" id="sign">Sign</button></div>
+    <div class="card row"><div class="grow"><h3>Text alerts</h3><div class="meta">Reminders, schedule changes, safety notices</div></div><span class="tag t-open">On</span></div>
+  </div></div>
+  <div class="sec"><div class="sec-h"><h3>Latest update</h3><button class="link" data-tab="msgs">All</button></div><div class="card"><div class="meta">${S.sent.at(-1).when} · ${esc(S.sent.at(-1).to)}</div><p style="margin:6px 0 0">${esc(S.sent.at(-1).text)}</p></div></div>
+  <div class="sec"><div class="maroonband"><p><b>$50 puts a robotics kit in a student's hands.</b></p><button class="btn white sm" id="donate">Donate</button></div></div>`;
+  const seats=S.camps.reduce((a,c)=>a+c.filled,0),cap=S.camps.reduce((a,c)=>a+c.cap,0),wait=S.camps.reduce((a,c)=>a+c.wait,0),pend=S.mentors.filter(m=>m.pending);
+  return `
+  <div class="hello"><div class="eyebrow">Staff dashboard</div><h2>Good evening, Coach</h2><p class="lead">Summer 2027 sign-ups, teams and the print shop.</p></div>
+  <div class="band"><div><div class="n">${seats}<span style="font-size:13px;opacity:.6">/${cap}</span></div><div class="l">Seats filled</div></div><div><div class="n">${wait}</div><div class="l">Waitlisted</div></div><div><div class="n">${S.jobs.filter(j=>j.lane!=='Done').length}</div><div class="l">Open prints</div></div></div>
+  <div class="sec"><div class="sec-h"><h3>Needs attention</h3></div><div class="stack">
+    ${pend.length?`<div class="card row"><div class="grow"><h3>${pend.length} mentor logs to approve</h3><div class="meta">${pend.map(m=>m.name).join(', ')}</div></div><button class="btn sm" data-tab="mentors">Review</button></div>`:''}
+    <div class="card row"><div class="grow"><h3>Coastal Bend VEX Qualifier</h3><div class="meta">Nov 14 · registration due Oct 31</div></div><button class="btn out sm" data-tab="teams">View</button></div>
+    <div class="card row"><div class="grow"><h3>Pickup ready: drone frames</h3><div class="meta">Del Rio camp · P-115</div></div><button class="btn out sm" data-tab="prints">Queue</button></div>
+  </div></div>
+  <div class="sec"><div class="sec-h"><h3>Filling up</h3><button class="link" data-tab="camps">All camps</button></div><div class="card stack">
+    ${S.camps.slice().sort((a,b)=>b.filled/b.cap-a.filled/a.cap).slice(0,4).map(c=>`<div><div class="row" style="margin-bottom:6px"><div class="grow"><h3 style="font-size:14px">${c.name}</h3><div class="meta">${c.loc}</div></div>${tag(c)}</div><div class="bar"><i style="width:${Math.min(100,c.filled/c.cap*100)}%"></i></div></div>`).join('')}
+  </div></div>`;
+},
+camps(){
+  const locs=['All','Portland','Robstown','Del Rio','Alice'];
+  const list=S.camps.filter(c=>S.loc==='All'||c.loc===S.loc);
+  return `<div class="pad" style="padding-bottom:12px"><div class="eyebrow">Summer 2027</div><h2>Find a camp</h2><p class="lead">Free week-long camps at partner libraries, funded by local sponsors.</p></div>
+  <div class="chips">${locs.map(l=>`<button class="chip" data-loc="${l}" aria-pressed="${S.loc===l}">${l}</button>`).join('')}</div>
+  <div class="sec stack" style="padding-top:12px">${list.map(c=>`<div class="card camp">
+    <div class="row"><div class="grow"><div class="loc">${c.loc}</div><h3>${c.name}</h3></div>${tag(c)}</div>
+    <dl><dt>Ages</dt><dd>${c.ages}</dd><dt>Dates</dt><dd>${c.dates}</dd><dt>Time</dt><dd>${c.time}</dd><dt>Where</dt><dd>${c.venue}</dd></dl>
+    <div class="bar" style="margin-bottom:10px"><i style="width:${Math.min(100,c.filled/c.cap*100)}%"></i></div>
+    <div class="row"><span class="seats grow">${c.filled} of ${c.cap} seats</span><button class="btn sm" data-reg="${c.id}">${c.filled>=c.cap?'Join waitlist':'Register'}</button></div>
+  </div>`).join('')}</div>`;
+},
+teams(){
+  const going=S.rsvp;
+  return `<div class="pad" style="padding-bottom:0"><div class="eyebrow">VEX V5 · 2026–27</div><h2>Competition teams</h2></div>
+  <div class="sec stack">
+    ${[['STX 2A','Ironclads',7,112,78],['STX 2B','Gear Hawks',6,94,64],['STX 2C','Rookies',5,51,40]].map(t=>`<div class="card"><div class="row"><div class="grow"><div class="eyebrow" style="color:var(--maroon)">${t[0]}</div><h3 style="margin-top:3px">${t[1]}</h3></div><span class="tag t-mute">${t[2]} students</span></div><div class="meta" style="margin:8px 0 5px">Best skills ${t[3]} · Notebook ${t[4]}%</div><div class="bar blk"><i style="width:${t[4]}%"></i></div></div>`).join('')}
+  </div>
+  <div class="sec"><div class="sec-h"><h3>This week's practice</h3></div><div class="stack">
+    ${[['tue','Tue · Drivetrain tuning','5:30–7:30 · 2A & 2B'],['thu','Thu · Autonomous routines','5:30–7:30 · All teams'],['sat','Sat · Mock qualifier','10:00–2:00 · Bring notebooks']].map(p=>`<div class="card row"><div class="grow"><h3 style="font-size:14px">${p[1]}</h3><div class="meta">${p[2]}</div></div><button class="btn sm ${going[p[0]]?'':'out'}" data-rsvp="${p[0]}">${going[p[0]]?'Going ✓':'RSVP'}</button></div>`).join('')}
+  </div></div>
+  <div class="sec"><div class="sec-h"><h3>Tournaments</h3></div><div class="card stack">
+    ${[['Nov 14','Coastal Bend VEX Qualifier','t-few','Reg. due Oct 31'],['Dec 12','Laredo Border Showdown','t-open','Registered'],['Jan 23','RGV Signature Event','t-mute','Planned'],['Mar 6','Region 4 Championship','t-mute','Qualify first']].map(e=>`<div class="row"><span class="score" style="width:52px;font-size:13px">${e[0]}</span><div class="grow" style="font-size:14px">${e[1]}</div><span class="tag ${e[2]}">${e[3]}</span></div>`).join('')}
+  </div></div>
+  <div class="sec"><div class="sec-h"><h3>Last event · STX 2A</h3><span class="tag t-blue">4–1 · Rank 3</span></div><div class="card">
+    ${[['Q4','w','124–98'],['Q11','w','140–131'],['Q19','l','88–102'],['Q26','w','117–64'],['QF2','w','131–120']].map(m=>`<div class="match"><span class="score">${m[0]}</span><span class="meta">${m[0]==='QF2'?'Quarterfinal':'Qualification'}</span><span class="score ${m[1]==='w'?'w':'lo'}">${m[1].toUpperCase()} ${m[2]}</span></div>`).join('')}
+  </div></div>`;
+},
+prints(){
+  const lanes=['Queued','Printing','Ready','Done'],nx={Queued:'Printing',Printing:'Ready',Ready:'Done'},lbl={Queued:'Start print',Printing:'Mark ready',Ready:'Picked up'};
+  return `<div class="pad" style="padding-bottom:12px"><div class="eyebrow">Print shop</div><h2>3D print queue</h2><p class="lead">Take-home camp projects and competition parts. Swipe across the stages.</p></div>
+  <div class="sec" style="padding-top:0"><div class="card stack">
+    <div class="row"><span class="led"></span><div class="grow"><b>Bambu #1</b> <span class="meta">· P-117 · 1h 10m left</span></div></div>
+    <div class="row"><span class="led"></span><div class="grow"><b>Prusa #2</b> <span class="meta">· P-116 · 2h 40m left</span></div></div>
+    <div class="row"><span class="led ${S.jobs.some(j=>j.printer==='Prusa #3'&&j.lane==='Printing')?'':'idle'}"></span><div class="grow"><b>Prusa #3</b> <span class="meta">· ${S.jobs.some(j=>j.printer==='Prusa #3'&&j.lane==='Printing')?'Printing':'Idle'}</span></div></div>
+  </div></div>
+  <div class="lanes" style="margin-top:16px">${lanes.map(l=>{const js=S.jobs.filter(j=>j.lane===l);return `<div class="lane"><div class="lane-h"><span>${l}</span><span>${js.length}</span></div>
+    ${js.map(j=>`<div class="card job stack" style="gap:6px"><span class="id">${j.id} · ${j.hrs.toFixed(1)} h</span><b>${esc(j.what)}</b><span class="meta">${esc(j.who)}${j.printer&&l==='Printing'?' · '+j.printer:''}</span>${nx[l]?`<button class="btn out sm" data-adv="${j.id}">${lbl[l]}</button>`:''}</div>`).join('')||'<p class="empty">Nothing here</p>'}</div>`}).join('')}</div>
+  <div class="sec"><button class="btn block" id="newprint">+ Request a print</button></div>`;
+},
+mentors(){
+  const pend=S.mentors.filter(m=>m.pending),max=Math.max(...S.mentors.map(m=>m.hours));
+  return `<div class="pad" style="padding-bottom:0"><button class="link" data-tab="more">‹ More</button><div class="eyebrow" style="margin-top:10px">Student mentors</div><h2>Mentor hours</h2><p class="lead">Approved hours count toward service-hour letters.</p></div>
+  <div class="sec"><div class="sec-h"><h3>To approve</h3><span class="seats">${pend.length}</span></div><div class="stack">
+    ${pend.length?pend.map(m=>`<div class="card"><div class="row"><div class="grow"><h3>${m.name}</h3><div class="meta">${m.pending.date} · ${m.pending.task}</div></div><span class="score">${m.pending.h} h</span></div><div class="two" style="margin-top:10px"><button class="btn sm" data-ok="${m.name}">Approve</button><button class="btn out sm" data-ret="${m.name}">Return</button></div></div>`).join(''):'<p class="empty">All caught up. New logs show up here.</p>'}
+  </div></div>
+  <div class="sec"><div class="sec-h"><h3>Season totals</h3><span class="seats">${S.mentors.reduce((a,m)=>a+m.hours,0)} h</span></div><div class="card stack">
+    ${S.mentors.slice().sort((a,b)=>b.hours-a.hours).map(m=>`<div><div class="row" style="margin-bottom:5px"><div class="grow"><b style="font-size:14px">${m.name}</b> <span class="meta">· ${m.school}</span></div><span class="score">${m.hours} h</span></div><div class="bar blk"><i style="width:${m.hours/max*100}%"></i></div></div>`).join('')}
+  </div></div>`;
+},
+msgs(){
+  if(S.role==='parent') return `<div class="pad" style="padding-bottom:0"><div class="eyebrow">From STX Robotics</div><h2>Updates</h2><p class="lead">Texts also go to the phone you registered with.</p></div>
+  <div class="sec stack">${S.sent.slice().reverse().map(m=>`<div class="card"><div class="meta">${m.when} · ${esc(m.to)}</div><p style="margin:6px 0 0">${esc(m.text)}</p></div>`).join('')}</div>`;
+  const groups={'All families':212,'Robstown · Intro to Robotics':16,'Del Rio · Drone Flight Lab':11,'Portland · VEX V5 Bootcamp':9,'Alice · 3D Design & Print':14,'Competition team parents':18};
+  return `<div class="pad" style="padding-bottom:0"><button class="link" data-tab="more">‹ More</button><div class="eyebrow" style="margin-top:10px">Family texts</div><h2>Send an update</h2><p class="lead">Only families who opted in to texts receive these.</p></div>
+  <div class="sec"><form id="msgform">
+    <label for="m-to">Send to<select id="m-to">${Object.keys(groups).map(g=>`<option>${g}</option>`).join('')}</select></label>
+    <label for="m-type">Type<select id="m-type"><option>Reminder</option><option>Schedule change</option><option>Safety notice</option><option>Announcement</option></select></label>
+    <label for="m-text">Message<textarea id="m-text" maxlength="300">Heads up: Thursday's session moves to 1:00 because of the library's book sale. Same room, same pickup.</textarea></label>
+    <div class="card"><div class="row" style="margin-bottom:8px"><span class="meta grow">Phone preview</span><span class="tag t-blue" id="m-reach"></span></div><div class="sms" id="m-prev"></div></div>
+    <button class="btn block" type="submit">Send update</button>
+  </form></div>
+  <div class="sec"><div class="sec-h"><h3>Sent</h3></div><div class="stack">${S.sent.slice().reverse().map(m=>`<div class="card"><div class="meta">${m.when} · ${esc(m.to)}</div><p style="margin:6px 0 0;font-size:14px">${esc(m.text)}</p></div>`).join('')}</div></div>`;
+},
+more(){
+  const pend=S.mentors.filter(m=>m.pending).length;
+  const items=S.role==='staff'
+    ?[['mentors','clock','Mentor hours',pend?pend+' to approve':'Up to date'],['msgs','msg','Family texts','Send reminders and changes'],['about','heart','Sponsors & donations','Sponsor tiers start at $50'],['about','doc','Waivers & forms','Track what families still owe']]
+    :[['about','heart','Donate or sponsor','Tax-deductible, 501(c)(3)'],['about','doc','Waivers & forms','1 waiting to sign'],['about','msg','Contact STX','(361) 945-7669 · Corpus Christi']];
+  return `<div class="pad"><div class="eyebrow">${S.role==='staff'?'Staff tools':'Your account'}</div><h2>More</h2></div>
+  <div class="sec stack" style="padding-top:0">${items.map(i=>`<button class="more-item" data-tab="${i[0]}">${ico(i[1])}<div class="grow" style="flex:1"><h3 style="font-size:15px">${i[2]}</h3><div class="meta">${i[3]}</div></div><span class="chev">›</span></button>`).join('')}</div>
+  <div class="sec"><div class="band" style="grid-template-columns:1fr 1fr"><div><div class="n">1,037</div><div class="l">3D-printer hours, Summer '26</div></div><div><div class="n">300+</div><div class="l">Mentor hours awarded</div></div></div></div>`;
+},
+about(){
+  return `<div class="pad"><button class="link" data-tab="more">‹ More</button><div class="eyebrow" style="margin-top:10px">Coming in the full app</div><h2>Not built in this demo</h2><p class="lead">In the real app, this screen would handle donations, sponsor tiers, waivers and contact forms. It would tie into the existing donate page and contact form on stxrobotics.com.</p></div>`;
+}
+};
+
+function renderTabs(){
+  const pend=S.mentors.filter(m=>m.pending).length;
+  const active=['mentors','about'].includes(S.tab)||(S.role==='staff'&&S.tab==='msgs')?'more':S.tab;
+  $('#tabbar').innerHTML=TABS[S.role].map(([k,l,i])=>`<button data-tab="${k}" aria-current="${active===k}">${ico(i)}${l}${k==='more'&&S.role==='staff'&&pend?`<span class="badge">${pend}</span>`:''}</button>`).join('');
+}
+function render(scrollTop=true){
+  renderTabs();
+  $('#content').innerHTML=V[S.tab]();
+  if(scrollTop)$('#content').scrollTop=0;
+  bind();
+}
+function go(t){S.tab=t;render()}
+function openSheet(html){
+  $('#sheet').innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`;
+  $('#sbg').onclick=e=>{if(e.target.id==='sbg')closeSheet()};
+}
+function closeSheet(){$('#sheet').innerHTML=''}
+function regSheet(id){
+  const c=S.camps.find(x=>x.id==id),full=c.filled>=c.cap;
+  openSheet(`<div class="eyebrow">${c.loc} · ${c.dates}</div><h2 style="font-size:22px">${full?'Join waitlist:':'Register for'} ${c.name}</h2><p class="lead" style="margin-bottom:14px">${full?'This session is full. You’ll get a text if a seat opens.':'Free, funded by local sponsors. Ages '+c.ages+'.'}</p>
+  <form id="regform">
+    <div class="two"><label for="f-kid">Child's name<input id="f-kid" required value="Lucas G."></label><label for="f-age">Age<input id="f-age" type="number" min="5" max="18" required value="9"></label></div>
+    <label for="f-parent">Parent or guardian<input id="f-parent" required value="Maria Garza"></label>
+    <label for="f-phone">Mobile phone<input id="f-phone" type="tel" value="(361) 555-0142"></label>
+    <label for="f-notes">Allergies or notes<input id="f-notes" placeholder="Optional"></label>
+    <label class="check"><input type="checkbox" id="f-sms" checked> Text me reminders, schedule changes and safety notices. Reply STOP anytime.</label>
+    <label class="check"><input type="checkbox" id="f-waiver" required> I agree to the participation waiver.</label>
+    <button class="btn block" type="submit">${full?'Join waitlist':'Complete registration'}</button>
+    <button class="btn out block" type="button" id="cancel">Cancel</button>
+  </form>`);
+  $('#cancel').onclick=closeSheet;
+  $('#regform').onsubmit=e=>{e.preventDefault();
+    const f=c.filled>=c.cap; if(f)c.wait++; else c.filled++;
+    S.regs.push({kid:$('#f-kid').value.trim()||'Your child',age:+$('#f-age').value,camp:c.id,status:f?'Waitlisted':'Confirmed'});
+    closeSheet();render(false);toast(f?`${$('#f-kid')?'':''}Added to the ${c.name} waitlist`:`Registered for ${c.name}`);
+  };
+}
+function printSheet(){
+  openSheet(`<div class="eyebrow">Print shop</div><h2 style="font-size:22px">Request a print</h2><form id="pf" style="margin-top:12px">
+    <label for="p-what">What to print<input id="p-what" required value="Claw bracket ×2"></label>
+    <label for="p-who">For<select id="p-who"><option>Team 2A</option><option>Team 2B</option><option>Team 2C</option><option>Portland camp</option><option>Robstown camp</option></select></label>
+    <label for="p-hrs">Estimated hours<input id="p-hrs" type="number" step="0.1" min="0.1" value="1.5"></label>
+    <label for="p-file">STL file<input id="p-file" type="file" accept=".stl,.3mf"></label>
+    <button class="btn block" type="submit">Add to queue</button><button class="btn out block" type="button" id="cancel">Cancel</button></form>`);
+  $('#cancel').onclick=closeSheet;
+  $('#pf').onsubmit=e=>{e.preventDefault();const id='P-'+(113+S.jobs.length);S.jobs.push({id,what:$('#p-what').value.trim(),who:$('#p-who').value,hrs:+$('#p-hrs').value||1,lane:'Queued'});closeSheet();render(false);toast(`${id} added to the queue`)};
+}
+function bind(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+  document.querySelectorAll('[data-loc]').forEach(b=>b.onclick=()=>{S.loc=b.dataset.loc;render(false)});
+  document.querySelectorAll('[data-reg]').forEach(b=>b.onclick=()=>regSheet(b.dataset.reg));
+  document.querySelectorAll('[data-rsvp]').forEach(b=>b.onclick=()=>{const k=b.dataset.rsvp;S.rsvp[k]=!S.rsvp[k];render(false);toast(S.rsvp[k]?'You’re on the list':'RSVP removed')});
+  const nx={Queued:'Printing',Printing:'Ready',Ready:'Done'};
+  document.querySelectorAll('[data-adv]').forEach(b=>b.onclick=()=>{const j=S.jobs.find(x=>x.id===b.dataset.adv);j.lane=nx[j.lane];if(j.lane==='Printing')j.printer='Prusa #3';render(false);toast(`${j.id} moved to ${j.lane}`)});
+  document.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>{const m=S.mentors.find(x=>x.name===b.dataset.ok),h=m.pending.h;m.hours+=h;m.pending=null;render(false);toast(`Approved ${h} h for ${m.name}`)});
+  document.querySelectorAll('[data-ret]').forEach(b=>b.onclick=()=>{const m=S.mentors.find(x=>x.name===b.dataset.ret);m.pending=null;render(false);toast(`Sent back to ${m.name} for edits`)});
+  const np=$('#newprint');if(np)np.onclick=printSheet;
+  const sg=$('#sign');if(sg)sg.onclick=()=>{sg.outerHTML='<span class="tag t-open">Signed</span>';toast('Waiver signed for Mateo G.')};
+  const dn=$('#donate');if(dn)dn.onclick=()=>go('about');
+  const mf=$('#msgform');if(mf){
+    const reach={'All families':212,'Robstown · Intro to Robotics':16,'Del Rio · Drone Flight Lab':11,'Portland · VEX V5 Bootcamp':9,'Alice · 3D Design & Print':14,'Competition team parents':18};
+    const upd=()=>{$('#m-prev').textContent=`STX Robotics ${$('#m-type').value}: ${$('#m-text').value}\nReply STOP to opt out.`;$('#m-reach').textContent=`${reach[$('#m-to').value]} families`};
+    ['#m-text','#m-to','#m-type'].forEach(s=>$(s).oninput=upd);upd();
+    mf.onsubmit=e=>{e.preventDefault();S.sent.push({to:$('#m-to').value,text:$('#m-text').value,when:'Just now'});render();toast('Demo only: no texts were sent')};
+  }
+}
+function setRole(r){S.role=r;$('#r-parent').setAttribute('aria-pressed',r==='parent');$('#r-staff').setAttribute('aria-pressed',r==='staff');
+  if(r==='parent'&&['prints','mentors'].includes(S.tab))S.tab='home';render()}
+$('#r-parent').onclick=()=>setRole('parent');$('#r-staff').onclick=()=>setRole('staff');
+const tick=()=>{const d=new Date();$('#clock').textContent=d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M/i,'')};tick();setInterval(tick,30000);
+render();
+</script>
+</body>
+</html>

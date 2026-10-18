@@ -1,0 +1,9 @@
+# Machine-local Claude settings
+.claude/settings.local.json
+
+# Impeccable's launcher binary (downloaded on first run)
+.claude/skills/impeccable/scripts/bin/
+.impeccable/config.local.json
+
+node_modules/
+.DS_Store
