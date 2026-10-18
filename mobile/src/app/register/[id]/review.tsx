@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import { formatPhone, isFull, register, seatsLeft, useStore } from '@/lib/store';
 import { Btn, Check, ErrorLine, FormScreen, Notice, Placeholder, StepStrip, T } from '@/ui/kit';
 import { c, space } from '@/ui/theme';
+import { useFrameOverlay } from '@/ui/PhoneFrame';
 
 export default function ReviewStep() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -118,31 +119,49 @@ export default function ReviewStep() {
 
 function WaiverSheet({ open, onClose, onAgree }: { open: boolean; onClose: () => void; onAgree: () => void }) {
   const insets = useSafeAreaInsets();
+  const frame = useFrameOverlay(); // set only on the framed web demo
+  const body = (
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: space, paddingTop: space + (insets.top > 30 ? 0 : 4), borderBottomWidth: 1, borderColor: c.line, backgroundColor: c.white }}>
+        <T v="h3" accessibilityRole="header" style={{ flex: 1 }}>
+          Participation waiver
+        </T>
+        <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={onClose} hitSlop={8} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+          <Feather name="x" size={24} color={c.black} />
+        </Pressable>
+      </View>
+      <ScrollView contentContainerStyle={{ padding: space, gap: 16 }}>
+        <Placeholder title="Placeholder · waiver">Waiver text goes here.</Placeholder>
+        <Placeholder title="Placeholder · signature">
+          How parents sign (checkbox or typed name) is still to be decided.
+        </Placeholder>
+      </ScrollView>
+      <View style={{ padding: space, paddingBottom: Math.max(insets.bottom, space), borderTopWidth: 1, borderColor: c.line, gap: 10 }}>
+        <Btn onPress={onAgree}>I agree</Btn>
+        <Btn kind="outline" onPress={onClose}>
+          Close
+        </Btn>
+      </View>
+    </View>
+  );
+
+  // Framed web demo: show the sheet inside the phone screen instead of over the whole page.
+  useEffect(() => {
+    if (!frame) return;
+    frame(
+      open ? (
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', paddingTop: insets.top + 8 }}>
+          {body}
+        </View>
+      ) : null,
+    );
+    return () => frame(null);
+  }, [frame, open]);
+
+  if (frame) return null;
   return (
     <Modal visible={open} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: c.bg }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', padding: space, paddingTop: space + (insets.top > 30 ? 0 : 4), borderBottomWidth: 1, borderColor: c.line, backgroundColor: c.white }}>
-          <T v="h3" accessibilityRole="header" style={{ flex: 1 }}>
-            Participation waiver
-          </T>
-          <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={onClose} hitSlop={8} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
-            <Feather name="x" size={24} color={c.black} />
-          </Pressable>
-        </View>
-        <ScrollView contentContainerStyle={{ padding: space, gap: 16 }}>
-          <Placeholder title="Placeholder · waiver">Waiver text goes here.</Placeholder>
-          <Placeholder title="Placeholder · signature">
-            How parents sign (checkbox or typed name) is still to be decided.
-          </Placeholder>
-        </ScrollView>
-        <View style={{ padding: space, paddingBottom: Math.max(insets.bottom, space), borderTopWidth: 1, borderColor: c.line, gap: 10 }}>
-          <Btn onPress={onAgree}>I agree</Btn>
-          <Btn kind="outline" onPress={onClose}>
-            Close
-          </Btn>
-        </View>
-      </View>
+      {body}
     </Modal>
   );
 }
-
