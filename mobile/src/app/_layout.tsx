@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { AtkinsonHyperlegible_400Regular, AtkinsonHyperlegible_700Bold, useFonts } from '@expo-google-fonts/atkinson-hyperlegible';
 import { StoreProvider } from '@/lib/store';
+import { PhoneFrame } from '@/ui/PhoneFrame';
 import { c, f } from '@/ui/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -16,6 +17,7 @@ export default function RootLayout() {
   if (!loaded && !error) return null;
 
   return (
+    <PhoneFrame>
     <StoreProvider>
       <StatusBar style="dark" />
       <Stack
@@ -43,5 +45,6 @@ export default function RootLayout() {
         />
       </Stack>
     </StoreProvider>
+    </PhoneFrame>
   );
 }
