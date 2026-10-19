@@ -7,3 +7,7 @@
 
 node_modules/
 .DS_Store
+
+# Claude skills and agents are installed locally (see skills-lock.json), not published
+.claude/skills/
+.claude/agents/
