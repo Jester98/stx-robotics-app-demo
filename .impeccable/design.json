@@ -545,6 +545,7 @@
     ]
   },
   "notes": [
-    "2026-10-19: soft style adopted (user screenshot): 16px cards with soft shadow, floating rounded app bar and tab bar, pill Parent/Staff switch, light stats row instead of the black band, 8px buttons, 4px tags. DESIGN.md is current; values elsewhere in this file that say square/flat are superseded."
+    "2026-10-19: soft style adopted (user screenshot): 16px cards with soft shadow, floating rounded app bar and tab bar, pill Parent/Staff switch, light stats row instead of the black band, 8px buttons, 4px tags. DESIGN.md is current; values elsewhere in this file that say square/flat are superseded.",
+    "2026-10-19: print queue removed; staff Schedule tab added (week strip, open shifts, event rows with initials circles, type tags incl. dark/ink for Speaker Series). Printer LED and idle colour retired. DESIGN.md is current."
   ]
 }

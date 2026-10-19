@@ -108,7 +108,7 @@ function FakeStatusBar() {
 const IN_DEMO: [string, string][] = [
   ['Camps', 'Register by community, with automatic waitlists'],
   ['Teams', 'VEX V5 tournaments, matches and practice RSVPs'],
-  ['Prints', '3D print requests from queue to pickup'],
+  ['Schedule', 'Week view, open shifts and staffing for every event'],
   ['Mentors', 'Log and approve student mentor hours'],
   ['Texts', 'Reminders to families who opted in'],
 ];

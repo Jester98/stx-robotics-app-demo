@@ -8,7 +8,7 @@ import { c, f, gutter, radius, shadow } from '@/ui/theme';
 import { Home } from '@/views/home';
 import { Camps } from '@/views/camps';
 import { Teams } from '@/views/teams';
-import { Prints } from '@/views/prints';
+import { Schedule } from '@/views/schedule';
 import { About, Mentors, Messages, More } from '@/views/staff';
 import { EventDetail, StaffCamps, StaffList } from '@/views/events';
 import { useApp } from '@/lib/state';
@@ -27,7 +27,7 @@ const TABS: Record<State['role'], [Tab, string, IconName][]> = {
     ['home', 'Home', 'home'],
     ['camps', 'Camps', 'camps'],
     ['teams', 'Teams', 'teams'],
-    ['prints', 'Prints', 'prints'],
+    ['sched', 'Schedule', 'sched'],
     ['more', 'More', 'more'],
   ],
 };
@@ -35,7 +35,7 @@ const VIEWS: Record<Tab, () => ReactNode> = {
   home: Home,
   camps: CampsTab,
   teams: Teams,
-  prints: Prints,
+  sched: Schedule,
   msgs: Messages,
   more: More,
   mentors: Mentors,
@@ -50,7 +50,8 @@ function CampsTab() {
 }
 
 // Sub-pages and the tab they belong to.
-const PARENT_TAB: Partial<Record<Tab, Tab>> = { mentors: 'more', about: 'more', staffList: 'more', event: 'camps' };
+const PARENT_TAB: Partial<Record<Tab, Tab>> = { mentors: 'more', about: 'more', staffList: 'more' };
+const parentOf = (s: State): Tab | undefined => (s.tab === 'event' ? s.eventFrom : PARENT_TAB[s.tab]);
 
 export default function AppScreen() {
   const insets = useSafeAreaInsets();
@@ -78,22 +79,22 @@ export default function AppScreen() {
     setS((p) => ({
       ...p,
       role,
-      tab: role === 'parent' && ['prints', 'mentors', 'staffList', 'event'].includes(p.tab) ? (p.tab === 'event' ? 'camps' : 'home') : p.tab,
+      tab: role === 'parent' && ['sched', 'mentors', 'staffList', 'event'].includes(p.tab) ? (p.tab === 'event' ? 'camps' : 'home') : p.tab,
     }));
 
   // Android back: close the sheet, then leave sub-pages, then go Home.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (sheetNode) return setSheetNode(null), true;
-      const up = s.role === 'staff' && s.tab === 'msgs' ? 'more' : PARENT_TAB[s.tab];
+      const up = s.role === 'staff' && s.tab === 'msgs' ? 'more' : parentOf(s);
       if (up) return go(up), true;
       if (s.tab !== 'home') return go('home'), true;
       return false;
     });
     return () => sub.remove();
-  }, [sheetNode, s.tab, s.role]);
+  }, [sheetNode, s]);
 
-  const active: Tab = s.role === 'staff' && s.tab === 'msgs' ? 'more' : (PARENT_TAB[s.tab] ?? s.tab);
+  const active: Tab = s.role === 'staff' && s.tab === 'msgs' ? 'more' : (parentOf(s) ?? s.tab);
   const pend = s.mentors.filter((m) => m.pending).length;
   const View_ = VIEWS[s.tab];
 

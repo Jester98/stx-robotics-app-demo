@@ -6,11 +6,13 @@ import {
   INFO,
   PEOPLE,
   ROLES,
-  THIS_WEEK,
   adults,
   adultsNeeded,
   person,
   roster,
+  shortBy,
+  inWeek,
+  thisWeekMonday,
   type Assignment,
   type Kind,
   type Role,
@@ -22,19 +24,22 @@ import { c, f, gutter, shadow } from '@/ui/theme';
 
 const FILTERS = ['All', 'Needs staff', 'This week', 'Portland', 'Robstown', 'Del Rio', 'Alice'];
 
-const short = (camp: Camp, a: Assignment[]) => Math.max(0, INFO[camp.id].need - a.length);
+const short = shortBy;
 const lead = (a: Assignment[]) => a.find((x) => x.role === 'Lead instructor');
 
 export function StaffCamps() {
   const { s, set } = useApp();
+  const week = thisWeekMonday();
+  // Multi-day camps only; one-off workshops, practices and competitions live in Schedule.
   const list = s.camps.filter((x) => {
+    if (x.scheduleOnly) return false;
     const a = s.assign[x.id] ?? [];
     if (s.staffFilter === 'All') return true;
     if (s.staffFilter === 'Needs staff') return short(x, a) > 0;
-    if (s.staffFilter === 'This week') return THIS_WEEK.includes(x.id);
+    if (s.staffFilter === 'This week') return inWeek(x, week);
     return x.loc === s.staffFilter;
   });
-  const open = (id: number) => set((p) => ({ ...p, eventId: id, tab: 'event' }));
+  const open = (id: number) => set((p) => ({ ...p, eventId: id, eventFrom: 'camps', tab: 'event' }));
 
   return (
     <>
@@ -65,7 +70,7 @@ export function StaffCamps() {
                       <View style={{ flex: 1 }}>
                         <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.32, textTransform: 'uppercase', color: c.maroon }}>
                           {x.loc}
-                          {THIS_WEEK.includes(x.id) ? ' · This week' : ''}
+                          {inWeek(x, week) ? ' · This week' : ''}
                         </Text>
                         <H3>{x.name}</H3>
                       </View>
@@ -115,11 +120,16 @@ export function EventDetail() {
   return (
     <>
       <Pad style={{ paddingBottom: 12 }}>
-        <BackLink to="Camps" onPress={() => go('camps')} />
+        <BackLink to={s.eventFrom === 'sched' ? 'Schedule' : 'Camps'} onPress={() => go(s.eventFrom)} />
         <Eyebrow style={{ marginTop: 10 }}>
           {x.loc} · {x.dates}
         </Eyebrow>
         <H2>{x.name}</H2>
+        {x.type && (
+          <View style={{ flexDirection: 'row', marginTop: 2, marginBottom: 2 }}>
+            <TypeTag type={x.type} />
+          </View>
+        )}
         <Lead>
           {x.filled} of {x.cap} seats · {a.length} of {need} staff
           {x.wait ? ` · ${x.wait} waiting` : ''}
@@ -152,6 +162,7 @@ function Overview({ camp }: { camp: Camp }) {
     ['Address', INFO[camp.id].address],
     ['Lead', l ? `${person(l.person).name} · ${person(l.person).phone}` : 'Not assigned yet'],
     ['Ages', camp.ages],
+    ['Type', camp.type ?? 'Camp'],
   ];
   return (
     <Sec title="Overview">
@@ -325,7 +336,9 @@ function Schedule({ camp }: { camp: Camp }) {
       <Stack>
         {INFO[camp.id].schedule.map(([title, detail], i) => (
           <Card key={i}>
-            <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.32, textTransform: 'uppercase', color: c.maroon }}>Day {i + 1}</Text>
+            <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.32, textTransform: 'uppercase', color: c.maroon }}>
+              {camp.start && camp.start === camp.end ? `Part ${i + 1}` : `Day ${i + 1}`}
+            </Text>
             <H3>{title}</H3>
             <Meta>{detail}</Meta>
           </Card>
@@ -343,7 +356,8 @@ function Kids({ camp }: { camp: Camp }) {
   return (
     <>
       <Sec title={`Kids · ${kids.length}`} right={<Meta style={{ fontSize: 12 }}>{flagged} flagged · {missing} waivers missing</Meta>}>
-        <Card>
+        {kids.length === 0 && <Empty>No one registered yet.</Empty>}
+        <Card style={kids.length ? undefined : { display: 'none' }}>
           {kids.map((k, i) => (
             <View key={k.name + i} style={{ paddingVertical: 9, paddingTop: i ? 9 : 0, borderTopWidth: i ? 1 : 0, borderColor: c.line, gap: 4 }}>
               <Row>
@@ -485,7 +499,7 @@ export function StaffList() {
                       <Pressable
                         key={camp.id}
                         accessibilityRole="link"
-                        onPress={() => set((st) => ({ ...st, eventId: camp.id, tab: 'event' }))}
+                        onPress={() => set((st) => ({ ...st, eventId: camp.id, eventFrom: camp.scheduleOnly ? 'sched' : 'camps', tab: 'event' }))}
                         hitSlop={{ top: 6, bottom: 6 }}
                       >
                         <Text style={{ fontFamily: f.regular, fontSize: 13, lineHeight: 19, color: c.ink }}>
@@ -505,3 +519,12 @@ export function StaffList() {
     </>
   );
 }
+
+const TYPE_TAG: Record<NonNullable<Camp['type']>, 'open' | 'blue' | 'full' | 'mute' | 'dark'> = {
+  Camp: 'open',
+  Workshop: 'blue',
+  Competition: 'full',
+  Practice: 'mute',
+  'Speaker Series': 'dark',
+};
+export const TypeTag = ({ type }: { type: NonNullable<Camp['type']> }) => <Tag kind={TYPE_TAG[type]}>{type}</Tag>;

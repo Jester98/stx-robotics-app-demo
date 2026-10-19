@@ -19,7 +19,6 @@ colors:
   warn-soft: "#fbf1dc"
   blue: "#2337ff"
   blue-soft: "#e8ebff"
-  idle: "#b6c0d1"
   bubble: "#e9e9eb"
   track: "#eef1f5"
 typography:
@@ -234,12 +233,6 @@ components:
   more-item:
     backgroundColor: "{colors.white}"
     padding: "14px"
-  printer-led:
-    backgroundColor: "{colors.good}"
-    size: "9px"
-  printer-led-idle:
-    backgroundColor: "{colors.idle}"
-    size: "9px"
 ---
 
 # Design System: STX Robotics App
@@ -272,7 +265,7 @@ The palette is high contrast: grey paper, near-black ink, one maroon voice, blac
 - **Maroon Wash** (`maroon-soft`): the background of the "full" tag.
 
 ### Secondary
-- **Band Black** (`black`): the toast, outline-button and chip strokes, selected chips print lane header rules, black progress bars and the logo's "ST".
+- **Band Black** (`black`): the toast, outline-button and chip strokes, selected chips, black progress bars and the logo's "ST".
 - **Site Blue** (`blue`, `blue-soft`): used sparingly, only for the informational tag (for example the SMS audience tag).
 
 ### Neutral
@@ -282,11 +275,10 @@ The palette is high contrast: grey paper, near-black ink, one maroon voice, blac
 - **Slate Muted** (`muted`): meta text, eyebrows, inactive tabs, the more-item chevron and the unchecked checkbox stroke.
 - **Hairline** (`line`): stats-row rules and dividers, list dividers inside cards, progress bar track, and the desktop backdrop. Track (`#eef1f5`) is the role-switch background.
 - **Field Stroke** (`field`): input borders, the sheet grabber and the fine-print rule in the info panel.
-- **Idle Light** (`idle`): an idle printer LED.
 - **Bubble Grey** (`bubble`): the SMS preview bubble, with #111 text.
 
 ### Status tones
-Each tag pairs a strong foreground with its soft wash: **good / good-soft** (open), **warn / warn-soft** (few seats left), **maroon / maroon-soft** (full or waitlist), **blue / blue-soft** (info), **muted / page** (neutral). `good` also lights an active printer LED and marks match wins. Maroon marks losses.
+Each tag pairs a strong foreground with its soft wash: **good / good-soft** (open), **warn / warn-soft** (few seats left), **maroon / maroon-soft** (full or waitlist), **blue / blue-soft** (info), **muted / page** (neutral). `good` also marks match wins and your own shifts' "on this shift" note. Maroon marks losses.
 
 ### Named Rules
 **The Maroon Speaks, Black Holds Rule.** Maroon is for brand and action: the primary button, the active state and links. Black is for structure and selection: outlines, selected chips and the toast. Do not swap them.
@@ -312,7 +304,7 @@ Each tag pairs a strong foreground with its soft wash: **good / good-soft** (ope
 - **Meta** (400, 13/19, muted): secondary facts such as dates, venues and counts. Small buttons, links and checkbox sentences are also 13px.
 - **Section title** (700, 13px, 1.56px tracking, uppercase, head): the header of each section, with an optional link on the right.
 - **Field label** (700, 12px, 0.72px, uppercase, head). **Chip** (700, 12px, 0.96px, uppercase).
-- **Eyebrow** (700, 11px, 1.54px, uppercase, muted, or maroon on team cards). **Label** (700, 11px, 1.32px, uppercase): role switch (1.1px), print lane headers, camp community and info-panel keys.
+- **Eyebrow** (700, 11px, 1.54px, uppercase, muted, or maroon on team cards). **Label** (700, 11px, 1.32px, uppercase): role switch (1.1px), camp community and info-panel keys.
 - **Tag** (700, 10.5px, 0.84px, uppercase). **Tab** (700, 10.5px, 0.63px, uppercase). **Stat label** (400, 10.5/14, 1.05px, uppercase, muted).
 - **Job id** (400, 11px, muted, tabular). **Badge** (700, 9.5px).
 
@@ -330,7 +322,7 @@ The layout is a single phone column: a floating app bar inset 12px, scrolling co
 - **Stacks** of cards are 10px apart (`spacing.stack`). **Rows** use a 12px gap. **Chips** sit 6px apart in a horizontal row that runs from gutter to gutter.
 - **Hello block:** on the page grey (no box), padded 14px top, 16px bottom and 18px sides. It holds the eyebrow, headline and lead at the top of Home.
 - **Stats row and donate card:** the stats row sits inside the gutter with 1px hairlines above and below, equal columns and 1px dividers with 12px left padding. The donate prompt is a maroon card with 16px corners and 16px padding.
-- **Print lanes** scroll sideways. Each lane is 78% of the width (up to 366) with a 10px gap and snapping, so the next stage peeks in.
+- **Open shifts** scroll sideways as 236px cards with a 10px gap, bleeding to the screen edges.
 - **Forms** stack fields 11px apart. A field label sits 4px above its input.
 
 **Desktop web** (wider than 820px): the app renders inside a 390×812 phone frame (the height shrinks to fit the window) on the `line` backdrop. From 960px wide, the info panel sits to its left with a 56px gap and 32px page padding. Native apps and narrow browsers render the app full screen with no frame.
@@ -350,7 +342,7 @@ Depth is soft and shallow. Cards, the floating app bar, the floating tab bar and
 
 ## Shapes
 
-Corners are soft and consistent: 16px for cards and the app bar, 20px for the tab bar and the top of the bottom sheet, 12px for warning banners and the toast, 8px for buttons and fields, 4px for tags and checkboxes, and full pills for chips and the role switch. Borders: 1px for fields and tags, 1.5px black for outline buttons and checkboxes, 1px hairlines for the stats row and list dividers, and the 2px black print-lane header rule. The SMS bubble is 18px with a 4px bottom-left tail, the LED is a 9px circle, the tab badge is a 16px pill, and the phone frame has 54px corners outside and 42px inside with a 110×30 island.
+Corners are soft and consistent: 16px for cards and the app bar, 20px for the tab bar and the top of the bottom sheet, 12px for warning banners and the toast, 8px for buttons and fields, 4px for tags and checkboxes, and full pills for chips and the role switch. Borders: 1px for fields and tags, 1.5px black for outline buttons and checkboxes, 1px hairlines for the stats row and list dividers. The SMS bubble is 18px with a 4px bottom-left tail, staff initials are 26px circles with a 2px white ring, the tab badge is a 16px pill, and the phone frame has 54px corners outside and 42px inside with a 110×30 island.
 
 ## Components
 
@@ -399,11 +391,8 @@ A 5px `line` track with a maroon fill (black for the alternate series), capped a
 - **Focus:** the border turns maroon and the selection color is maroon.
 - **Check:** an 18px box with 4px corners with a 1.5px border (muted, or maroon when ticked) and a white check, next to a 13px sentence. Opt-ins start unticked.
 
-### Printer LED
-A 9px circle: `good` when printing, `idle` when idle.
-
 ### Icons
-Stroke icons on a 24 grid with a 1.8 stroke and round caps and joins, drawn as SVG: home, camps, teams, prints, more, msg, clock, heart and doc. They are 23px in the tab bar and 22px in maroon on more-items. They are decorative and hidden from accessibility.
+Stroke icons on a 24 grid with a 1.8 stroke and round caps and joins, drawn as SVG: home, camps, teams, sched (calendar with dots), more, msg, clock, heart, doc and people. They are 23px in the tab bar and 22px in maroon on more-items. They are decorative and hidden from accessibility.
 
 ### Navigation
 - **App bar:** a floating white card with 16px corners and the float shadow, inset 12px from the screen edges, padded 10/10/10/16. The upright STX logo (maroon X) sits on the left. On the right is the role switch: a pill-shaped grey track (`#eef1f5`, 3px padding) holding PARENT and STAFF (11px bold uppercase, padded 6×13). The selected side is a white pill with the pill shadow and head-ink text; the other side is muted. It is a radio group with a 10pt vertical hit slop.
@@ -419,8 +408,11 @@ Solid black with 12px corners and 14px white text, padded 12×14, inset 16px eac
 ### SMS Bubble
 `bubble` grey with #111 14/20 text. Corners are 18px except a 4px bottom-left tail. It is padded 10×13, at most 92% wide and aligned left, inside a card titled "Phone preview" with a blue audience tag. The message always ends with "Reply STOP to opt out."
 
-### Print Lanes
-Queued, Printing, Ready and Done lanes scroll sideways and snap. Each lane header is the 11px label in head color with the lane name and count at either end, over a 2px black rule. Job cards are spaced 6px inside and show the job id and hours (11px muted tabular), the item (14px bold head), and meta.
+### Week Strip (staff Schedule)
+A white card holding the week label ("Week of Oct 19") between maroon ‹ › arrows, then seven equal day cells (Mon–Sun): an 10.5px uppercase weekday over a 17px bold date and a 5px dot. A day with events gets a maroon dot. The selected day is a maroon 12px-rounded cell with white text and a white dot; today, when not selected, has a maroon-soft fill and maroon text. Swiping the row sideways, or the arrows, changes the week; "Back to today" appears when you leave the current week.
+
+### Event Rows and Open-Shift Cards
+Event rows are cards with a 46px time column (start in bold 15, end in muted 12) next to the name (bold 15), a type tag and, when short, an amber "Needs N more" tag, the venue · town in meta, a maroon "Your shift: role · hours" line for the signed-in staff member, and a row of 26px initials circles (track grey; the signed-in person in maroon). Type tags: Camp green, Workshop blue, Competition maroon, Practice muted, Speaker Series ink on white. Open-shift cards are the same parts compressed into a 236px card with a small maroon "Take shift" button, or a green "You're on this shift" note.
 
 ### More Items
 Full-width rows with a white background, 1px `line` border and 14px padding (12px gap). Each has a 22px maroon icon, then a 15px title over meta, then a muted 18px chevron. Pressed turns page grey.

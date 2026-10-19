@@ -17,7 +17,6 @@ export const c = {
   warnSoft: '#fbf1dc',
   blue: '#2337ff',
   blueSoft: '#e8ebff',
-  idle: '#b6c0d1', // idle printer light
   bubble: '#e9e9eb', // SMS preview bubble
   track: '#eef1f5', // pill-switch track
 };

@@ -17,23 +17,23 @@ Expo / React Native, shipping to iOS and Android (user decision, 2026-10-18). Ba
 Two primary audiences, weighted equally at launch:
 
 - **Parents and guardians** of South Texas students: register kids for camps and programs, sign waivers, opt into texts, follow their kids' registrations and team activity, and donate. Usually on a phone, often between other obligations.
-- **Staff** of South Texas Robotics: run camps and seat counts, waitlists, competition teams, the 3D print queue, mentor-hour approvals, and family texts. Small team running programs across four communities.
+- **Staff** of South Texas Robotics: run camps and seat counts, waitlists, competition teams, the staff schedule and shifts, mentor-hour approvals, and family texts. Small team running programs across four communities.
 
 Later roles under consideration: Student and Mentor (student mentors already log hours in the prototype).
 
 ## Product Purpose
 
-The operating app for South Texas Robotics (stxrobotics.com), a 501(c)(3) nonprofit in Corpus Christi, TX that runs hands-on robotics and STEM education. It replaces scattered forms, texts and spreadsheets with one place where families sign up and stay informed, and staff run the programs. Success: families register and complete waivers without staff chasing them, and staff see seats, waitlists, prints and hours at a glance.
+The operating app for South Texas Robotics (stxrobotics.com), a 501(c)(3) nonprofit in Corpus Christi, TX that runs hands-on robotics and STEM education. It replaces scattered forms, texts and spreadsheets with one place where families sign up and stay informed, and staff run the programs. Success: families register and complete waivers without staff chasing them, and staff see seats, waitlists, shifts and hours at a glance.
 
 ## Positioning
 
-Built for one organization's real programs, not a generic camp or club platform: VEX V5 competition teams with engineering notebooks and tournaments, week-long summer camps with take-home 3D prints, a print shop queue, student mentor hours, library partnerships, and SMS that honors the consent the org already collects.
+Built for one organization's real programs, not a generic camp or club platform: VEX V5 competition teams with engineering notebooks and tournaments, week-long summer camps with take-home 3D prints, a staff schedule with open shifts, student mentor hours, library partnerships, and SMS that honors the consent the org already collects.
 
 ## Operating Context
 
 - Programs: VEX V5 competition teams (year-round; regional and state tournaments, engineering notebooks), summer camps (week-long, all ages, beginner friendly, take-home projects), STEM workshops (school visits, pop-ups, library partnerships), STEM Speaker Series.
 - Communities: Portland, Robstown, Del Rio, Alice, with programs at partner public libraries.
-- Print shop: requests arrive as STL uploads and move Queued → Printing → Ready → Done.
+- Staff schedule: every event (camps, workshops, competitions, practices, Speaker Series) on a week view; staff take open shifts.
 - SMS: the website contact form already collects consent for program registrations, event reminders, schedule changes and safety notifications ("Reply STOP to unsubscribe").
 - The public website is built with Astro and is separate from this app.
 
@@ -43,9 +43,9 @@ Feature scope, from `prototype/stx-robotics-app.html` (clickable concept, sample
 
 1. Camps and registration: filter by community, seat counts, automatic waitlist when full, parent/guardian info, SMS opt-in, waiver checkbox.
 2. Parent home: kids' registrations, outstanding waivers, latest updates, donate prompt.
-3. Staff dashboard: seats filled, waitlists, open prints, items needing attention.
+3. Staff dashboard: seats filled, waitlists, open shifts, items needing attention.
 4. Competition teams: team cards (VEX team numbers, notebook progress), practice schedule with RSVP, tournaments, match results.
-5. 3D print queue: printer status, request form with STL upload.
+5. Staff schedule: week view, open shifts with Take shift, My shifts, add event (the 3D print queue was removed, 2026-10-19).
 6. Mentor hours: student mentors log hours; staff approve or return them; season totals.
 7. Family texts: compose an SMS to a group (camp, team, all), phone preview, automatic STOP footer.
 
@@ -79,7 +79,7 @@ Open decisions:
 2. Fewer steps for families: registration, waivers and opt-ins should finish in one sitting without staff follow-up.
 3. Protect kids' data by default: ask only for what a program needs, and keep sensitive fields behind auth.
 4. Respect consent: no message goes to a family that hasn't opted in, and STOP always works.
-5. Show the real work: teams, prints and mentor hours are the organization's story; surface them honestly, never with invented numbers.
+5. Show the real work: teams, events and mentor hours are the organization's story; surface them honestly, never with invented numbers.
 
 ## Accessibility & Inclusion
 

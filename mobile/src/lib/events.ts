@@ -1,18 +1,28 @@
-// Staff-side sample data for running camps. All names, addresses, phone numbers,
-// schedules and notes are made up for the client demo.
+// Staff-side sample data for running events. All names, addresses, phone numbers,
+// schedules and notes are made up for the client demo. Fall events are placed
+// relative to the current week, so "this week" always has something in it.
 import type { Camp, Reg } from './state';
+import { addDays, dayShort, isWeekday, monday, monthDay, range, today } from './dates';
 
 export type Kind = 'Staff' | 'Volunteer' | 'Student mentor';
 export type Role = 'Lead instructor' | 'Assistant' | 'Student mentor' | 'Volunteer';
+export type EvType = 'Camp' | 'Workshop' | 'Competition' | 'Practice' | 'Speaker Series';
 export type Person = { id: string; name: string; kind: Kind; town: string; phone: string };
 export type Assignment = { person: string; role: Role; days: string; hours: string };
 export type Note = { by: string; when: string; text: string };
 export type Supply = { item: string; need: string };
+export type Info = { need: number; address: string; schedule: [string, string][]; supplies: Supply[] };
 
 export const ROLES: Role[] = ['Lead instructor', 'Assistant', 'Student mentor', 'Volunteer'];
+export const TYPES: EvType[] = ['Camp', 'Workshop', 'Competition', 'Practice', 'Speaker Series'];
+export const TOWNS = ['Portland', 'Robstown', 'Del Rio', 'Alice'];
 export const ADULT_RATIO = 8; // sample rule: at least 1 adult per 8 kids
 
+/** The signed-in staff member in the demo. */
+export const ME = 'p12';
+
 export const PEOPLE: Person[] = [
+  { id: 'p12', name: 'Coach Alex', kind: 'Staff', town: 'Portland', phone: '(361) 555-0112' },
   { id: 'p1', name: 'Laura R.', kind: 'Staff', town: 'Robstown', phone: '(361) 555-0101' },
   { id: 'p2', name: 'Marcus J.', kind: 'Staff', town: 'Portland', phone: '(361) 555-0102' },
   { id: 'p3', name: 'Elena V.', kind: 'Staff', town: 'Del Rio', phone: '(830) 555-0103' },
@@ -27,29 +37,29 @@ export const PEOPLE: Person[] = [
 ];
 export const person = (id: string) => PEOPLE.find((p) => p.id === id)!;
 export const isAdult = (id: string) => person(id).kind !== 'Student mentor';
+export const initials = (name: string) =>
+  name
+    .replace('.', '')
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
-// A staff-only event so "This week" has something in it (the summer camps are next year).
-export const WORKSHOP: Camp = {
-  id: 7,
-  name: 'Fall Library Workshop',
-  loc: 'Portland',
-  ages: '8–12',
-  dates: 'Oct 19–23, 2026',
-  time: '4:00–6:00',
-  venue: 'Bell Whittington Library',
-  cap: 12,
-  filled: 10,
-  wait: 0,
-  staffOnly: true,
+const ADDRESS: Record<string, string> = {
+  Portland: '300 Sample Rd, Portland, TX',
+  Robstown: '100 Sample St, Robstown, TX',
+  'Del Rio': '200 Sample Ave, Del Rio, TX',
+  Alice: '400 Sample St, Alice, TX',
 };
-export const THIS_WEEK = [7];
+export const addressFor = (town: string) => ADDRESS[town] ?? `${town}, TX`;
 
-type Info = { need: number; address: string; schedule: [string, string][]; supplies: Supply[] };
+// ---- Summer camps (fixed dates, from the prototype) ----
+type Summer = { id: number; start: string; end: string; need: number; schedule: [string, string][]; supplies: Supply[] };
 const kits = (c: number) => `${c} robot kits`;
-export const INFO: Record<number, Info> = {
-  1: {
-    need: 4,
-    address: '100 Sample St, Robstown, TX',
+const SUMMER: Summer[] = [
+  {
+    id: 1, start: '2027-06-07', end: '2027-06-11', need: 4,
     schedule: [
       ['Intro and first build', 'Meet the kit, safety talk, build a driving base.'],
       ['Sensors', 'Add a touch sensor; robots that stop at walls.'],
@@ -57,17 +67,10 @@ export const INFO: Record<number, Info> = {
       ['Challenge day', 'Teams run the obstacle course.'],
       ['Showcase', 'Families visit at 11:00; take-home prints.'],
     ],
-    supplies: [
-      { item: kits(16), need: '16' },
-      { item: 'Laptops', need: '8' },
-      { item: 'Take-home 3D prints (name plates)', need: '16' },
-      { item: 'Name badges', need: '20' },
-      { item: 'First-aid kit', need: '1' },
-    ],
+    supplies: [{ item: kits(16), need: '16' }, { item: 'Laptops', need: '8' }, { item: 'Take-home 3D prints (name plates)', need: '16' }, { item: 'Name badges', need: '20' }, { item: 'First-aid kit', need: '1' }],
   },
-  2: {
-    need: 3,
-    address: '200 Sample Ave, Del Rio, TX',
+  {
+    id: 2, start: '2027-06-14', end: '2027-06-18', need: 3,
     schedule: [
       ['Intro and safety', 'Flight rules, propeller safety, first hover.'],
       ['Controls', 'Takeoff, hover and landing drills.'],
@@ -75,17 +78,10 @@ export const INFO: Record<number, Info> = {
       ['Obstacle course', 'Fly through hoops in teams.'],
       ['Showcase', 'Demo flights for families; take-home frames.'],
     ],
-    supplies: [
-      { item: '14 drone kits', need: '14' },
-      { item: 'Laptops', need: '7' },
-      { item: 'Take-home 3D prints (drone frames)', need: '14' },
-      { item: 'Spare propellers', need: '30' },
-      { item: 'First-aid kit', need: '1' },
-    ],
+    supplies: [{ item: '14 drone kits', need: '14' }, { item: 'Laptops', need: '7' }, { item: 'Take-home 3D prints (drone frames)', need: '14' }, { item: 'Spare propellers', need: '30' }, { item: 'First-aid kit', need: '1' }],
   },
-  3: {
-    need: 4,
-    address: '300 Sample Rd, Portland, TX',
+  {
+    id: 3, start: '2027-06-21', end: '2027-06-25', need: 4,
     schedule: [
       ['Intro and first build', 'VEX V5 parts, build a clawbot.'],
       ['Drivetrains', 'Tune gears and drive control.'],
@@ -93,17 +89,10 @@ export const INFO: Record<number, Info> = {
       ['Scrimmage', 'Practice matches in alliances.'],
       ['Mini tournament', 'Bracket play; families welcome at 2:00.'],
     ],
-    supplies: [
-      { item: '10 VEX V5 kits', need: '10' },
-      { item: 'Laptops', need: '10' },
-      { item: 'Field tiles and game elements', need: '1 set' },
-      { item: 'Batteries (charged)', need: '20' },
-      { item: 'First-aid kit', need: '1' },
-    ],
+    supplies: [{ item: '10 VEX V5 kits', need: '10' }, { item: 'Laptops', need: '10' }, { item: 'Field tiles and game elements', need: '1 set' }, { item: 'Batteries (charged)', need: '20' }, { item: 'First-aid kit', need: '1' }],
   },
-  4: {
-    need: 3,
-    address: '400 Sample St, Alice, TX',
+  {
+    id: 4, start: '2027-06-28', end: '2027-07-02', need: 3,
     schedule: [
       ['Intro to 3D design', 'Shapes and measuring in Tinkercad.'],
       ['Design a keychain', 'Personal keychain models.'],
@@ -111,17 +100,10 @@ export const INFO: Record<number, Info> = {
       ['Design challenge', 'Design a phone stand.'],
       ['Showcase', 'Take-home prints and families visit.'],
     ],
-    supplies: [
-      { item: 'Laptops', need: '16' },
-      { item: 'Take-home 3D prints (keychains)', need: '16' },
-      { item: 'Calipers', need: '8' },
-      { item: 'Filament spools', need: '4' },
-      { item: 'First-aid kit', need: '1' },
-    ],
+    supplies: [{ item: 'Laptops', need: '16' }, { item: 'Take-home 3D prints (keychains)', need: '16' }, { item: 'Calipers', need: '8' }, { item: 'Filament spools', need: '4' }, { item: 'First-aid kit', need: '1' }],
   },
-  5: {
-    need: 2,
-    address: '100 Sample St, Robstown, TX',
+  {
+    id: 5, start: '2027-07-12', end: '2027-07-16', need: 2,
     schedule: [
       ['What is electricity?', 'Batteries, bulbs and safe circuits.'],
       ['Switches', 'Build a light with a switch.'],
@@ -129,17 +111,10 @@ export const INFO: Record<number, Info> = {
       ['Build a nightlight', 'Combine parts into a project.'],
       ['Showcase', 'Families visit; take-home circuit cards.'],
     ],
-    supplies: [
-      { item: '12 circuit kits', need: '12' },
-      { item: 'AA batteries', need: '48' },
-      { item: 'Take-home 3D prints (circuit cases)', need: '12' },
-      { item: 'Name badges', need: '15' },
-      { item: 'First-aid kit', need: '1' },
-    ],
+    supplies: [{ item: '12 circuit kits', need: '12' }, { item: 'AA batteries', need: '48' }, { item: 'Take-home 3D prints (circuit cases)', need: '12' }, { item: 'Name badges', need: '15' }, { item: 'First-aid kit', need: '1' }],
   },
-  6: {
-    need: 4,
-    address: '300 Sample Rd, Portland, TX',
+  {
+    id: 6, start: '2027-07-19', end: '2027-07-23', need: 4,
     schedule: [
       ['Intro and first program', 'Meet the robots; first commands.'],
       ['Loops', 'Patterns and dances with loops.'],
@@ -147,32 +122,111 @@ export const INFO: Record<number, Info> = {
       ['Maze challenge', 'Program through a maze.'],
       ['Showcase', 'Families visit at 3:00.'],
     ],
-    supplies: [
-      { item: kits(16), need: '16' },
-      { item: 'Laptops', need: '8' },
-      { item: 'Maze boards', need: '4' },
-      { item: 'Name badges', need: '20' },
-      { item: 'First-aid kit', need: '1' },
-    ],
+    supplies: [{ item: kits(16), need: '16' }, { item: 'Laptops', need: '8' }, { item: 'Maze boards', need: '4' }, { item: 'Name badges', need: '20' }, { item: 'First-aid kit', need: '1' }],
   },
-  7: {
-    need: 2,
-    address: '300 Sample Rd, Portland, TX',
-    schedule: [
-      ['Mon · Build', 'Build a simple robot.'],
-      ['Tue · Code', 'Make it drive.'],
-      ['Wed · Sensors', 'Add a sensor.'],
-      ['Thu · Challenge', 'Team challenge.'],
-      ['Fri · Share', 'Show families.'],
-    ],
-    supplies: [
-      { item: kits(12), need: '12' },
-      { item: 'Laptops', need: '6' },
-      { item: 'Name badges', need: '12' },
-      { item: 'First-aid kit', need: '1' },
-    ],
-  },
+];
+/** Fields the schedule needs on the prototype's summer camps. */
+export const SUMMER_EXTRA: Record<number, Pick<Camp, 'type' | 'start' | 'end'>> = Object.fromEntries(
+  SUMMER.map((x) => [x.id, { type: 'Camp' as const, start: x.start, end: x.end }]),
+);
+
+// ---- One-day plans and supplies by type (used for fall events and added events) ----
+export function planFor(type: EvType, time: string): [string, string][] {
+  const t = time.split('–')[0];
+  const plans: Record<EvType, [string, string][]> = {
+    Camp: [['Build', 'Build and test the day’s robot.'], ['Code', 'Program it to finish a task.'], ['Share', 'Show the group what works.']],
+    Workshop: [[`${t} · Welcome`, 'Sign-in, name badges, safety talk.'], ['Hands-on build', 'Small groups with one helper each.'], ['Wrap-up', 'Show and tell; clean up kits.']],
+    Competition: [[`${t} · Check-in`, 'Robot inspection and pit setup.'], ['Qualification matches', 'Rotate drivers; notebook ready for judges.'], ['Alliance selection and finals', 'Awards at the end of the day.']],
+    Practice: [[`${t} · Warm-up`, 'Charge batteries, check robots.'], ['Drills', 'Driver skills and autonomous runs.'], ['Notebook', 'Log changes and plan next steps.']],
+    'Speaker Series': [[`${t} · Doors open`, 'Seat families; sign-in table.'], ['Talk', 'Guest speaker, about 40 minutes.'], ['Q&A and demos', 'Students show their robots.']],
+  };
+  return plans[type];
+}
+export function suppliesFor(type: EvType): Supply[] {
+  const base: Record<EvType, Supply[]> = {
+    Camp: [{ item: kits(12), need: '12' }, { item: 'Laptops', need: '6' }, { item: 'Name badges', need: '15' }, { item: 'First-aid kit', need: '1' }],
+    Workshop: [{ item: kits(10), need: '10' }, { item: 'Sign-in sheet and badges', need: '1' }, { item: 'Extension cords', need: '2' }, { item: 'First-aid kit', need: '1' }],
+    Competition: [{ item: 'Competition robots', need: '3' }, { item: 'Charged batteries', need: '12' }, { item: 'Engineering notebooks', need: '3' }, { item: 'Pit toolbox', need: '1' }, { item: 'First-aid kit', need: '1' }],
+    Practice: [{ item: 'Charged batteries', need: '8' }, { item: 'Field tiles', need: '1 set' }, { item: 'Laptops', need: '3' }],
+    'Speaker Series': [{ item: 'Projector and clicker', need: '1' }, { item: 'Chairs set out', need: '40' }, { item: 'Demo robots', need: '2' }, { item: 'Sign-in sheet', need: '1' }],
+  };
+  return base[type];
+}
+
+// ---- Fall events, relative to this week ----
+type Fall = {
+  id: number;
+  name: string;
+  type: EvType;
+  loc: string;
+  venue: string;
+  week: number; // 0 = this week
+  day: number; // 0 = Monday
+  days?: number; // weekdays it runs, for camps
+  time: string;
+  ages: string;
+  cap: number;
+  filled: number;
+  need: number;
+  staff: [string, Role][];
 };
+const FALL: Fall[] = [
+  { id: 7, name: 'Fall After-School Camp', type: 'Camp', loc: 'Portland', venue: 'Bell Whittington Library', week: 0, day: 0, days: 5, time: '4:00–6:00', ages: '8–12', cap: 12, filled: 10, need: 2, staff: [['p2', 'Lead instructor']] },
+  { id: 8, name: 'Team 2A practice: drivetrain tuning', type: 'Practice', loc: 'Portland', venue: 'STX build room', week: 0, day: 1, time: '5:30–7:30', ages: '13–17', cap: 7, filled: 7, need: 2, staff: [['p12', 'Lead instructor'], ['p8', 'Student mentor']] },
+  { id: 9, name: 'Library pop-up: build a bristlebot', type: 'Workshop', loc: 'Robstown', venue: 'Robstown Public Library', week: 0, day: 2, time: '4:00–6:00', ages: '7–11', cap: 16, filled: 14, need: 3, staff: [['p1', 'Lead instructor'], ['p9', 'Student mentor']] },
+  { id: 10, name: 'STEM Speaker Series: Engineers at Work', type: 'Speaker Series', loc: 'Alice', venue: 'Alice Public Library', week: 0, day: 3, time: '6:30–8:00', ages: '8–17', cap: 40, filled: 26, need: 2, staff: [['p4', 'Lead instructor']] },
+  { id: 11, name: 'Mock qualifier', type: 'Practice', loc: 'Portland', venue: 'STX build room', week: 0, day: 5, time: '10:00–2:00', ages: '12–17', cap: 18, filled: 18, need: 3, staff: [['p2', 'Lead instructor'], ['p12', 'Assistant'], ['p11', 'Student mentor']] },
+  { id: 12, name: 'Drone basics workshop', type: 'Workshop', loc: 'Del Rio', venue: 'Val Verde County Library', week: 1, day: 0, time: '4:00–6:00', ages: '10–14', cap: 12, filled: 9, need: 2, staff: [['p3', 'Lead instructor']] },
+  { id: 13, name: 'Team 2B practice: autonomous routines', type: 'Practice', loc: 'Portland', venue: 'STX build room', week: 1, day: 1, time: '5:30–7:30', ages: '13–17', cap: 6, filled: 6, need: 2, staff: [['p12', 'Lead instructor'], ['p11', 'Student mentor']] },
+  { id: 14, name: '3D design pop-up', type: 'Workshop', loc: 'Alice', venue: 'Alice Public Library', week: 1, day: 2, time: '3:30–5:30', ages: '9–13', cap: 14, filled: 12, need: 2, staff: [['p4', 'Lead instructor'], ['p10', 'Student mentor']] },
+  { id: 15, name: 'School visit: robots in class', type: 'Workshop', loc: 'Robstown', venue: 'Robstown Elementary (sample)', week: 1, day: 3, time: '9:00–11:30', ages: '8–10', cap: 24, filled: 24, need: 3, staff: [['p1', 'Lead instructor']] },
+  { id: 16, name: 'Coastal Bend VEX Qualifier', type: 'Competition', loc: 'Robstown', venue: 'Robstown High School gym (sample)', week: 1, day: 5, time: '7:00–5:00', ages: '12–17', cap: 18, filled: 18, need: 4, staff: [['p2', 'Lead instructor'], ['p12', 'Assistant'], ['p5', 'Volunteer']] },
+  { id: 17, name: 'Thanksgiving Break Robotics Camp', type: 'Camp', loc: 'Robstown', venue: 'Robstown Public Library', week: 2, day: 0, days: 3, time: '9:00–12:00', ages: '8–12', cap: 16, filled: 11, need: 3, staff: [['p1', 'Lead instructor'], ['p6', 'Volunteer']] },
+  { id: 18, name: 'STEM Speaker Series: Drones on the Farm', type: 'Speaker Series', loc: 'Del Rio', venue: 'Val Verde County Library', week: 2, day: 1, time: '6:30–8:00', ages: '8–17', cap: 40, filled: 19, need: 2, staff: [['p3', 'Lead instructor'], ['p12', 'Assistant']] },
+  { id: 19, name: 'Team 2C rookie practice', type: 'Practice', loc: 'Alice', venue: 'Alice Public Library', week: 2, day: 2, time: '4:30–6:30', ages: '12–15', cap: 5, filled: 5, need: 2, staff: [['p4', 'Lead instructor']] },
+  { id: 20, name: 'Border Region VEX Qualifier', type: 'Competition', loc: 'Del Rio', venue: 'Del Rio High School gym (sample)', week: 2, day: 5, time: '7:00–5:00', ages: '12–17', cap: 12, filled: 12, need: 3, staff: [['p3', 'Lead instructor']] },
+];
+
+// On a weekend the current week is almost over, so the sample "this week" is the coming one.
+const W0 = monday(addDays(today(), 2));
+const startOf = (x: Fall) => addDays(W0, x.week * 7 + x.day);
+const endOf = (x: Fall) => addDays(startOf(x), (x.days ?? 1) - 1);
+const dayLabel = (x: Fall) => (x.days ? `${dayShort(startOf(x))}–${dayShort(endOf(x))}` : `${dayShort(startOf(x))} ${monthDay(startOf(x))}`);
+
+export const FALL_CAMPS: Camp[] = FALL.map((x) => ({
+  id: x.id,
+  name: x.name,
+  loc: x.loc,
+  ages: x.ages,
+  dates: range(startOf(x), endOf(x)),
+  time: x.time,
+  venue: x.venue,
+  cap: x.cap,
+  filled: x.filled,
+  wait: 0,
+  staffOnly: true,
+  scheduleOnly: x.type !== 'Camp',
+  type: x.type,
+  start: startOf(x),
+  end: endOf(x),
+}));
+
+// Mutable on purpose: "+ Add event" registers its details here (demo only).
+export const INFO: Record<number, Info> = {
+  ...Object.fromEntries(SUMMER.map((x) => [x.id, { need: x.need, address: '', schedule: x.schedule, supplies: x.supplies }])),
+  ...Object.fromEntries(
+    FALL.map((x) => [
+      x.id,
+      { need: x.need, address: addressFor(x.loc), schedule: x.days ? planFor('Camp', x.time).slice(0, x.days) : planFor(x.type, x.time), supplies: suppliesFor(x.type) },
+    ]),
+  ),
+};
+INFO[1].address = addressFor('Robstown');
+INFO[2].address = addressFor('Del Rio');
+INFO[3].address = addressFor('Portland');
+INFO[4].address = addressFor('Alice');
+INFO[5].address = addressFor('Robstown');
+INFO[6].address = addressFor('Portland');
 
 const FULL_WEEK = 'Mon–Fri';
 export const INITIAL_ASSIGN: Record<number, Assignment[]> = {
@@ -204,18 +258,25 @@ export const INITIAL_ASSIGN: Record<number, Assignment[]> = {
     { person: 'p2', role: 'Lead instructor', days: FULL_WEEK, hours: '12:30–4:30' },
     { person: 'p8', role: 'Student mentor', days: FULL_WEEK, hours: '1:00–4:00' },
   ],
-  7: [{ person: 'p2', role: 'Lead instructor', days: FULL_WEEK, hours: '3:30–6:30' }],
+  ...Object.fromEntries(FALL.map((x) => [x.id, x.staff.map(([p, role]) => ({ person: p, role, days: dayLabel(x), hours: x.time }))])),
 };
 
 export const INITIAL_NOTES: Record<number, Note[]> = Object.fromEntries(
   Object.keys(INFO).map((id) => [
     Number(id),
     [
-      { by: 'Laura R.', when: 'Oct 14', text: 'Library room is booked; the side door opens at 8:15. Park behind the building.' },
-      { by: 'Marcus J.', when: 'Oct 16', text: 'Two kids need early pickup on Friday. Check the sign-out sheet before anyone leaves.' },
+      { by: 'Laura R.', when: monthDay(addDays(today(), -4)), text: 'Room is booked; the side door opens 15 minutes before start. Park behind the building.' },
+      { by: 'Marcus J.', when: monthDay(addDays(today(), -2)), text: 'Two kids need early pickup. Check the sign-out sheet before anyone leaves.' },
     ],
   ]),
 );
+
+// ---- Calendar helpers ----
+/** Does event `x` run on day `d`? Multi-day events skip weekends. */
+export const runsOn = (x: Camp, d: string) =>
+  !!x.start && !!x.end && x.start <= d && d <= x.end && (x.start === x.end || isWeekday(d));
+export const inWeek = (x: Camp, mon: string) => !!x.start && !!x.end && x.start <= addDays(mon, 6) && x.end >= mon;
+export const thisWeekMonday = () => W0;
 
 // Sample kid roster. Parent-flow registrations come first, so a child registered
 // on the parent side shows up here.
@@ -245,6 +306,7 @@ export function roster(camp: Camp, regs: Reg[], parentWaiverSigned: boolean): { 
   return { kids, waitlist };
 }
 
-export const staffCount = (a: Assignment[]) => a.length;
 export const adults = (a: Assignment[]) => a.filter((x) => isAdult(x.person)).length;
 export const adultsNeeded = (kids: number) => Math.ceil(kids / ADULT_RATIO);
+/** How many more people an event needs. */
+export const shortBy = (x: Camp, a: Assignment[]) => Math.max(0, (INFO[x.id]?.need ?? 0) - a.length);

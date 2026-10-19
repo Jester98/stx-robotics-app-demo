@@ -3,6 +3,8 @@ import { useApp, type Camp, type Reg } from '@/lib/state';
 import { Band, Bar, Btn, Card, Eyebrow, H2, H3, Lead, Link, Meta, Row, Sec, Stack, Tag, Body } from '@/ui/kit';
 import { c, f, gutter, radius, shadow } from '@/ui/theme';
 import { campTag } from './camps';
+import { shortBy } from '@/lib/events';
+import { today } from '@/lib/dates';
 
 function Hello({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
   return (
@@ -124,6 +126,8 @@ function StaffHome() {
   const { s: all, go } = useApp();
   // Home keeps the prototype's summer-camp numbers; staff-only events live in Camps.
   const s = { ...all, camps: all.camps.filter((x) => !x.staffOnly) };
+  const now = today();
+  const openShifts = all.camps.filter((x) => x.end && x.end >= now && shortBy(x, all.assign[x.id] ?? []) > 0);
   const seats = s.camps.reduce((a, x) => a + x.filled, 0);
   const cap = s.camps.reduce((a, x) => a + x.cap, 0);
   const wait = s.camps.reduce((a, x) => a + x.wait, 0);
@@ -145,7 +149,7 @@ function StaffHome() {
             'Seats filled',
           ],
           [String(wait), 'Waitlisted'],
-          [String(s.jobs.filter((j) => j.lane !== 'Done').length), 'Open prints'],
+          [String(openShifts.length), 'Open shifts'],
         ]}
       />
       <Sec title="Needs attention">
@@ -177,11 +181,11 @@ function StaffHome() {
           <Card>
             <Row>
               <View style={{ flex: 1 }}>
-                <H3>Pickup ready: drone frames</H3>
-                <Meta>Del Rio camp · P-115</Meta>
+                <H3>{openShifts.length} upcoming events need staff</H3>
+                <Meta>{openShifts.slice(0, 2).map((x) => x.name).join(', ')}</Meta>
               </View>
-              <Btn sm kind="out" onPress={() => go('prints')}>
-                Queue
+              <Btn sm kind="out" onPress={() => go('sched')}>
+                Schedule
               </Btn>
             </Row>
           </Card>

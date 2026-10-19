@@ -86,13 +86,14 @@ export function Link({ children, onPress }: { children: string; onPress: () => v
   );
 }
 
-type TagKind = 'open' | 'few' | 'full' | 'blue' | 'mute';
+type TagKind = 'open' | 'few' | 'full' | 'blue' | 'mute' | 'dark';
 const TAGS: Record<TagKind, [string, string]> = {
   open: [c.good, c.goodSoft],
   few: [c.warn, c.warnSoft],
   full: [c.maroon, c.maroonSoft],
   blue: [c.blue, c.blueSoft],
   mute: [c.muted, c.bg],
+  dark: [c.head, c.white],
 };
 export function Tag({ kind, children }: { kind: TagKind; children: ReactNode }) {
   const [fg, bg] = TAGS[kind];
@@ -272,19 +273,16 @@ export function Check({ on, onChange, children }: { on: boolean; onChange: (v: b
 
 export const Empty = ({ children }: { children: string }) => <Meta>{children}</Meta>;
 
-export const Led = ({ on }: { on: boolean }) => (
-  <View style={{ width: 9, height: 9, borderRadius: 4.5, backgroundColor: on ? c.good : c.idle }} />
-);
 
 /** The prototype's stroke icons. */
-export type IconName = 'home' | 'camps' | 'teams' | 'prints' | 'more' | 'msg' | 'clock' | 'heart' | 'doc' | 'people';
+export type IconName = 'home' | 'camps' | 'teams' | 'sched' | 'more' | 'msg' | 'clock' | 'heart' | 'doc' | 'people';
 export function Icon({ name, color, size = 23 }: { name: IconName; color: string; size?: number }) {
   const s = { stroke: color, strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
   const shapes: Record<IconName, ReactNode> = {
     home: <><Path d="M3 11l9-7 9 7" {...s} /><Path d="M5 10v10h14V10" {...s} /><Path d="M10 20v-6h4v6" {...s} /></>,
     camps: <><Rect x={3} y={5} width={18} height={16} {...s} /><Path d="M3 10h18M8 3v4M16 3v4" {...s} /></>,
     teams: <><Rect x={5} y={8} width={14} height={10} {...s} /><Path d="M12 4v4M9 13h.01M15 13h.01M3 12v3M21 12v3M9 18v2M15 18v2" {...s} /></>,
-    prints: <><Path d="M6 9V3h12v6" {...s} /><Rect x={3} y={9} width={18} height={8} {...s} /><Path d="M7 17v4h10v-4" {...s} /></>,
+    sched: <><Rect x={3} y={5} width={18} height={16} {...s} /><Path d="M3 10h18M8 3v4M16 3v4" {...s} /><Path d="M7 14h.01M12 14h.01M17 14h.01M7 17.5h.01M12 17.5h.01" {...s} strokeWidth={2.6} /></>,
     more: <><Circle cx={5} cy={12} r={1.3} {...s} /><Circle cx={12} cy={12} r={1.3} {...s} /><Circle cx={19} cy={12} r={1.3} {...s} /></>,
     msg: <Path d="M4 5h16v11H8l-4 4z" {...s} />,
     clock: <><Circle cx={12} cy={12} r={9} {...s} /><Path d="M12 7v5l3 2" {...s} /></>,
