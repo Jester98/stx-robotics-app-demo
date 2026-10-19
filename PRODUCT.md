@@ -19,7 +19,7 @@ Two primary audiences, weighted equally at launch:
 - **Parents and guardians** of South Texas students: register kids for camps and programs, sign waivers, opt into texts, follow their kids' registrations and team activity, and donate. Usually on a phone, often between other obligations.
 - **Staff** of South Texas Robotics: run camps and seat counts, waitlists, competition teams, the staff schedule and shifts, mentor-hour approvals, and family texts. Small team running programs across four communities.
 
-Later roles under consideration: Student and Mentor (student mentors already log hours in the prototype).
+The demo has five roles, picked on a "Who are you?" start screen (in the real app an administrator assigns them): Parent, Student mentor, Volunteer, Staff, Administrator. Mentors and volunteers see their shifts, take open ones, log hours and request to drop shifts. Staff run events, check kids in and out, add people and text families. Administrators can also remove people, approve hours, drops and new volunteers, and change roles. Kid details (medical notes, pickup, parent contact) show only to people assigned to that event, and to administrators; volunteers pending a background check see none.
 
 ## Product Purpose
 
@@ -46,7 +46,8 @@ Feature scope, from `prototype/stx-robotics-app.html` (clickable concept, sample
 3. Staff dashboard: seats filled, waitlists, open shifts, items needing attention.
 4. Competition teams: team cards (VEX team numbers, notebook progress), practice schedule with RSVP, tournaments, match results.
 5. Staff schedule: week view, open shifts with Take shift, My shifts, add event (the 3D print queue was removed, 2026-10-19).
-6. Mentor hours: student mentors log hours; staff approve or return them; season totals.
+6. Hours: student mentors and volunteers log hours; administrators approve or return them; season totals.
+8. Check-in: staff check kids in and out per event, with approved pickup lists.
 7. Family texts: compose an SMS to a group (camp, team, all), phone preview, automatic STOP footer.
 
 Constraints:

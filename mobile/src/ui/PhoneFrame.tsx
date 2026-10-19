@@ -106,10 +106,11 @@ function FakeStatusBar() {
 
 // Same pitch as the prototype's left column.
 const IN_DEMO: [string, string][] = [
+  ['Roles', 'Parent, student mentor, volunteer, staff or administrator'],
   ['Camps', 'Register by community, with automatic waitlists'],
-  ['Teams', 'VEX V5 tournaments, matches and practice RSVPs'],
   ['Schedule', 'Week view, open shifts and staffing for every event'],
-  ['Mentors', 'Log and approve student mentor hours'],
+  ['Hours', 'Mentors and volunteers log hours; admins approve them'],
+  ['Check-in', 'Check kids in and out, with pickup lists'],
   ['Texts', 'Reminders to families who opted in'],
 ];
 
@@ -138,8 +139,8 @@ function InfoPanel() {
       </Text>
       <Text style={[p, { marginBottom: 12 }]}>
         <Text style={{ fontFamily: f.bold, color: c.maroon }}>Try it: </Text>
-        tap through a camp sign-up on the phone. <Text style={{ fontFamily: f.bold }}>Intro to Robotics</Text> is full, so it shows the
-        waitlist moment. Use the <Text style={{ fontFamily: f.bold }}>Parent / Staff</Text> switch at the top to see each side.
+        pick a role on the phone. As a parent, <Text style={{ fontFamily: f.bold }}>Intro to Robotics</Text> is full, so it shows the
+        waitlist moment. Use <Text style={{ fontFamily: f.bold }}>More › Switch role</Text> to see another side.
       </Text>
 
       <Text style={{ fontFamily: f.bold, fontSize: 15, color: c.head, marginTop: 6, marginBottom: 8 }}>In this demo</Text>

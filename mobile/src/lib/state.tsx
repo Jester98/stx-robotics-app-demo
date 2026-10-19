@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
-import { FALL_CAMPS, INITIAL_ASSIGN, INITIAL_NOTES, ME, SUMMER_EXTRA, thisWeekMonday, type Assignment, type EvType, type Note } from './events';
-import { today } from './dates';
+import { FALL_CAMPS, INITIAL_ASSIGN, INITIAL_NOTES, SUMMER_EXTRA, thisWeekMonday, type Assignment, type EvType, type Kind, type Note } from './events';
+import { addDays, today } from './dates';
+import type { AppRole } from './roles';
 
 // Sample data from the prototype (prototype/stx-robotics-app.html). Only the
 // Summer 2026 totals come from stxrobotics.com; everything else is made up.
@@ -22,36 +23,59 @@ export type Camp = {
   end?: string;
 };
 export type Reg = { kid: string; age: number; camp: number; status: 'Confirmed' | 'Waitlisted' };
-export type Mentor = { name: string; school: string; hours: number; pending: { date: string; task: string; h: number } | null };
 export type Sent = { to: string; text: string; when: string };
-export type Tab = 'home' | 'camps' | 'teams' | 'msgs' | 'sched' | 'more' | 'mentors' | 'about' | 'event' | 'staffList';
+export type Status = 'Pending' | 'Approved' | 'Returned';
+export type HoursReq = { id: number; person: string; event?: number; date: string; h: number; task: string; status: Status };
+export type Drop = { id: number; event: number; person: string; status: Status };
+export type Tab =
+  | 'home'
+  | 'camps'
+  | 'teams'
+  | 'msgs'
+  | 'sched'
+  | 'hours'
+  | 'checkin'
+  | 'approvals'
+  | 'more'
+  | 'about'
+  | 'event'
+  | 'staffList'
+  | 'people';
 
 export type State = {
-  role: 'parent' | 'staff';
+  role: AppRole | null; // null = start screen
+  me: string; // person id for the chosen role ('parent' for the parent)
   tab: Tab;
   loc: string;
   camps: Camp[];
   regs: Reg[];
-  mentors: Mentor[];
   sent: Sent[];
   rsvp: Record<'tue' | 'thu' | 'sat', boolean>;
   waiverSigned: boolean;
-  // Staff camp management
+  // Events
   eventId: number;
-  eventFrom: 'camps' | 'sched'; // where the event page goes back to
+  eventFrom: 'camps' | 'sched' | 'home'; // where the event page goes back to
   staffFilter: string;
-  // Staff schedule
-  me: string; // signed-in staff member (demo: Coach Alex)
   schedWeek: string; // Monday of the week shown
   schedDay: string; // selected day
   schedFilter: string;
   assign: Record<number, Assignment[]>;
   packed: Record<number, boolean[]>;
   notes: Record<number, Note[]>;
+  // People and approvals
+  kinds: Record<string, Kind>; // role changes made on the People page
+  pending: string[]; // volunteers waiting on approval
+  baseHours: Record<string, number>; // hours approved before this demo's requests
+  hours: HoursReq[];
+  drops: Drop[];
+  checkins: Record<number, Record<string, { in?: string; out?: string }>>;
 };
 
+const day = (n: number) => addDays(today(), n);
+
 export const INITIAL: State = {
-  role: 'parent',
+  role: null,
+  me: 'parent',
   tab: 'home',
   loc: 'All',
   camps: [
@@ -67,12 +91,6 @@ export const INITIAL: State = {
     { kid: 'Mateo G.', age: 10, camp: 1, status: 'Confirmed' },
     { kid: 'Ava G.', age: 13, camp: 2, status: 'Confirmed' },
   ],
-  mentors: [
-    { name: 'Isabella M.', school: 'Calallen HS', hours: 42, pending: { date: 'Oct 15', task: 'Led build session, Team 2A', h: 3 } },
-    { name: 'Diego T.', school: 'Robstown HS', hours: 36, pending: { date: 'Oct 14', task: 'Notebook review with rookies', h: 2 } },
-    { name: 'Sofia L.', school: 'Alice HS', hours: 28, pending: null },
-    { name: 'Noah P.', school: 'Gregory-Portland HS', hours: 19, pending: { date: 'Oct 12', task: 'Library STEM workshop helper', h: 4 } },
-  ],
   sent: [
     { to: 'Robstown · Intro to Robotics', text: 'Reminder: camp starts Monday at 9:00 at Robstown Public Library. Bring a water bottle!', when: 'Oct 16' },
   ],
@@ -81,13 +99,26 @@ export const INITIAL: State = {
   eventId: 1,
   eventFrom: 'camps',
   staffFilter: 'All',
-  me: ME,
   schedWeek: thisWeekMonday(),
   schedDay: today() >= thisWeekMonday() ? today() : thisWeekMonday(),
   schedFilter: 'All',
   assign: INITIAL_ASSIGN,
   packed: { 1: [true, true, false, true, false], 2: [true, false, false, true, true], 7: [true, true, true, false], 16: [true, false, true, false, true] },
   notes: INITIAL_NOTES,
+  kinds: {},
+  pending: ['p13'],
+  baseHours: { p8: 36, p9: 34, p10: 28, p11: 15, p5: 12, p6: 9, p7: 14, p13: 0 },
+  hours: [
+    { id: 1, person: 'p8', event: 8, date: day(-3), h: 3, task: 'Led build session, Team 2A', status: 'Pending' },
+    { id: 2, person: 'p9', event: 9, date: day(-4), h: 2, task: 'Notebook review with rookies', status: 'Pending' },
+    { id: 3, person: 'p11', event: 11, date: day(-6), h: 4, task: 'Pit crew for the mock qualifier', status: 'Pending' },
+    { id: 4, person: 'p8', date: day(-12), h: 4, task: 'Mock qualifier pit crew', status: 'Approved' },
+    { id: 5, person: 'p8', date: day(-19), h: 2, task: 'Robot inspection prep', status: 'Approved' },
+    { id: 6, person: 'p8', date: day(-9), h: 6, task: 'Weekend build (no adult present)', status: 'Returned' },
+    { id: 7, person: 'p13', date: day(-2), h: 2, task: 'Orientation and safety training', status: 'Pending' },
+  ],
+  drops: [{ id: 1, event: 9, person: 'p9', status: 'Pending' }],
+  checkins: {},
 };
 
 export type App = {
@@ -104,3 +135,7 @@ export function useApp() {
   if (!v) throw new Error('useApp outside the app');
   return v;
 }
+
+/** Approved hours for a person: earlier hours plus approved requests. */
+export const approvedHours = (s: State, id: string) =>
+  (s.baseHours[id] ?? 0) + s.hours.filter((r) => r.person === id && r.status === 'Approved').reduce((a, r) => a + r.h, 0);

@@ -251,7 +251,7 @@ Information is dense but legible. Atkinson Hyperlegible is the only typeface, in
 - Atkinson Hyperlegible throughout, with bold headings and tight leading.
 - Soft rounded corners: 16px cards, 20px floating bars and sheet, 8px buttons and fields, 4px tags and checkboxes, pill chips and role switch.
 - White cards with no border and a soft two-layer shadow on a #f7fafc page.
-- Maroon solid buttons, 1.5px black outline buttons, black-filled selected chips, and a white pill on a grey track for the Parent / Staff switch.
+- Maroon solid buttons, 1.5px black outline buttons, black-filled selected chips, and a grey pill in the app bar naming the current role.
 - Eyebrow, then heading, then lead at the top of screens. A stats row with hairlines above, below and between carries the big numbers.
 - An 18px gutter, 14px card padding, 10px stack gaps and 20px section tops.
 
@@ -395,7 +395,7 @@ A 5px `line` track with a maroon fill (black for the alternate series), capped a
 Stroke icons on a 24 grid with a 1.8 stroke and round caps and joins, drawn as SVG: home, camps, teams, sched (calendar with dots), more, msg, clock, heart, doc and people. They are 23px in the tab bar and 22px in maroon on more-items. They are decorative and hidden from accessibility.
 
 ### Navigation
-- **App bar:** a floating white card with 16px corners and the float shadow, inset 12px from the screen edges, padded 10/10/10/16. The upright STX logo (maroon X) sits on the left. On the right is the role switch: a pill-shaped grey track (`#eef1f5`, 3px padding) holding PARENT and STAFF (11px bold uppercase, padded 6×13). The selected side is a white pill with the pill shadow and head-ink text; the other side is muted. It is a radio group with a 10pt vertical hit slop.
+- **App bar:** a floating white card with 16px corners and the float shadow, inset 12px from the screen edges, padded 10/10/10/16. The upright STX logo (maroon X) sits on the left. On the right is the role label: a grey pill (`#eef1f5`, padded 6×13) with the current role in 11px bold uppercase head ink. Roles are chosen on the "Who are you?" start screen (five white option cards with a one-line description each) and changed from More › Switch role; the start screen hides the tab bar.
 - **Tab bar:** a floating white card with 20px corners and the float shadow, inset 12px from the sides and sitting above the home indicator (10px minimum). Five equal tabs, each an icon over a 10.5px uppercase label in muted; the active tab is maroon. The staff More tab carries a maroon 16px pill badge (9.5px white count) showing pending mentor approvals.
 - **Back link:** a maroon "More" link at the top of sub-pages.
 

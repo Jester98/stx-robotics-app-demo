@@ -7,6 +7,7 @@ import {
   TYPES,
   addressFor,
   initials,
+  kindOf,
   person,
   planFor,
   runsOn,
@@ -20,6 +21,7 @@ import { addDays, dayLong, dayNum, dayShort, monday, monthDay, range, today, wee
 import { Btn, Card, Chip, Choice, Empty, Eyebrow, Field, H2, H3, Lead, Link, Meta, Pad, Row, Sec, Stack, Tag } from '@/ui/kit';
 import { c, f, gutter } from '@/ui/theme';
 import { TypeTag } from './events';
+import { ROLE_INFO, can, shiftRoleFor } from '@/lib/roles';
 
 // Staff Schedule: a week strip, open shifts, and the selected day's events.
 
@@ -33,12 +35,14 @@ function matches(x: Camp, a: Assignment[], filter: string, me: string) {
   return x.loc === filter;
 }
 
-/** Give `me` a shift on an event: Lead instructor if it has none, otherwise Assistant. */
+/** Give `me` a shift on an event. Staff lead if no one does; mentors and volunteers keep their kind. */
 function takeShift(s: State, id: number, day: string): State {
   const x = s.camps.find((y) => y.id === id)!;
   const a = s.assign[id] ?? [];
   if (a.some((y) => y.person === s.me)) return s;
-  const role: Role = a.some((y) => y.role === 'Lead instructor') ? 'Assistant' : 'Lead instructor';
+  const kind = kindOf(s.me, s.kinds);
+  const staff = kind === 'Staff' || kind === 'Administrator';
+  const role: Role = staff && !a.some((y) => y.role === 'Lead instructor') ? 'Lead instructor' : shiftRoleFor(kind);
   const days = x.start === x.end ? `${dayShort(day)} ${monthDay(day)}` : `${dayShort(x.start!)}–${dayShort(x.end!)}`;
   return { ...s, assign: { ...s.assign, [id]: [...a, { person: s.me, role, days, hours: x.time }] } };
 }
@@ -86,12 +90,14 @@ export function Schedule() {
       <Pad style={{ paddingBottom: 12 }}>
         <Row style={{ alignItems: 'flex-end' }}>
           <View style={{ flex: 1 }}>
-            <Eyebrow>Staff · Schedule</Eyebrow>
+            <Eyebrow>{ROLE_INFO[s.role!].label} · Schedule</Eyebrow>
             <H2>Schedule</H2>
           </View>
-          <View style={{ paddingBottom: 6 }}>
-            <Link onPress={() => sheet(<AddEventSheet />)}>+ Add event</Link>
-          </View>
+          {can(s, 'manageEvent') && (
+            <View style={{ paddingBottom: 6 }}>
+              <Link onPress={() => sheet(<AddEventSheet />)}>+ Add event</Link>
+            </View>
+          )}
         </Row>
         <Lead>Signed in as {person(s.me).name}.</Lead>
       </Pad>
@@ -172,7 +178,7 @@ export function Schedule() {
                   <View style={{ marginTop: 4 }}>
                     {mine ? (
                       <Text style={{ fontFamily: f.bold, fontSize: 13, color: c.good }}>You’re on this shift</Text>
-                    ) : (
+                    ) : can(s, 'takeShift') ? (
                       <Btn
                         sm
                         onPress={() => {
@@ -182,7 +188,7 @@ export function Schedule() {
                       >
                         Take shift
                       </Btn>
-                    )}
+                    ) : null}
                   </View>
                 </Card>
               );
@@ -207,9 +213,11 @@ export function Schedule() {
           {list.map((x) => (
             <EventRow key={x.id} x={x} onPress={() => open(x.id)} />
           ))}
-          <Btn block kind="out" onPress={() => sheet(<AddEventSheet />)}>
-            + Add event
-          </Btn>
+          {can(s, 'manageEvent') && (
+            <Btn block kind="out" onPress={() => sheet(<AddEventSheet />)}>
+              + Add event
+            </Btn>
+          )}
         </Stack>
       </Sec>
     </>

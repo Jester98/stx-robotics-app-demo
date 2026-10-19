@@ -27,10 +27,10 @@ An app for **South Texas Robotics** (https://stxrobotics.com), a 501(c)(3) nonpr
 3. **Staff dashboard**: seats filled, waitlists, open prints, items needing attention.
 4. **Competition teams**: team cards (VEX team numbers, notebook progress), practice schedule with RSVP, tournament list, match results.
 5. **3D print queue**: Queued → Printing → Ready → Done, printer status, print request form (STL upload).
-6. **Mentor hours**: student mentors log hours; staff approve or return them; season totals.
+6. **Hours**: student mentors and volunteers log hours; administrators approve or return them; season totals.
 7. **Family texts**: compose an SMS to a group (by camp/team/all), phone preview, automatic STOP footer.
 
-Roles: **Parent** and **Staff** (later possibly Student and Mentor).
+Roles in the app demo: **Parent**, **Student mentor**, **Volunteer**, **Staff**, **Administrator**, picked on a start screen (see `mobile/src/lib/roles.ts`). In the real app an administrator assigns roles.
 
 ## Brand / design system (taken from stxrobotics.com's CSS)
 

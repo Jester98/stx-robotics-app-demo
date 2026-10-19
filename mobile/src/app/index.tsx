@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AccessibilityInfo, Animated, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -9,28 +10,26 @@ import { Home } from '@/views/home';
 import { Camps } from '@/views/camps';
 import { Teams } from '@/views/teams';
 import { Schedule } from '@/views/schedule';
-import { About, Mentors, Messages, More } from '@/views/staff';
+import { About, Messages, More } from '@/views/staff';
+import { Approvals, CheckIn, Hours, People, Start } from '@/views/roles';
+import { ROLE_INFO, approvalsCount, type AppRole } from '@/lib/roles';
 import { EventDetail, StaffCamps, StaffList } from '@/views/events';
 import { useApp } from '@/lib/state';
 
 // One screen, like the prototype: top bar, the current tab's content, tab bar,
 // plus a bottom sheet and a toast drawn over it.
-const TABS: Record<State['role'], [Tab, string, IconName][]> = {
-  parent: [
-    ['home', 'Home', 'home'],
-    ['camps', 'Camps', 'camps'],
-    ['teams', 'Teams', 'teams'],
-    ['msgs', 'Updates', 'msg'],
-    ['more', 'More', 'more'],
-  ],
-  staff: [
-    ['home', 'Home', 'home'],
-    ['camps', 'Camps', 'camps'],
-    ['teams', 'Teams', 'teams'],
-    ['sched', 'Schedule', 'sched'],
-    ['more', 'More', 'more'],
-  ],
+// Tabs a role can get; which ones it gets comes from ROLE_INFO. (Teams is hidden for now.)
+const TAB_META: Partial<Record<Tab, [string, IconName]>> = {
+  home: ['Home', 'home'],
+  camps: ['Camps', 'camps'],
+  msgs: ['Updates', 'msg'],
+  sched: ['Schedule', 'sched'],
+  hours: ['Hours', 'clock'],
+  checkin: ['Check-in', 'checkin'],
+  approvals: ['Approvals', 'approve'],
+  more: ['More', 'more'],
 };
+const ROLE_KEY = 'stx-demo-role';
 const VIEWS: Record<Tab, () => ReactNode> = {
   home: Home,
   camps: CampsTab,
@@ -38,7 +37,10 @@ const VIEWS: Record<Tab, () => ReactNode> = {
   sched: Schedule,
   msgs: Messages,
   more: More,
-  mentors: Mentors,
+  hours: Hours,
+  checkin: CheckIn,
+  approvals: Approvals,
+  people: People,
   about: About,
   event: EventDetail,
   staffList: StaffList,
@@ -46,12 +48,13 @@ const VIEWS: Record<Tab, () => ReactNode> = {
 
 // Parents get the sign-up list; staff get the event-running view.
 function CampsTab() {
-  return useApp().s.role === 'staff' ? <StaffCamps /> : <Camps />;
+  return useApp().s.role === 'parent' ? <Camps /> : <StaffCamps />;
 }
 
 // Sub-pages and the tab they belong to.
-const PARENT_TAB: Partial<Record<Tab, Tab>> = { mentors: 'more', about: 'more', staffList: 'more' };
-const parentOf = (s: State): Tab | undefined => (s.tab === 'event' ? s.eventFrom : PARENT_TAB[s.tab]);
+const PARENT_TAB: Partial<Record<Tab, Tab>> = { about: 'more', staffList: 'more', people: 'more' };
+const parentOf = (s: State): Tab | undefined =>
+  s.tab === 'event' ? s.eventFrom : s.tab === 'msgs' && s.role !== 'parent' ? 'more' : PARENT_TAB[s.tab];
 
 export default function AppScreen() {
   const insets = useSafeAreaInsets();
@@ -75,18 +78,27 @@ export default function AppScreen() {
   const go = (tab: Tab) => setS((p) => ({ ...p, tab }));
   const app: App = { s, set: setS, go, toast, sheet: setSheetNode };
 
-  const setRole = (role: State['role']) =>
-    setS((p) => ({
-      ...p,
-      role,
-      tab: role === 'parent' && ['sched', 'mentors', 'staffList', 'event'].includes(p.tab) ? (p.tab === 'event' ? 'camps' : 'home') : p.tab,
-    }));
+  // Remember the chosen role between visits; the rest of the demo state starts fresh.
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    AsyncStorage.getItem(ROLE_KEY)
+      .then((r) => {
+        if (r && r in ROLE_INFO) setS((p) => ({ ...p, role: r as AppRole, me: ROLE_INFO[r as AppRole].me }));
+      })
+      .catch(() => {})
+      .finally(() => setLoaded(true));
+  }, []);
+  useEffect(() => {
+    if (!loaded) return;
+    (s.role ? AsyncStorage.setItem(ROLE_KEY, s.role) : AsyncStorage.removeItem(ROLE_KEY)).catch(() => {});
+  }, [s.role, loaded]);
 
   // Android back: close the sheet, then leave sub-pages, then go Home.
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (sheetNode) return setSheetNode(null), true;
-      const up = s.role === 'staff' && s.tab === 'msgs' ? 'more' : parentOf(s);
+      if (!s.role) return false;
+      const up = parentOf(s);
       if (up) return go(up), true;
       if (s.tab !== 'home') return go('home'), true;
       return false;
@@ -94,9 +106,10 @@ export default function AppScreen() {
     return () => sub.remove();
   }, [sheetNode, s]);
 
-  const active: Tab = s.role === 'staff' && s.tab === 'msgs' ? 'more' : (parentOf(s) ?? s.tab);
-  const pend = s.mentors.filter((m) => m.pending).length;
-  const View_ = VIEWS[s.tab];
+  const active: Tab = parentOf(s) ?? s.tab;
+  const pend = approvalsCount(s);
+  const View_ = s.role ? VIEWS[s.tab] : Start;
+  if (!loaded) return <View style={{ flex: 1, backgroundColor: c.bg }} />;
 
   return (
     <AppCtx.Provider value={app}>
@@ -125,43 +138,20 @@ export default function AppScreen() {
           <Text accessibilityRole="header" accessibilityLabel="STX Robotics" style={{ fontFamily: f.bold, fontSize: 22, lineHeight: 26, letterSpacing: -0.6, color: c.black }}>
             ST<Text style={{ color: c.maroon }}>X</Text>
           </Text>
-          <View
-            style={{ flexDirection: 'row', backgroundColor: c.track, borderRadius: radius.pill, padding: 3 }}
-            accessibilityRole="radiogroup"
-            accessibilityLabel="View as"
-          >
-            {(['parent', 'staff'] as const).map((r) => {
-              const on = s.role === r;
-              return (
-                <Pressable
-                  key={r}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: on }}
-                  onPress={() => setRole(r)}
-                  hitSlop={{ top: 10, bottom: 10 }}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 13,
-                    borderRadius: radius.pill,
-                    backgroundColor: on ? c.white : 'transparent',
-                    boxShadow: on ? shadow.pill : undefined,
-                  }}
-                >
-                  <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.1, textTransform: 'uppercase', color: on ? c.head : c.muted }}>
-                    {r === 'parent' ? 'Parent' : 'Staff'}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          {s.role && (
+            <View style={{ backgroundColor: c.track, borderRadius: radius.pill, paddingVertical: 6, paddingHorizontal: 13 }}>
+              <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.1, textTransform: 'uppercase', color: c.head }}>{ROLE_INFO[s.role].label}</Text>
+            </View>
+          )}
         </View>
 
         {/* Content: keyed by tab so each tab opens at the top */}
-        <ScrollView key={s.tab} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
+        <ScrollView key={s.role ? s.tab : 'start'} style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 20 }} keyboardShouldPersistTaps="handled">
           <View_ />
         </ScrollView>
 
         {/* Tab bar */}
+        {s.role && (
         <View
           onLayout={(e) => setTabH(e.nativeEvent.layout.height)}
           accessibilityRole="tablist"
@@ -177,7 +167,8 @@ export default function AppScreen() {
             paddingHorizontal: 4,
           }}
         >
-          {TABS[s.role].map(([key, label, icon]) => {
+          {ROLE_INFO[s.role].tabs.map((key) => {
+            const [label, icon] = TAB_META[key]!;
             const on = active === key;
             const color = on ? c.maroon : c.muted;
             return (
@@ -185,13 +176,13 @@ export default function AppScreen() {
                 key={key}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: on }}
-                accessibilityLabel={key === 'more' && s.role === 'staff' && pend ? `${label}, ${pend} to approve` : label}
+                accessibilityLabel={key === 'approvals' && pend ? `${label}, ${pend} to approve` : label}
                 onPress={() => go(key)}
                 style={{ flex: 1, alignItems: 'center', gap: 3, paddingVertical: 6 }}
               >
                 <Icon name={icon} color={color} />
                 <Text style={{ fontFamily: f.bold, fontSize: 10.5, letterSpacing: 0.63, textTransform: 'uppercase', color }}>{label}</Text>
-                {key === 'more' && s.role === 'staff' && pend > 0 && (
+                {key === 'approvals' && pend > 0 && (
                   <View
                     style={{
                       position: 'absolute',
@@ -213,6 +204,7 @@ export default function AppScreen() {
             );
           })}
         </View>
+        )}
 
         {/* Toast */}
         <Animated.View

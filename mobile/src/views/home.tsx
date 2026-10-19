@@ -1,9 +1,11 @@
 import { Text, View } from 'react-native';
-import { useApp, type Camp, type Reg } from '@/lib/state';
+import { approvedHours, useApp, type Camp, type Reg } from '@/lib/state';
 import { Band, Bar, Btn, Card, Eyebrow, H2, H3, Lead, Link, Meta, Row, Sec, Stack, Tag, Body } from '@/ui/kit';
 import { c, f, gutter, radius, shadow } from '@/ui/theme';
 import { campTag } from './camps';
-import { shortBy } from '@/lib/events';
+import { person, shortBy } from '@/lib/events';
+import { approvalsCount, can, dropPending, isPending, requestDrop } from '@/lib/roles';
+import { PendingBanner } from './roles';
 import { today } from '@/lib/dates';
 
 function Hello({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
@@ -38,7 +40,7 @@ export function RegRow({ r, camp }: { r: Reg; camp: Camp }) {
 
 export function Home() {
   const { s } = useApp();
-  return s.role === 'parent' ? <ParentHome /> : <StaffHome />;
+  return s.role === 'parent' ? <ParentHome /> : s.role === 'mentor' || s.role === 'volunteer' ? <HelperHome /> : <StaffHome />;
 }
 
 function ParentHome() {
@@ -123,7 +125,7 @@ function ParentHome() {
 }
 
 function StaffHome() {
-  const { s: all, go } = useApp();
+  const { s: all, set, go } = useApp();
   // Home keeps the prototype's summer-camp numbers; staff-only events live in Camps.
   const s = { ...all, camps: all.camps.filter((x) => !x.staffOnly) };
   const now = today();
@@ -131,14 +133,15 @@ function StaffHome() {
   const seats = s.camps.reduce((a, x) => a + x.filled, 0);
   const cap = s.camps.reduce((a, x) => a + x.cap, 0);
   const wait = s.camps.reduce((a, x) => a + x.wait, 0);
-  const pend = s.mentors.filter((m) => m.pending);
+  const pend = approvalsCount(all);
+  const first = person(all.me).name.split(' ')[0];
   const filling = s.camps
     .slice()
     .sort((a, b) => b.filled / b.cap - a.filled / a.cap)
     .slice(0, 4);
   return (
     <>
-      <Hello eyebrow="Staff dashboard" title="Good evening, Coach" lead="Summer 2027 sign-ups, teams and the print shop." />
+      <Hello eyebrow={all.role === 'admin' ? 'Administrator dashboard' : 'Staff dashboard'} title={`Hi, ${first}`} lead="Summer 2027 sign-ups, events and staffing." />
       <Band
         items={[
           [
@@ -154,14 +157,14 @@ function StaffHome() {
       />
       <Sec title="Needs attention">
         <Stack>
-          {pend.length > 0 && (
+          {all.role === 'admin' && pend > 0 && (
             <Card>
               <Row>
                 <View style={{ flex: 1 }}>
-                  <H3>{pend.length} mentor logs to approve</H3>
-                  <Meta>{pend.map((m) => m.name).join(', ')}</Meta>
+                  <H3>{pend} items to approve</H3>
+                  <Meta>Hours, dropped shifts and new volunteers</Meta>
                 </View>
-                <Btn sm onPress={() => go('mentors')}>
+                <Btn sm onPress={() => go('approvals')}>
                   Review
                 </Btn>
               </Row>
@@ -171,9 +174,11 @@ function StaffHome() {
             <Row>
               <View style={{ flex: 1 }}>
                 <H3>Coastal Bend VEX Qualifier</H3>
-                <Meta>Nov 14 · registration due Oct 31</Meta>
+                <Meta>
+                  {all.camps.find((x) => x.id === 16)!.dates} · {all.camps.find((x) => x.id === 16)!.loc}
+                </Meta>
               </View>
-              <Btn sm kind="out" onPress={() => go('teams')}>
+              <Btn sm kind="out" onPress={() => set((p) => ({ ...p, eventId: 16, eventFrom: 'home', tab: 'event' }))}>
                 View
               </Btn>
             </Row>
@@ -207,6 +212,96 @@ function StaffHome() {
               </View>
             ))}
           </Stack>
+        </Card>
+      </Sec>
+    </>
+  );
+}
+
+// Student mentors and volunteers: hours, their shifts, and open shifts to take.
+function HelperHome() {
+  const { s, set, go, toast } = useApp();
+  const now = today();
+  const pending = isPending(s);
+  const mine = s.camps
+    .filter((x) => x.end && x.end >= now && (s.assign[x.id] ?? []).some((a) => a.person === s.me))
+    .sort((a, b) => (a.start! < b.start! ? -1 : 1));
+  const open = s.camps.filter((x) => x.end && x.end >= now && shortBy(x, s.assign[x.id] ?? []) > 0);
+  const first = person(s.me).name.split(' ')[0];
+  const openEvent = (id: number) => set((p) => ({ ...p, eventId: id, eventFrom: 'home', tab: 'event' }));
+  return (
+    <>
+      <Hello eyebrow="Welcome back" title={`Hi, ${first}`} lead={pending ? 'Thanks for signing up to help.' : 'Your shifts and service hours.'} />
+      {pending && (
+        <Sec style={{ paddingTop: 0, paddingBottom: 16 }}>
+          <PendingBanner />
+        </Sec>
+      )}
+      <Band
+        items={[
+          [String(approvedHours(s, s.me)), 'Approved hours'],
+          [String(mine.length), 'Upcoming shifts'],
+          [String(s.hours.filter((r) => r.person === s.me && r.status === 'Pending').length), 'Hours pending'],
+        ]}
+      />
+      <Sec title="Your shifts" right={<Link onPress={() => go('sched')}>Schedule</Link>}>
+        <Stack>
+          {mine.length === 0 && <Body>{pending ? 'You can take shifts once you’re approved.' : 'No upcoming shifts. Take an open one below.'}</Body>}
+          {mine.map((x) => {
+            const a = s.assign[x.id]!.find((y) => y.person === s.me)!;
+            const asked = dropPending(s, x.id);
+            return (
+              <Card key={x.id}>
+                <Row>
+                  <View style={{ flex: 1 }}>
+                    <H3>{x.name}</H3>
+                    <Meta>
+                      {x.dates} · {a.hours} · {x.loc}
+                    </Meta>
+                  </View>
+                  <Tag kind={asked ? 'few' : 'open'}>{asked ? 'Drop requested' : a.role}</Tag>
+                </Row>
+                <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+                  <Btn sm kind="out" onPress={() => openEvent(x.id)}>
+                    Details
+                  </Btn>
+                  {can(s, 'requestDrop') && !asked && (
+                    <Btn sm kind="out" onPress={() => (set((p) => requestDrop(p, x.id)), toast('Drop request sent to an administrator'))}>
+                      Request to drop
+                    </Btn>
+                  )}
+                </View>
+              </Card>
+            );
+          })}
+        </Stack>
+      </Sec>
+      {can(s, 'takeShift') && (
+        <Sec title="Open shifts">
+          <Card>
+            <Row>
+              <View style={{ flex: 1 }}>
+                <H3>{open.length} upcoming events need help</H3>
+                <Meta>{open.slice(0, 2).map((x) => x.name).join(', ')}</Meta>
+              </View>
+              <Btn sm onPress={() => go('sched')}>
+                Take a shift
+              </Btn>
+            </Row>
+          </Card>
+        </Sec>
+      )}
+      <Sec title="Hours">
+        <Card>
+          <Row>
+            <View style={{ flex: 1 }}>
+              <H3>Log your hours</H3>
+              <Meta>An administrator approves each request.</Meta>
+            </View>
+            <Btn sm kind="out" onPress={() => go('hours')}>
+              Log hours
+            </Btn>
+          </Row>
         </Card>
       </Sec>
     </>

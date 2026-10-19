@@ -7,6 +7,7 @@ import {
   PEOPLE,
   ROLES,
   adults,
+  kindOf,
   adultsNeeded,
   person,
   roster,
@@ -19,6 +20,8 @@ import {
 } from '@/lib/events';
 import { BackLink, Bar, Body, Btn, Card, Check, Chip, Choice, Empty, Eyebrow, Field, H2, H3, Lead, Link, Meta, Pad, Row, Sec, Stack, Tag } from '@/ui/kit';
 import { c, f, gutter, shadow } from '@/ui/theme';
+import { can, canSeeKids, dropPending, requestDrop, shiftRoleFor } from '@/lib/roles';
+import { KindTag } from './roles';
 
 // Staff side of Camps: running events. Same components as the rest of the prototype.
 
@@ -120,7 +123,7 @@ export function EventDetail() {
   return (
     <>
       <Pad style={{ paddingBottom: 12 }}>
-        <BackLink to={s.eventFrom === 'sched' ? 'Schedule' : 'Camps'} onPress={() => go(s.eventFrom)} />
+        <BackLink to={s.eventFrom === 'sched' ? 'Schedule' : s.eventFrom === 'home' ? 'Home' : 'Camps'} onPress={() => go(s.eventFrom)} />
         <Eyebrow style={{ marginTop: 10 }}>
           {x.loc} · {x.dates}
         </Eyebrow>
@@ -136,7 +139,7 @@ export function EventDetail() {
         </Lead>
       </Pad>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingHorizontal: gutter, paddingBottom: 4 }}>
-        {SECTIONS.map((n) => (
+        {SECTIONS.filter((n) => can(s, 'manageEvent') || (n !== 'Supplies' && n !== 'Notes')).map((n) => (
           <Chip key={n} on={sec === n} onPress={() => setSec(n)}>
             {n}
           </Chip>
@@ -179,13 +182,14 @@ function Overview({ camp }: { camp: Camp }) {
 }
 
 function StaffSection({ camp }: { camp: Camp }) {
-  const { s, sheet, toast } = useApp();
+  const { s, set, sheet, toast } = useApp();
   const a = s.assign[camp.id] ?? [];
-  const grown = adults(a);
+  const grown = adults(a, s.kinds);
+  const add = can(s, 'addPeople');
   const needAdults = adultsNeeded(camp.filled);
   const gap = short(camp, a);
   return (
-    <Sec title="Staff" right={<Link onPress={() => sheet(<AddStaffSheet campId={camp.id} />)}>+ Add staff</Link>}>
+    <Sec title="Staff" right={add ? <Link onPress={() => sheet(<AddStaffSheet campId={camp.id} />)}>+ Add staff</Link> : undefined}>
       <Stack>
         {grown < needAdults && (
           <View style={{ backgroundColor: c.warnSoft, borderWidth: 1, borderColor: c.warn, borderRadius: 12, padding: 14 }} accessibilityRole="alert">
@@ -206,6 +210,11 @@ function StaffSection({ camp }: { camp: Camp }) {
         {a.length === 0 && <Empty>No one assigned yet.</Empty>}
         {a.map((x) => {
           const p = person(x.person);
+          const self = x.person === s.me;
+          const asked = dropPending(s, camp.id, x.person);
+          const contact = can(s, 'manageEvent') && !self;
+          const drop = self && can(s, 'requestDrop') && !asked;
+          const remove = can(s, 'removePeople');
           return (
             <Card key={x.person}>
               <Row>
@@ -215,21 +224,32 @@ function StaffSection({ camp }: { camp: Camp }) {
                     {x.days} · {x.hours}
                   </Meta>
                 </View>
-                <Tag kind={x.role === 'Lead instructor' ? 'blue' : x.role === 'Student mentor' ? 'mute' : 'open'}>{x.role}</Tag>
+                {asked ? <Tag kind="few">Drop requested</Tag> : <Tag kind={x.role === 'Lead instructor' ? 'blue' : x.role === 'Student mentor' ? 'mute' : 'open'}>{x.role}</Tag>}
               </Row>
-              <View style={{ flexDirection: 'row', gap: 10, marginTop: 10, alignItems: 'center' }}>
-                <Btn sm kind="out" onPress={() => toast(`Demo: would call ${p.name} at ${p.phone}`)}>
-                  Contact
-                </Btn>
-                <View style={{ flex: 1 }} />
-                <Link onPress={() => sheet(<RemoveSheet campId={camp.id} personId={x.person} />)}>Remove</Link>
-              </View>
+              {(contact || drop || remove) && (
+                <View style={{ flexDirection: 'row', gap: 10, marginTop: 10, alignItems: 'center' }}>
+                  {contact && (
+                    <Btn sm kind="out" onPress={() => toast(`Demo: would call ${p.name} at ${p.phone}`)}>
+                      Contact
+                    </Btn>
+                  )}
+                  {drop && (
+                    <Btn sm kind="out" onPress={() => (set((st) => requestDrop(st, camp.id)), toast('Drop request sent to an administrator'))}>
+                      Request to drop
+                    </Btn>
+                  )}
+                  <View style={{ flex: 1 }} />
+                  {remove && <Link onPress={() => sheet(<RemoveSheet campId={camp.id} personId={x.person} />)}>Remove</Link>}
+                </View>
+              )}
             </Card>
           );
         })}
-        <Btn block kind="out" onPress={() => sheet(<AddStaffSheet campId={camp.id} />)}>
-          + Add staff
-        </Btn>
+        {add && (
+          <Btn block kind="out" onPress={() => sheet(<AddStaffSheet campId={camp.id} />)}>
+            + Add staff
+          </Btn>
+        )}
       </Stack>
     </Sec>
   );
@@ -239,13 +259,12 @@ function AddStaffSheet({ campId }: { campId: number }) {
   const { s, set, sheet, toast } = useApp();
   const camp = s.camps.find((y) => y.id === campId)!;
   const taken = new Set((s.assign[campId] ?? []).map((x) => x.person));
-  const available = PEOPLE.filter((p) => !taken.has(p.id));
+  const available = PEOPLE.filter((p) => !taken.has(p.id) && !s.pending.includes(p.id));
   const [pick, setPick] = useState<string>();
   const [role, setRole] = useState<Role>('Assistant');
   const choose = (id: string) => {
     setPick(id);
-    const k = person(id).kind;
-    setRole(k === 'Student mentor' ? 'Student mentor' : k === 'Volunteer' ? 'Volunteer' : 'Assistant');
+    setRole(shiftRoleFor(kindOf(id, s.kinds)));
   };
   const add = () => {
     if (!pick) return;
@@ -284,7 +303,7 @@ function AddStaffSheet({ campId }: { campId: number }) {
                 <View style={{ flex: 1 }}>
                   <H3 style={{ fontSize: 15 }}>{p.name}</H3>
                   <Meta>
-                    {p.kind} · {p.town}
+                    {kindOf(p.id, s.kinds)} · {p.town}
                   </Meta>
                 </View>
                 {on && <Tag kind="full">Selected</Tag>}
@@ -350,6 +369,20 @@ function Schedule({ camp }: { camp: Camp }) {
 
 function Kids({ camp }: { camp: Camp }) {
   const { s } = useApp();
+  const [open, setOpen] = useState<string>();
+  if (!canSeeKids(s, camp.id))
+    return (
+      <Sec title="Kids">
+        <Card>
+          <H3>Kid details are private</H3>
+          <Meta>
+            {s.pending.includes(s.me)
+              ? 'You’ll see kids’ details for your events once an administrator approves you.'
+              : 'You see medical notes, pickup lists and parent contacts only for events you’re assigned to.'}
+          </Meta>
+        </Card>
+      </Sec>
+    );
   const { kids, waitlist } = roster(camp, s.regs, s.waiverSigned);
   const missing = kids.filter((k) => !k.waiver).length;
   const flagged = kids.filter((k) => k.flag).length;
@@ -360,9 +393,15 @@ function Kids({ camp }: { camp: Camp }) {
         <Card style={kids.length ? undefined : { display: 'none' }}>
           {kids.map((k, i) => (
             <View key={k.name + i} style={{ paddingVertical: 9, paddingTop: i ? 9 : 0, borderTopWidth: i ? 1 : 0, borderColor: c.line, gap: 4 }}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ expanded: open === k.name }}
+                accessibilityHint="Shows medical notes, pickup and parent contact"
+                onPress={() => setOpen(open === k.name ? undefined : k.name)}
+              >
               <Row>
                 <Text style={{ flex: 1, fontFamily: f.bold, fontSize: 14, color: c.head }}>
-                  {k.name} <Text style={{ fontFamily: f.regular, fontSize: 13, color: c.muted }}>· {k.age}</Text>
+                  {open === k.name ? '▾' : '▸'} {k.name} <Text style={{ fontFamily: f.regular, fontSize: 13, color: c.muted }}>· {k.age}</Text>
                 </Text>
                 <Tag kind={k.waiver ? 'open' : 'full'}>{k.waiver ? 'Waiver signed' : 'Waiver missing'}</Tag>
               </Row>
@@ -370,6 +409,16 @@ function Kids({ camp }: { camp: Camp }) {
                 <Text style={{ fontFamily: f.bold, fontSize: 12, color: c.warn }} accessibilityLabel={`Medical flag: ${k.flag}`}>
                   Medical: {k.flag}
                 </Text>
+              )}
+              </Pressable>
+              {open === k.name && (
+                <View style={{ backgroundColor: c.bg, borderRadius: 10, padding: 10, gap: 3, marginTop: 2 }}>
+                  {k.medical && <Meta style={{ color: c.ink }}>What to do: {k.medical}</Meta>}
+                  <Meta style={{ color: c.ink }}>Approved pickup: {k.pickup.join(', ')}</Meta>
+                  <Meta style={{ color: c.ink }}>
+                    Parent: {k.parent} · {k.phone}
+                  </Meta>
+                </View>
               )}
             </View>
           ))}
@@ -455,12 +504,12 @@ function Notes({ camp }: { camp: Camp }) {
   );
 }
 
-const KINDS: ('All' | Kind)[] = ['All', 'Staff', 'Volunteer', 'Student mentor'];
+const KINDS: ('All' | Kind)[] = ['All', 'Staff', 'Volunteer', 'Student mentor', 'Administrator'];
 
 export function StaffList() {
   const { s, set, go } = useApp();
   const [kind, setKind] = useState<'All' | Kind>('All');
-  const list = PEOPLE.filter((p) => kind === 'All' || p.kind === kind);
+  const list = PEOPLE.filter((p) => kind === 'All' || kindOf(p.id, s.kinds) === kind);
   const jobs = (id: string) =>
     s.camps.flatMap((x) => (s.assign[x.id] ?? []).filter((a) => a.person === id).map((a) => ({ camp: x, role: a.role })));
   return (
@@ -474,7 +523,7 @@ export function StaffList() {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingHorizontal: gutter, paddingBottom: 4 }}>
         {KINDS.map((k) => (
           <Chip key={k} on={kind === k} onPress={() => setKind(k)}>
-            {k === 'All' ? 'All' : k === 'Volunteer' ? 'Volunteers' : k === 'Student mentor' ? 'Student mentors' : 'Staff'}
+            {k === 'All' ? 'All' : k === 'Volunteer' ? 'Volunteers' : k === 'Student mentor' ? 'Student mentors' : k === 'Administrator' ? 'Admins' : 'Staff'}
           </Chip>
         ))}
       </ScrollView>
@@ -491,7 +540,7 @@ export function StaffList() {
                       {p.town} · {p.phone}
                     </Meta>
                   </View>
-                  <Tag kind={p.kind === 'Staff' ? 'blue' : p.kind === 'Volunteer' ? 'open' : 'mute'}>{p.kind}</Tag>
+                  <KindTag kind={kindOf(p.id, s.kinds)} />
                 </Row>
                 <View style={{ marginTop: 10, gap: 4 }}>
                   {js.length ? (

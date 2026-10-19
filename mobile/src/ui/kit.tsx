@@ -275,7 +275,7 @@ export const Empty = ({ children }: { children: string }) => <Meta>{children}</M
 
 
 /** The prototype's stroke icons. */
-export type IconName = 'home' | 'camps' | 'teams' | 'sched' | 'more' | 'msg' | 'clock' | 'heart' | 'doc' | 'people';
+export type IconName = 'home' | 'camps' | 'teams' | 'sched' | 'more' | 'msg' | 'clock' | 'heart' | 'doc' | 'people' | 'checkin' | 'approve' | 'switch';
 export function Icon({ name, color, size = 23 }: { name: IconName; color: string; size?: number }) {
   const s = { stroke: color, strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
   const shapes: Record<IconName, ReactNode> = {
@@ -288,6 +288,9 @@ export function Icon({ name, color, size = 23 }: { name: IconName; color: string
     clock: <><Circle cx={12} cy={12} r={9} {...s} /><Path d="M12 7v5l3 2" {...s} /></>,
     heart: <Path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" {...s} />,
     doc: <><Path d="M6 3h9l3 3v15H6z" {...s} /><Path d="M9 11h6M9 15h6" {...s} /></>,
+    checkin: <><Rect x={5} y={4} width={14} height={17} rx={2} {...s} /><Path d="M9 4V3h6v1" {...s} /><Path d="M9 13l2 2 4-4" {...s} /></>,
+    approve: <><Circle cx={12} cy={12} r={9} {...s} /><Path d="M8 12.5l2.8 2.8L16 9.5" {...s} /></>,
+    switch: <><Path d="M4 8h13l-3-3M20 16H7l3 3" {...s} /></>,
     people: <><Circle cx={9} cy={8} r={3} {...s} /><Path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" {...s} /><Path d="M16 5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6" {...s} /></>,
   };
   return (

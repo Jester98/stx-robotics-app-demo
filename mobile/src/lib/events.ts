@@ -4,7 +4,7 @@
 import type { Camp, Reg } from './state';
 import { addDays, dayShort, isWeekday, monday, monthDay, range, today } from './dates';
 
-export type Kind = 'Staff' | 'Volunteer' | 'Student mentor';
+export type Kind = 'Staff' | 'Volunteer' | 'Student mentor' | 'Administrator';
 export type Role = 'Lead instructor' | 'Assistant' | 'Student mentor' | 'Volunteer';
 export type EvType = 'Camp' | 'Workshop' | 'Competition' | 'Practice' | 'Speaker Series';
 export type Person = { id: string; name: string; kind: Kind; town: string; phone: string };
@@ -18,8 +18,6 @@ export const TYPES: EvType[] = ['Camp', 'Workshop', 'Competition', 'Practice', '
 export const TOWNS = ['Portland', 'Robstown', 'Del Rio', 'Alice'];
 export const ADULT_RATIO = 8; // sample rule: at least 1 adult per 8 kids
 
-/** The signed-in staff member in the demo. */
-export const ME = 'p12';
 
 export const PEOPLE: Person[] = [
   { id: 'p12', name: 'Coach Alex', kind: 'Staff', town: 'Portland', phone: '(361) 555-0112' },
@@ -34,9 +32,14 @@ export const PEOPLE: Person[] = [
   { id: 'p9', name: 'Diego T.', kind: 'Student mentor', town: 'Robstown', phone: '(361) 555-0109' },
   { id: 'p10', name: 'Sofia L.', kind: 'Student mentor', town: 'Alice', phone: '(361) 555-0110' },
   { id: 'p11', name: 'Noah P.', kind: 'Student mentor', town: 'Portland', phone: '(361) 555-0111' },
+  { id: 'p13', name: 'Carmen D.', kind: 'Volunteer', town: 'Alice', phone: '(361) 555-0113' },
+  { id: 'p14', name: 'Dana W.', kind: 'Administrator', town: 'Portland', phone: '(361) 555-0114' },
 ];
+export const KINDS: Kind[] = ['Staff', 'Volunteer', 'Student mentor', 'Administrator'];
 export const person = (id: string) => PEOPLE.find((p) => p.id === id)!;
-export const isAdult = (id: string) => person(id).kind !== 'Student mentor';
+/** A person's kind, with any change made on the People page. */
+export const kindOf = (id: string, kinds: Record<string, Kind> = {}) => kinds[id] ?? person(id).kind;
+export const isAdult = (id: string, kinds?: Record<string, Kind>) => kindOf(id, kinds) !== 'Student mentor';
 export const initials = (name: string) =>
   name
     .replace('.', '')
@@ -284,21 +287,58 @@ const FIRST = ['Lucas', 'Sofia', 'Mia', 'Diego', 'Emma', 'Liam', 'Camila', 'Noah
 const LAST = 'GMRHTLSVCPBADNEFKOWJ';
 const FLAGS = ['Peanut allergy', 'Asthma inhaler', 'Bee sting allergy (EpiPen)', 'Gluten-free'];
 
-export type Kid = { name: string; age: string; flag?: string; waiver: boolean };
+export type Kid = {
+  name: string;
+  age: string;
+  flag?: string; // allergy or medical flag
+  medical?: string; // what staff should do
+  waiver: boolean;
+  parent: string;
+  phone: string;
+  pickup: string[]; // approved pickup people
+};
+const PARENTS = ['Maria', 'Jose', 'Ana', 'Luis', 'Rosa', 'Carlos', 'Elena', 'David'];
+const RELATIVES = ['Grandma', 'Grandpa', 'Aunt', 'Uncle'];
+const MEDICAL: Record<string, string> = {
+  'Peanut allergy': 'No shared snacks. Check labels on any treats.',
+  'Asthma inhaler': 'Inhaler in the front pocket of the backpack.',
+  'Bee sting allergy (EpiPen)': 'EpiPen in the red pouch; call 911 after use.',
+  'Gluten-free': 'Bring own snacks; no shared food.',
+};
+const contact = (seed: number, last: string) => {
+  const parent = `${PARENTS[seed % PARENTS.length]} ${last}.`;
+  return {
+    parent,
+    phone: `(361) 555-${String(200 + (seed % 700)).padStart(4, '0')}`,
+    pickup: [parent, `${RELATIVES[seed % RELATIVES.length]} ${last}.`],
+  };
+};
 export function roster(camp: Camp, regs: Reg[], parentWaiverSigned: boolean): { kids: Kid[]; waitlist: string[] } {
   const mine = regs.filter((r) => r.camp === camp.id);
   const confirmed: Kid[] = mine
     .filter((r) => r.status === 'Confirmed')
-    .map((r) => ({ name: r.kid, age: String(r.age), waiver: r.kid !== 'Mateo G.' || parentWaiverSigned }));
+    .map((r) => ({
+      name: r.kid,
+      age: String(r.age),
+      waiver: r.kid !== 'Mateo G.' || parentWaiverSigned,
+      // The parent-flow sample family
+      parent: 'Maria Garza',
+      phone: '(361) 555-0142',
+      pickup: ['Maria Garza', 'Abuela Garza'],
+    }));
   const kids = [...confirmed];
   const [lo, hi] = camp.ages.split('–').map(Number);
   for (let i = 0; kids.length < camp.filled; i++) {
     const n = (i * 7 + camp.id * 3) % FIRST.length;
+    const last = LAST[(i + camp.id) % LAST.length];
+    const flag = (i + camp.id) % 5 === 0 ? FLAGS[(i + camp.id) % FLAGS.length] : undefined;
     kids.push({
-      name: `${FIRST[n]} ${LAST[(i + camp.id) % LAST.length]}.`,
+      name: `${FIRST[n]} ${last}.`,
       age: String(lo + ((i * 3 + camp.id) % (hi - lo + 1))),
-      flag: (i + camp.id) % 5 === 0 ? FLAGS[(i + camp.id) % FLAGS.length] : undefined,
+      flag,
+      medical: flag && MEDICAL[flag],
       waiver: (i + camp.id) % 6 !== 2,
+      ...contact(i * 11 + camp.id * 5, last),
     });
   }
   const waitNames = mine.filter((r) => r.status === 'Waitlisted').map((r) => r.kid);
@@ -306,7 +346,7 @@ export function roster(camp: Camp, regs: Reg[], parentWaiverSigned: boolean): { 
   return { kids, waitlist };
 }
 
-export const adults = (a: Assignment[]) => a.filter((x) => isAdult(x.person)).length;
+export const adults = (a: Assignment[], kinds?: Record<string, Kind>) => a.filter((x) => isAdult(x.person, kinds)).length;
 export const adultsNeeded = (kids: number) => Math.ceil(kids / ADULT_RATIO);
 /** How many more people an event needs. */
 export const shortBy = (x: Camp, a: Assignment[]) => Math.max(0, (INFO[x.id]?.need ?? 0) - a.length);

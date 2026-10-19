@@ -1,83 +1,10 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useApp } from '@/lib/state';
-import { BackLink, Band, Bar, Body, Btn, Card, Choice, Empty, Eyebrow, Field, H2, H3, Icon, Lead, Meta, Pad, Row, Score, Sec, Stack, Tag } from '@/ui/kit';
+import { ROLE_INFO, can } from '@/lib/roles';
+import { person } from '@/lib/events';
+import { BackLink, Band, Body, Btn, Card, Choice, Eyebrow, Field, H2, H3, Icon, Lead, Meta, Pad, Row, Sec, Stack, Tag, type IconName } from '@/ui/kit';
 import { c, f, radius, shadow } from '@/ui/theme';
-
-export function Mentors() {
-  const { s, set, go, toast } = useApp();
-  const pend = s.mentors.filter((m) => m.pending);
-  const max = Math.max(...s.mentors.map((m) => m.hours));
-  const resolve = (name: string, approve: boolean) => {
-    const m = s.mentors.find((x) => x.name === name)!;
-    const h = m.pending!.h;
-    set((p) => ({ ...p, mentors: p.mentors.map((x) => (x.name !== name ? x : { ...x, hours: approve ? x.hours + h : x.hours, pending: null })) }));
-    toast(approve ? `Approved ${h} h for ${name}` : `Sent back to ${name} for edits`);
-  };
-  return (
-    <>
-      <Pad style={{ paddingBottom: 0 }}>
-        <BackLink onPress={() => go('more')} />
-        <Eyebrow style={{ marginTop: 10 }}>Student mentors</Eyebrow>
-        <H2>Mentor hours</H2>
-        <Lead>Approved hours count toward service-hour letters.</Lead>
-      </Pad>
-      <Sec title="To approve" right={<Meta style={{ fontSize: 12 }}>{pend.length}</Meta>}>
-        <Stack>
-          {pend.length ? (
-            pend.map((m) => (
-              <Card key={m.name}>
-                <Row>
-                  <View style={{ flex: 1 }}>
-                    <H3>{m.name}</H3>
-                    <Meta>
-                      {m.pending!.date} · {m.pending!.task}
-                    </Meta>
-                  </View>
-                  <Score>{m.pending!.h} h</Score>
-                </Row>
-                <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-                  <View style={{ flex: 1 }}>
-                    <Btn sm block onPress={() => resolve(m.name, true)}>
-                      Approve
-                    </Btn>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Btn sm block kind="out" onPress={() => resolve(m.name, false)}>
-                      Return
-                    </Btn>
-                  </View>
-                </View>
-              </Card>
-            ))
-          ) : (
-            <Empty>All caught up. New logs show up here.</Empty>
-          )}
-        </Stack>
-      </Sec>
-      <Sec title="Season totals" right={<Meta style={{ fontSize: 12 }}>{s.mentors.reduce((a, m) => a + m.hours, 0)} h</Meta>}>
-        <Card>
-          <Stack>
-            {s.mentors
-              .slice()
-              .sort((a, b) => b.hours - a.hours)
-              .map((m) => (
-                <View key={m.name}>
-                  <Row style={{ marginBottom: 5 }}>
-                    <Text style={{ flex: 1, fontFamily: f.bold, fontSize: 14, color: c.ink }}>
-                      {m.name} <Text style={{ fontFamily: f.regular, fontSize: 13, color: c.muted }}>· {m.school}</Text>
-                    </Text>
-                    <Score>{m.hours} h</Score>
-                  </Row>
-                  <Bar pct={(m.hours / max) * 100} black />
-                </View>
-              ))}
-          </Stack>
-        </Card>
-      </Sec>
-    </>
-  );
-}
 
 const GROUPS: Record<string, number> = {
   'All families': 212,
@@ -175,26 +102,31 @@ function FamilyTexts() {
 }
 
 export function More() {
-  const { s, go } = useApp();
-  const pend = s.mentors.filter((m) => m.pending).length;
-  const items: [Parameters<typeof go>[0], 'clock' | 'msg' | 'heart' | 'doc' | 'people', string, string][] =
-    s.role === 'staff'
-      ? [
-          ['staffList', 'people', 'Staff list', 'Staff, volunteers and mentors by event'],
-          ['mentors', 'clock', 'Mentor hours', pend ? `${pend} to approve` : 'Up to date'],
-          ['msgs', 'msg', 'Family texts', 'Send reminders and changes'],
-          ['about', 'heart', 'Sponsors & donations', 'Sponsor tiers start at $50'],
-          ['about', 'doc', 'Waivers & forms', 'Track what families still owe'],
-        ]
-      : [
-          ['about', 'heart', 'Donate or sponsor', 'Tax-deductible, 501(c)(3)'],
-          ['about', 'doc', 'Waivers & forms', s.waiverSigned ? 'All signed' : '1 waiting to sign'],
-          ['about', 'msg', 'Contact STX', '(361) 945-7669 · Corpus Christi'],
-        ];
+  const { s, set, go } = useApp();
+  type Item = [Parameters<typeof go>[0], IconName, string, string];
+  const parent: Item[] = [
+    ['about', 'heart', 'Donate or sponsor', 'Tax-deductible, 501(c)(3)'],
+    ['about', 'doc', 'Waivers & forms', s.waiverSigned ? 'All signed' : '1 waiting to sign'],
+    ['about', 'msg', 'Contact STX', '(361) 945-7669 · Corpus Christi'],
+  ];
+  const helper: Item[] = [
+    ['about', 'msg', 'Contact STX', '(361) 945-7669 · Corpus Christi'],
+  ];
+  const team: Item[] = [
+    ['staffList', 'people', 'Staff list', 'Staff, volunteers and mentors by event'],
+    ...(can(s, 'textFamilies') ? ([['msgs', 'msg', 'Family texts', 'Send reminders and changes']] as Item[]) : []),
+    ['about', 'heart', 'Sponsors & donations', 'Sponsor tiers start at $50'],
+    ['about', 'doc', 'Waivers & forms', 'Track what families still owe'],
+  ];
+  const admin: Item[] = [['people', 'people', 'People', 'Change anyone’s role, approve volunteers']];
+  const items: Item[] =
+    s.role === 'parent' ? parent : s.role === 'mentor' || s.role === 'volunteer' ? helper : s.role === 'admin' ? [...admin, ...team] : team;
+  const me = s.role === 'parent' ? 'Garza family' : person(s.me).name;
+  const switchRole = () => set((p) => ({ ...p, role: null, tab: 'home' }));
   return (
     <>
       <Pad>
-        <Eyebrow>{s.role === 'staff' ? 'Staff tools' : 'Your account'}</Eyebrow>
+        <Eyebrow>{`${ROLE_INFO[s.role!].label} · ${me}`}</Eyebrow>
         <H2>More</H2>
       </Pad>
       <Sec style={{ paddingTop: 0 }}>
@@ -202,6 +134,7 @@ export function More() {
           {items.map(([tab, icon, title, meta]) => (
             <MoreItem key={title} icon={icon} title={title} meta={meta} onPress={() => go(tab)} />
           ))}
+          <MoreItem icon="switch" title="Switch role" meta="Go back to “Who are you?”" onPress={switchRole} />
         </Stack>
       </Sec>
       <Sec>
@@ -212,7 +145,7 @@ export function More() {
 }
 
 
-function MoreItem({ icon, title, meta, onPress }: { icon: 'clock' | 'msg' | 'heart' | 'doc' | 'people'; title: string; meta: string; onPress: () => void }) {
+function MoreItem({ icon, title, meta, onPress }: { icon: IconName; title: string; meta: string; onPress: () => void }) {
   return (
     <Pressable
       accessibilityRole="button"
