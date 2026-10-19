@@ -543,5 +543,8 @@
       "**Don't** set muted #60739f text on the `line` backdrop. Use #4c5d84 there.",
       "**Don't** use maroon for structure or black for the primary action."
     ]
-  }
+  },
+  "notes": [
+    "2026-10-19: soft style adopted (user screenshot): 16px cards with soft shadow, floating rounded app bar and tab bar, pill Parent/Staff switch, light stats row instead of the black band, 8px buttons, 4px tags. DESIGN.md is current; values elsewhere in this file that say square/flat are superseded."
+  ]
 }

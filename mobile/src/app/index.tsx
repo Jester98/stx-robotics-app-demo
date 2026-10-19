@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AppCtx, INITIAL, type App, type State, type Tab } from '@/lib/state';
 import { Icon, type IconName } from '@/ui/kit';
-import { c, f, gutter } from '@/ui/theme';
+import { c, f, gutter, radius, shadow } from '@/ui/theme';
 import { Home } from '@/views/home';
 import { Camps } from '@/views/camps';
 import { Teams } from '@/views/teams';
@@ -101,27 +101,34 @@ export default function AppScreen() {
     <AppCtx.Provider value={app}>
       <View style={{ flex: 1, backgroundColor: c.bg }}>
         <StatusBar style="dark" />
-        <View style={{ height: insets.top, backgroundColor: c.white }} />
+        <View style={{ height: insets.top }} />
 
         {/* App bar */}
         <View
           style={{
             backgroundColor: c.white,
-            borderBottomWidth: 1,
-            borderColor: c.line,
-            paddingTop: 8,
-            paddingBottom: 12,
-            paddingHorizontal: gutter,
+            borderRadius: radius.card,
+            boxShadow: shadow.float,
+            marginHorizontal: 12,
+            marginTop: 6,
+            marginBottom: 4,
+            paddingVertical: 10,
+            paddingLeft: 16,
+            paddingRight: 10,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 10,
           }}
         >
-          <Text accessibilityRole="header" accessibilityLabel="STX Robotics" style={{ fontFamily: f.boldItalic, fontSize: 22, lineHeight: 24, letterSpacing: -0.88, color: c.black }}>
+          <Text accessibilityRole="header" accessibilityLabel="STX Robotics" style={{ fontFamily: f.bold, fontSize: 22, lineHeight: 26, letterSpacing: -0.6, color: c.black }}>
             ST<Text style={{ color: c.maroon }}>X</Text>
           </Text>
-          <View style={{ flexDirection: 'row', borderWidth: 1.5, borderColor: c.black }} accessibilityRole="radiogroup" accessibilityLabel="View as">
+          <View
+            style={{ flexDirection: 'row', backgroundColor: c.track, borderRadius: radius.pill, padding: 3 }}
+            accessibilityRole="radiogroup"
+            accessibilityLabel="View as"
+          >
             {(['parent', 'staff'] as const).map((r) => {
               const on = s.role === r;
               return (
@@ -131,9 +138,15 @@ export default function AppScreen() {
                   accessibilityState={{ checked: on }}
                   onPress={() => setRole(r)}
                   hitSlop={{ top: 10, bottom: 10 }}
-                  style={{ paddingVertical: 5, paddingHorizontal: 10, backgroundColor: on ? c.black : 'transparent' }}
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 13,
+                    borderRadius: radius.pill,
+                    backgroundColor: on ? c.white : 'transparent',
+                    boxShadow: on ? shadow.pill : undefined,
+                  }}
                 >
-                  <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.1, textTransform: 'uppercase', color: on ? c.white : c.black }}>
+                  <Text style={{ fontFamily: f.bold, fontSize: 11, letterSpacing: 1.1, textTransform: 'uppercase', color: on ? c.head : c.muted }}>
                     {r === 'parent' ? 'Parent' : 'Staff'}
                   </Text>
                 </Pressable>
@@ -153,12 +166,14 @@ export default function AppScreen() {
           accessibilityRole="tablist"
           style={{
             backgroundColor: c.white,
-            borderTopWidth: 1,
-            borderColor: c.line,
+            borderRadius: radius.bar,
+            boxShadow: shadow.float,
+            marginHorizontal: 12,
+            marginTop: 4,
+            marginBottom: Math.max(10, insets.bottom),
             flexDirection: 'row',
-            paddingTop: 6,
-            paddingHorizontal: 6,
-            paddingBottom: Math.max(8, insets.bottom),
+            paddingVertical: 4,
+            paddingHorizontal: 4,
           }}
         >
           {TABS[s.role].map(([key, label, icon]) => {
@@ -173,7 +188,6 @@ export default function AppScreen() {
                 onPress={() => go(key)}
                 style={{ flex: 1, alignItems: 'center', gap: 3, paddingVertical: 6 }}
               >
-                {on && <View style={{ position: 'absolute', top: -7, left: '28%', right: '28%', height: 3, backgroundColor: c.maroon }} />}
                 <Icon name={icon} color={color} />
                 <Text style={{ fontFamily: f.bold, fontSize: 10.5, letterSpacing: 0.63, textTransform: 'uppercase', color }}>{label}</Text>
                 {key === 'more' && s.role === 'staff' && pend > 0 && (
@@ -207,8 +221,9 @@ export default function AppScreen() {
             position: 'absolute',
             left: 16,
             right: 16,
-            bottom: tabH + 12,
+            bottom: tabH + Math.max(10, insets.bottom) + 12,
             backgroundColor: c.black,
+            borderRadius: radius.btn + 4,
             paddingVertical: 12,
             paddingHorizontal: 14,
             opacity: toastAnim,
@@ -245,8 +260,9 @@ function Sheet({ children, onClose }: { children: ReactNode; onClose: () => void
           style={{
             maxHeight: '88%',
             backgroundColor: c.bg,
-            borderTopWidth: 4,
-            borderColor: c.maroon,
+            borderTopLeftRadius: radius.bar,
+            borderTopRightRadius: radius.bar,
+            overflow: 'hidden',
             transform: [{ translateY: slide.interpolate({ inputRange: [0, 1], outputRange: [600, 0] }) }],
           }}
         >

@@ -21,6 +21,7 @@ colors:
   blue-soft: "#e8ebff"
   idle: "#b6c0d1"
   bubble: "#e9e9eb"
+  track: "#eef1f5"
 typography:
   logo:
     fontFamily: "Atkinson Hyperlegible, Atkinson, system-ui, sans-serif"
@@ -102,12 +103,17 @@ typography:
     fontWeight: 700
     letterSpacing: "0.63px"
 rounded:
-  none: "0px"
+  tag: "4px"
+  btn: "8px"
+  field: "8px"
+  card: "16px"
+  bar: "20px"
+  pill: "9999px"
   bubble: "18px"
   phone: "54px"
 spacing:
   gutter: "18px"
-  card: "14px"
+  card: "16px"
   stack: "10px"
   section-top: "20px"
   row: "12px"
@@ -117,43 +123,43 @@ components:
     backgroundColor: "{colors.maroon}"
     textColor: "{colors.white}"
     typography: "{typography.lead}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.btn}"
     padding: "11px 16px"
   button-primary-pressed:
     backgroundColor: "{colors.maroon-dark}"
   button-primary-sm:
     backgroundColor: "{colors.maroon}"
     textColor: "{colors.white}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.btn}"
     padding: "7px 11px"
   button-outline:
     backgroundColor: "transparent"
     textColor: "{colors.black}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.btn}"
     padding: "11px 16px"
   button-white:
     backgroundColor: "{colors.white}"
     textColor: "{colors.maroon}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.btn}"
     padding: "7px 11px"
   card:
     backgroundColor: "{colors.white}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.card}"
     padding: "{spacing.card}"
-  stats-band:
-    backgroundColor: "{colors.black}"
-    textColor: "{colors.white}"
+  stats-row:
+    textColor: "{colors.head}"
     typography: "{typography.stat}"
-    padding: "16px 18px"
+    padding: "14px 0"
   maroon-band:
     backgroundColor: "{colors.maroon}"
     textColor: "{colors.white}"
-    padding: "16px 18px"
+    rounded: "{rounded.card}"
+    padding: "16px"
   chip:
     backgroundColor: "{colors.white}"
     textColor: "{colors.black}"
     typography: "{typography.chip}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.pill}"
     padding: "6px 12px"
   chip-selected:
     backgroundColor: "{colors.black}"
@@ -162,7 +168,7 @@ components:
     backgroundColor: "{colors.white}"
     textColor: "{colors.ink}"
     typography: "{typography.body}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.field}"
     padding: "10px"
   tag-open:
     backgroundColor: "{colors.good-soft}"
@@ -190,22 +196,29 @@ components:
     height: "5px"
   app-bar:
     backgroundColor: "{colors.white}"
-    padding: "8px 18px 12px"
+    rounded: "{rounded.card}"
+    padding: "10px 10px 10px 16px"
+  role-switch:
+    backgroundColor: "{colors.track}"
+    rounded: "{rounded.pill}"
+    padding: "3px"
   role-switch-selected:
-    backgroundColor: "{colors.black}"
-    textColor: "{colors.white}"
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.head}"
     typography: "{typography.label}"
-    padding: "5px 10px"
+    rounded: "{rounded.pill}"
+    padding: "6px 13px"
   tab-bar:
     backgroundColor: "{colors.white}"
     textColor: "{colors.muted}"
     typography: "{typography.tab}"
-    padding: "6px 6px 8px"
+    rounded: "{rounded.bar}"
+    padding: "4px"
   tab-bar-active:
     textColor: "{colors.maroon}"
   bottom-sheet:
     backgroundColor: "{colors.page}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.bar}"
     padding: "8px 18px 28px"
   toast:
     backgroundColor: "{colors.black}"
@@ -237,16 +250,16 @@ components:
 
 The app wears stxrobotics.com's clothes. The user chose the clickable prototype (`prototype/stx-robotics-app.html`) as the binding reference. Where it disagrees with an earlier DESIGN.md or with general craft rules, the prototype wins. The React Native port in `mobile/src` follows its CSS classes 1:1, and this file describes that port.
 
-It reads like a clean, light editorial page shrunk to a phone. The page is light grey, cards are white with a thin border, and the ink is near-black. Maroon is the brand voice and black gives the structure. Every corner is square. Most screen tops follow the website's pattern: an uppercase eyebrow with a short rule before it, a bold heading, then a lead line. Big numbers sit in a full-bleed black band. Small uppercase letter-spaced labels (tags, chips, tab labels, section titles) do the sorting work.
+It reads like a clean, light editorial page shrunk to a phone. The page is light grey, and everything that holds content floats on it: white cards with 16px corners and a soft shadow, a floating top bar and a floating tab bar. The ink is near-black and maroon is the brand voice. Most screen tops follow the website's pattern: an uppercase eyebrow with a short rule before it, a bold heading, then a lead line. Big numbers sit in a light stats row split by thin vertical lines. Small uppercase letter-spaced labels (tags, chips, tab labels, section titles) do the sorting work.
 
-Information is dense but legible. Atkinson Hyperlegible is the only typeface, in two weights plus a bold italic for the logo.
+Information is dense but legible. Atkinson Hyperlegible is the only typeface, in two weights.
 
 **Key Characteristics:**
 - Atkinson Hyperlegible throughout, with bold headings and tight leading.
-- Square corners on every control and container. The only rounded shapes are the SMS bubble, the printer LED, the tab badge and the desktop phone frame.
-- White cards with 1px #e5e9f0 borders on a #f7fafc page, with no shadows inside the app.
-- Maroon solid buttons, 1.5px black outline buttons, and black-filled selected states.
-- Eyebrow, then heading, then lead at the top of screens. A black stats band carries the big numbers.
+- Soft rounded corners: 16px cards, 20px floating bars and sheet, 8px buttons and fields, 4px tags and checkboxes, pill chips and role switch.
+- White cards with no border and a soft two-layer shadow on a #f7fafc page.
+- Maroon solid buttons, 1.5px black outline buttons, black-filled selected chips, and a white pill on a grey track for the Parent / Staff switch.
+- Eyebrow, then heading, then lead at the top of screens. A stats row with hairlines above, below and between carries the big numbers.
 - An 18px gutter, 14px card padding, 10px stack gaps and 20px section tops.
 
 ## Colors
@@ -254,20 +267,20 @@ Information is dense but legible. Atkinson Hyperlegible is the only typeface, in
 The palette is high contrast: grey paper, near-black ink, one maroon voice, black for structure, and soft tinted status pairs.
 
 ### Primary
-- **STX Maroon** (`maroon`): solid buttons, the X in the logo, the active tab and its top bar, the tab badge, links, eyebrows on team cards, the community label on camp cards, the more-item icons, the bottom-sheet top edge, progress bar fill and the donate band.
+- **STX Maroon** (`maroon`): solid buttons, the X in the logo, the active tab, the tab badge, links, eyebrows on team cards, the community label on camp cards, the more-item icons, progress bar fill and the donate band.
 - **Pressed Maroon** (`maroon-dark`): the pressed state of solid buttons only.
 - **Maroon Wash** (`maroon-soft`): the background of the "full" tag.
 
 ### Secondary
-- **Band Black** (`black`): the stats band, the toast, outline-button and chip strokes, selected chips and the selected role, print lane header rules, black progress bars and the logo's "ST".
+- **Band Black** (`black`): the toast, outline-button and chip strokes, selected chips print lane header rules, black progress bars and the logo's "ST".
 - **Site Blue** (`blue`, `blue-soft`): used sparingly, only for the informational tag (for example the SMS audience tag).
 
 ### Neutral
 - **Paper Grey** (`page`): the page ground and bottom-sheet surface. It also fills the "mute" tag and the pressed more-item.
-- **Card White** (`white`): cards, the app bar, the tab bar, the hello block, fields and chips.
+- **Card White** (`white`): cards, the floating app bar and tab bar, the selected role pill, fields and chips.
 - **Ink** (`ink`): body text. **Heading Ink** (`head`): headings, section titles and field labels.
 - **Slate Muted** (`muted`): meta text, eyebrows, inactive tabs, the more-item chevron and the unchecked checkbox stroke.
-- **Hairline** (`line`): card borders, app bar and tab bar dividers, progress bar track, and the desktop backdrop.
+- **Hairline** (`line`): stats-row rules and dividers, list dividers inside cards, progress bar track, and the desktop backdrop. Track (`#eef1f5`) is the role-switch background.
 - **Field Stroke** (`field`): input borders, the sheet grabber and the fine-print rule in the info panel.
 - **Idle Light** (`idle`): an idle printer LED.
 - **Bubble Grey** (`bubble`): the SMS preview bubble, with #111 text.
@@ -276,7 +289,7 @@ The palette is high contrast: grey paper, near-black ink, one maroon voice, blac
 Each tag pairs a strong foreground with its soft wash: **good / good-soft** (open), **warn / warn-soft** (few seats left), **maroon / maroon-soft** (full or waitlist), **blue / blue-soft** (info), **muted / page** (neutral). `good` also lights an active printer LED and marks match wins. Maroon marks losses.
 
 ### Named Rules
-**The Maroon Speaks, Black Holds Rule.** Maroon is for brand and action: the primary button, the active state and links. Black is for structure and selection: bands, outlines, chips and the role switch. Do not swap them.
+**The Maroon Speaks, Black Holds Rule.** Maroon is for brand and action: the primary button, the active state and links. Black is for structure and selection: outlines, selected chips and the toast. Do not swap them.
 
 **The Muted On Grey Rule.** `muted` on `page` just meets 4.5:1, but on the darker `line` backdrop it does not. Text on the desktop backdrop uses the darker step #4c5d84.
 
@@ -284,15 +297,15 @@ Each tag pairs a strong foreground with its soft wash: **good / good-soft** (ope
 
 **Display Font:** Atkinson Hyperlegible (the site self-hosts it as "Atkinson"), falling back to system-ui
 **Body Font:** Atkinson Hyperlegible 400
-**Logo:** Atkinson Hyperlegible 700 Italic
+**Logo:** Atkinson Hyperlegible 700
 
 **Character:** A single humanist sans built for legibility. Bold weight and uppercase tracking do the hierarchy work, so no second face is needed.
 
 ### Hierarchy
-- **Logo** (700 italic, 22/24, -0.88px): "ST" in black and "X" in maroon, used in the app bar only.
+- **Logo** (700, 22/26, -0.6px, upright): "ST" in black and "X" in maroon, used in the app bar only.
 - **Display** (700, 38/41, -0.38px): the desktop info panel heading only.
 - **Headline** (700, 26/29, -0.26px, 8px above and 4px below): the screen title (H2).
-- **Stat** (700, 24/26, tabular figures): numbers in the stats band.
+- **Stat** (700, 24/26, tabular figures): numbers in the stats row.
 - **Title** (700, 16/23): card titles (H3). More-item rows use 15px.
 - **Body** (400, 15/22): running text.
 - **Lead** (400, 14/20, 4px above): the line under a headline. Toast text, button labels (700) and SMS bubble text also use 14px.
@@ -300,23 +313,23 @@ Each tag pairs a strong foreground with its soft wash: **good / good-soft** (ope
 - **Section title** (700, 13px, 1.56px tracking, uppercase, head): the header of each section, with an optional link on the right.
 - **Field label** (700, 12px, 0.72px, uppercase, head). **Chip** (700, 12px, 0.96px, uppercase).
 - **Eyebrow** (700, 11px, 1.54px, uppercase, muted, or maroon on team cards). **Label** (700, 11px, 1.32px, uppercase): role switch (1.1px), print lane headers, camp community and info-panel keys.
-- **Tag** (700, 10.5px, 0.84px, uppercase). **Tab** (700, 10.5px, 0.63px, uppercase). **Band label** (400, 10.5/14, 1.05px, uppercase, white at 75%).
+- **Tag** (700, 10.5px, 0.84px, uppercase). **Tab** (700, 10.5px, 0.63px, uppercase). **Stat label** (400, 10.5/14, 1.05px, uppercase, muted).
 - **Job id** (400, 11px, muted, tabular). **Badge** (700, 9.5px).
 
 ### Named Rules
-**The Tracked Caps Rule.** Uppercase text is always 10.5 to 13px, bold (band labels are the one regular-weight case), and tracked at roughly 0.06 to 0.14em. Headings and body text are never uppercase.
+**The Tracked Caps Rule.** Uppercase text is always 10.5 to 13px, bold (stat labels are the one regular-weight case), and tracked at roughly 0.06 to 0.14em. Headings and body text are never uppercase.
 
 **The Tabular Numbers Rule.** Stats, scores, seat counts and job ids use tabular figures.
 
 ## Layout
 
-The layout is a single phone column: a white app bar, scrolling content (20px bottom padding) and a white tab bar. The bottom sheet and toast draw over everything.
+The layout is a single phone column: a floating app bar inset 12px, scrolling content (20px bottom padding) and a floating tab bar inset 12px above the home indicator. The bottom sheet and toast draw over everything.
 
 - **Gutter** (`spacing.gutter`): every horizontal page edge, including the app bar, sections, bands and the sheet.
 - **Sections** start 20px down (`spacing.section-top`). A section header row sits 10px above its content.
 - **Stacks** of cards are 10px apart (`spacing.stack`). **Rows** use a 12px gap. **Chips** sit 6px apart in a horizontal row that runs from gutter to gutter.
-- **Hello block:** white with an 18px pad and a bottom hairline. It holds the eyebrow, headline and lead at the top of Home.
-- **Full-bleed bands:** the black stats band and the maroon donate band are 16px tall and 18px wide, with equal flex columns 8px apart.
+- **Hello block:** on the page grey (no box), padded 14px top, 16px bottom and 18px sides. It holds the eyebrow, headline and lead at the top of Home.
+- **Stats row and donate card:** the stats row sits inside the gutter with 1px hairlines above and below, equal columns and 1px dividers with 12px left padding. The donate prompt is a maroon card with 16px corners and 16px padding.
 - **Print lanes** scroll sideways. Each lane is 78% of the width (up to 366) with a 10px gap and snapping, so the next stage peeks in.
 - **Forms** stack fields 11px apart. A field label sits 4px above its input.
 
@@ -324,17 +337,20 @@ The layout is a single phone column: a white app bar, scrolling content (20px bo
 
 ## Elevation & Depth
 
-Inside the app everything is flat. Depth comes from tone: white cards on the grey page, hairline borders, and solid black or maroon bands. Overlays add one layer: the sheet backdrop is black at 45% and the toast is solid black. The only shadow is the layered drop shadow on the desktop phone frame.
+Depth is soft and shallow. Cards, the floating app bar, the floating tab bar and the selected role pill lift off the grey page with small, diffuse shadows; nothing has a hard border except outline buttons and fields. Overlays add one layer: the sheet backdrop is black at 45% and the toast is solid black. The only shadow is the layered drop shadow on the desktop phone frame.
 
 ### Shadow Vocabulary
-- **Phone frame** (`box-shadow: 0 2px 6px rgba(96,115,159,.25), 0 8px 24px rgba(96,115,159,.33), 0 30px 60px rgba(34,41,57,.3)`): the desktop phone frame only.
+- **Card** (`0 1px 2px rgba(17,24,39,.04), 0 4px 14px rgba(17,24,39,.07)`): cards, more items, the donate card, the add-staff picker.
+- **Float** (`0 2px 6px rgba(17,24,39,.06), 0 8px 24px rgba(17,24,39,.10)`): the floating app bar and tab bar.
+- **Pill** (`0 1px 3px rgba(17,24,39,.12)`): the selected Parent / Staff pill.
+- **Phone frame** (`box-shadow: 0 2px 6px rgba(96,115,159,.25), 0 8px 24px rgba(96,115,159,.33), 0 30px 60px rgba(34,41,57,.3)`): the desktop phone frame.
 
 ### Named Rules
-**The Flat Phone Rule.** No component inside the screen casts a shadow. Separation comes from borders, tone and bands.
+**The Soft Lift Rule.** Containers lift with the card or float shadow instead of borders. Keep shadows diffuse and low-contrast; never a hard offset shadow or a dark halo.
 
 ## Shapes
 
-All corners are 0px: buttons, cards, chips, tags, fields, the role switch, bands, the sheet and the toast. Borders come in three weights. 1px hairlines are for containers and fields. 1.5px black is for interactive outlines (outline button, chip, role switch, checkbox, eyebrow rule). The heavy edges are the 2px black lane header rule, the 3px maroon active-tab bar and the 4px maroon sheet top edge. Rounded shapes appear in only four places. The SMS bubble is 18px with a 4px bottom-left tail. The LED is a 9px circle. The tab badge is a 16px pill. The phone frame has 54px corners outside and 42px inside, with a 110×30 island.
+Corners are soft and consistent: 16px for cards and the app bar, 20px for the tab bar and the top of the bottom sheet, 12px for warning banners and the toast, 8px for buttons and fields, 4px for tags and checkboxes, and full pills for chips and the role switch. Borders: 1px for fields and tags, 1.5px black for outline buttons and checkboxes, 1px hairlines for the stats row and list dividers, and the 2px black print-lane header rule. The SMS bubble is 18px with a 4px bottom-left tail, the LED is a 9px circle, the tab badge is a 16px pill, and the phone frame has 54px corners outside and 42px inside with a 110×30 island.
 
 ## Components
 
@@ -345,23 +361,23 @@ A small uppercase label with a short line before it, taken from the website. It 
 H2 is the screen title, H3 is the card title, Lead goes under H2 and Meta is muted secondary text. The section title is the uppercase 13px header of a section, with an optional maroon link (13px bold) on the right.
 
 ### Cards / Containers
-- **Corner Style:** square (0)
+- **Corner Style:** 16px (cards)
 - **Background:** white
 - **Border:** 1px `line`
-- **Shadow Strategy:** none (see Elevation)
+- **Shadow Strategy:** soft card shadow (see Elevation)
 - **Internal Padding:** 14px. Content is usually a Row: the main block grows, and a tag or small button sits on the right.
 
 ### Row
 A horizontal, center-aligned row with a 12px gap. The main block flexes and stays min-width 0.
 
 ### Tags
-A square tag with a 1px border in its own foreground color on a soft wash, padded 3×7, uppercase 10.5px and kept to one line. Variants: open, few, full, blue, mute.
+A small tag with 4px corners, a 1px border in its own foreground color on a soft wash, padded 3×7, uppercase 10.5px and kept to one line. Variants: open, few, full, blue, mute.
 
 ### Buttons
-- **Shape:** square (0)
+- **Shape:** 8px corners
 - **Primary (solid):** maroon with white text, 14px bold, padded 11×16. Pressed turns `maroon-dark`.
 - **Outline:** transparent with a 1.5px black border and black text. Pressed drops to 70% opacity.
-- **White:** white with maroon text, used on the maroon band.
+- **White:** white with maroon text, used on the maroon donate card.
 - **Small (sm):** 13px text padded 7×11. It keeps that visual size but the hit area extends to at least 44pt (8pt above and below, 4pt to the sides).
 - **Block:** stretches to full width. Sheet actions stack a block solid button over a block outline button.
 - **Focus:** the prototype uses a 2px maroon outline offset 2px.
@@ -369,19 +385,19 @@ A square tag with a 1px border in its own foreground color on a soft wash, padde
 ### Progress Bar
 A 5px `line` track with a maroon fill (black for the alternate series), capped at 100%. It shows seats filled and notebook progress.
 
-### Bands
-- **Stats band:** full-bleed black with equal columns 8px apart, each a 24px bold tabular number over a 10.5px uppercase white-at-75% label (5px gap). Use it for headline numbers.
-- **Maroon band:** full-bleed maroon with 14px bold white text that grows, and a small white button on the right. It is the donate prompt.
+### Stats Row and Donate Card
+- **Stats row:** inside the gutter, a 1px hairline above and below, equal columns split by 1px vertical hairlines (12px left padding after the first). Each column is a 24px bold tabular number in head ink over a 10.5px uppercase muted label (4px gap). Use it for headline numbers.
+- **Donate card:** a maroon card with 16px corners, the card shadow and 16px padding, holding 14px bold white text that grows and a small white button on the right.
 
 ### Chips
-- **Style:** 1.5px black border, white background, 12px bold uppercase text, padded 6×12.
+- **Style:** a pill with a 1px `field` border on white, 12px bold uppercase text, padded 6×13. Selected: black fill and border with white text.
 - **State:** selected is black with white text. Chips filter by community in a horizontal row.
 - **Choice:** a field label over a wrapping row of chips that picks one value. It replaces a select (React Native has no native select).
 
 ### Inputs / Fields
 - **Style:** an uppercase 12px label 4px above the input. The input has a 1px `field` border, white background, 10px padding and 15px body text. Placeholder text is muted. Multiline fields are at least 90px tall.
 - **Focus:** the border turns maroon and the selection color is maroon.
-- **Check:** an 18px square box with a 1.5px border (muted, or maroon when ticked) and a white check, next to a 13px sentence. Opt-ins start unticked.
+- **Check:** an 18px box with 4px corners with a 1.5px border (muted, or maroon when ticked) and a white check, next to a 13px sentence. Opt-ins start unticked.
 
 ### Printer LED
 A 9px circle: `good` when printing, `idle` when idle.
@@ -390,15 +406,15 @@ A 9px circle: `good` when printing, `idle` when idle.
 Stroke icons on a 24 grid with a 1.8 stroke and round caps and joins, drawn as SVG: home, camps, teams, prints, more, msg, clock, heart and doc. They are 23px in the tab bar and 22px in maroon on more-items. They are decorative and hidden from accessibility.
 
 ### Navigation
-- **App bar:** white with a bottom hairline, padded 8/18/12. The italic STX logo sits on the left. On the right is the role switch: a 1.5px black box holding PARENT and STAFF segments (11px bold uppercase, padded 5×10). The selected segment is black with white text. It is a radio group with a 10pt vertical hit slop.
-- **Tab bar:** white with a top hairline and five equal tabs, padded 6px with 8px or the safe area at the bottom. Each tab is an icon over a 10.5px uppercase label in muted. The active tab turns maroon with a 3px maroon bar 7px above the tab, inset 28% on each side. The staff More tab carries a maroon 16px pill badge (9.5px white count) showing pending mentor approvals.
+- **App bar:** a floating white card with 16px corners and the float shadow, inset 12px from the screen edges, padded 10/10/10/16. The upright STX logo (maroon X) sits on the left. On the right is the role switch: a pill-shaped grey track (`#eef1f5`, 3px padding) holding PARENT and STAFF (11px bold uppercase, padded 6×13). The selected side is a white pill with the pill shadow and head-ink text; the other side is muted. It is a radio group with a 10pt vertical hit slop.
+- **Tab bar:** a floating white card with 20px corners and the float shadow, inset 12px from the sides and sitting above the home indicator (10px minimum). Five equal tabs, each an icon over a 10.5px uppercase label in muted; the active tab is maroon. The staff More tab carries a maroon 16px pill badge (9.5px white count) showing pending mentor approvals.
 - **Back link:** a maroon "More" link at the top of sub-pages.
 
 ### Bottom Sheet
-The backdrop is black at 45% and tapping it closes the sheet. The sheet is the page grey with a 4px maroon top edge and square corners, at most 88% tall. It is padded 8/18/28 plus the safe area. A 40×4 grabber in `field` sits centered with 4px above and 12px below. It slides up over 260ms (instantly with reduce motion) and is modal for accessibility.
+The backdrop is black at 45% and tapping it closes the sheet. The sheet is the page grey with 20px top corners, at most 88% tall. It is padded 8/18/28 plus the safe area. A 40×4 grabber in `field` sits centered with 4px above and 12px below. It slides up over 260ms (instantly with reduce motion) and is modal for accessibility.
 
 ### Toast
-Solid black and square with 14px white text, padded 12×14, inset 16px each side, 12px above the tab bar. It fades and rises 10px over 250ms, stays 2.4s and is announced to screen readers.
+Solid black with 12px corners and 14px white text, padded 12×14, inset 16px each side, 12px above the floating tab bar. It fades and rises 10px over 250ms, stays 2.4s and is announced to screen readers.
 
 ### SMS Bubble
 `bubble` grey with #111 14/20 text. Corners are 18px except a 4px bottom-left tail. It is padded 10×13, at most 92% wide and aligned left, inside a card titled "Phone preview" with a blue audience tag. The message always ends with "Reply STOP to opt out."
@@ -413,7 +429,7 @@ Full-width rows with a white background, 1px `line` border and 14px padding (12p
 A row of the same filter chips doubles as in-page navigation on long staff pages: Overview, Staff, Schedule, Kids, Supplies, Notes. One section shows at a time under the page heading; the selected chip is filled black.
 
 ### Warning Banners
-Full-width boxes inside a section, square, 1px border in the tone colour on its soft wash: warn (`#8a5a00` on `#fbf1dc`) for safety problems such as too few adults for the number of kids; maroon (`#7b1f1f` on `#f6e9e9`) for staffing gaps. Bold 14 title, regular 13 explanation that names the rule being applied.
+Full-width boxes inside a section with 12px corners and a 1px border in the tone colour on its soft wash: warn (`#8a5a00` on `#fbf1dc`) for safety problems such as too few adults for the number of kids; maroon (`#7b1f1f` on `#f6e9e9`) for staffing gaps. Bold 14 title, regular 13 explanation that names the rule being applied.
 
 ### Roster and Checklist Rows
 Lists inside one card, separated by `#e5e9f0` hairlines: name in bold 14 with the age in muted 13, a status tag on the right (Waiver signed / Waiver missing), and a bold 12 warn-coloured "Medical: …" line when a child has a flag. Supply checklists use the Check component, with a black progress bar for how much is packed.
@@ -429,19 +445,19 @@ Destructive actions (removing someone from an event) open the bottom sheet with 
 
 ### Do:
 - **Do** open screens with eyebrow, H2 and lead, as stxrobotics.com does.
-- **Do** put headline numbers in the black stats band with 24px bold tabular figures.
+- **Do** put headline numbers in the stats row with 24px bold tabular figures, split by thin vertical lines.
 - **Do** group content in white cards (1px `line`, 14px padding) stacked 10px apart.
 - **Do** use the 18px gutter, 20px section top and 10px stack gap on every screen.
-- **Do** keep every corner square (0) except the SMS bubble, LED, badge and phone frame.
-- **Do** use small 13px buttons inside cards and bands, and keep their hit area at least 44pt.
+- **Do** use the corner scale: 16 cards, 20 bars and sheet, 8 buttons and fields, 4 tags, pills for chips and the switch.
+- **Do** use small 13px buttons inside cards, and keep their hit area at least 44pt.
 - **Do** use a solid maroon button for the main action and a 1.5px black outline for the secondary one.
 - **Do** mark state with the tag pairs: open, few, full, blue, mute.
 - **Do** start SMS opt-ins unticked and end every text with the STOP line.
 
 ### Don't:
-- **Don't** add shadows inside the phone screen. The only shadow is the desktop frame.
+- **Don't** put hard borders on cards or bring back the black stats band; containers lift with the soft card shadow.
 - **Don't** round buttons, cards, chips, fields or sheets.
-- **Don't** introduce a second typeface. Use Atkinson Hyperlegible 400/700 only, with italic for the logo.
+- **Don't** introduce a second typeface. Use Atkinson Hyperlegible 400/700 only.
 - **Don't** use site blue for actions or large areas. It is only for the info tag.
 - **Don't** set muted #60739f text on the `line` backdrop. Use #4c5d84 there.
 - **Don't** use maroon for structure or black for the primary action.

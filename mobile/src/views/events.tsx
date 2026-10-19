@@ -16,7 +16,7 @@ import {
   type Role,
 } from '@/lib/events';
 import { BackLink, Bar, Body, Btn, Card, Check, Chip, Choice, Empty, Eyebrow, Field, H2, H3, Lead, Link, Meta, Pad, Row, Sec, Stack, Tag } from '@/ui/kit';
-import { c, f, gutter } from '@/ui/theme';
+import { c, f, gutter, shadow } from '@/ui/theme';
 
 // Staff side of Camps: running events. Same components as the rest of the prototype.
 
@@ -177,7 +177,7 @@ function StaffSection({ camp }: { camp: Camp }) {
     <Sec title="Staff" right={<Link onPress={() => sheet(<AddStaffSheet campId={camp.id} />)}>+ Add staff</Link>}>
       <Stack>
         {grown < needAdults && (
-          <View style={{ backgroundColor: c.warnSoft, borderWidth: 1, borderColor: c.warn, padding: 14 }} accessibilityRole="alert">
+          <View style={{ backgroundColor: c.warnSoft, borderWidth: 1, borderColor: c.warn, borderRadius: 12, padding: 14 }} accessibilityRole="alert">
             <Text style={{ fontFamily: f.bold, fontSize: 14, color: c.warn }}>Too few adults for {camp.filled} kids</Text>
             <Text style={{ fontFamily: f.regular, fontSize: 13, lineHeight: 19, color: c.warn, marginTop: 2 }}>
               {grown} {grown === 1 ? 'adult' : 'adults'} assigned, {needAdults} needed (sample rule: 1 adult per {ADULT_RATIO} kids). Student mentors
@@ -186,7 +186,7 @@ function StaffSection({ camp }: { camp: Camp }) {
           </View>
         )}
         {gap > 0 && (
-          <View style={{ backgroundColor: c.maroonSoft, borderWidth: 1, borderColor: c.maroon, padding: 14 }}>
+          <View style={{ backgroundColor: c.maroonSoft, borderWidth: 1, borderColor: c.maroon, borderRadius: 12, padding: 14 }}>
             <Text style={{ fontFamily: f.bold, fontSize: 14, color: c.maroon }}>
               Short {gap} {gap === 1 ? 'person' : 'people'}: {a.length} of {INFO[camp.id].need} staff
             </Text>
@@ -260,7 +260,14 @@ function AddStaffSheet({ campId }: { campId: number }) {
               accessibilityRole="radio"
               accessibilityState={{ checked: on }}
               onPress={() => choose(p.id)}
-              style={{ backgroundColor: c.white, borderWidth: on ? 1.5 : 1, borderColor: on ? c.maroon : c.line, padding: 12 }}
+              style={{
+                backgroundColor: c.white,
+                borderRadius: 12,
+                borderWidth: 1.5,
+                borderColor: on ? c.maroon : 'transparent',
+                boxShadow: shadow.card,
+                padding: 12,
+              }}
             >
               <Row>
                 <View style={{ flex: 1 }}>

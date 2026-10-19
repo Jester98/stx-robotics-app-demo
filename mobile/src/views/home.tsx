@@ -1,12 +1,12 @@
 import { Text, View } from 'react-native';
 import { useApp, type Camp, type Reg } from '@/lib/state';
 import { Band, Bar, Btn, Card, Eyebrow, H2, H3, Lead, Link, Meta, Row, Sec, Stack, Tag, Body } from '@/ui/kit';
-import { c, f, gutter } from '@/ui/theme';
+import { c, f, gutter, radius, shadow } from '@/ui/theme';
 import { campTag } from './camps';
 
 function Hello({ eyebrow, title, lead }: { eyebrow: string; title: string; lead: string }) {
   return (
-    <View style={{ backgroundColor: c.white, padding: gutter, borderBottomWidth: 1, borderColor: c.line }}>
+    <View style={{ paddingHorizontal: gutter, paddingTop: 14, paddingBottom: 16 }}>
       <Eyebrow>{eyebrow}</Eyebrow>
       <H2>{title}</H2>
       <Lead>{lead}</Lead>
@@ -96,7 +96,18 @@ function ParentHome() {
         </Card>
       </Sec>
       <Sec>
-        <View style={{ backgroundColor: c.maroon, paddingVertical: 16, paddingHorizontal: gutter, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <View
+          style={{
+            backgroundColor: c.maroon,
+            borderRadius: radius.card,
+            boxShadow: shadow.card,
+            paddingVertical: 16,
+            paddingHorizontal: 16,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+          }}
+        >
           <Text style={{ flex: 1, fontFamily: f.bold, fontSize: 14, lineHeight: 20, color: c.white }}>
             $50 puts a robotics kit in a student&apos;s hands.
           </Text>
@@ -129,7 +140,7 @@ function StaffHome() {
           [
             <Text key="n">
               {seats}
-              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>/{cap}</Text>
+              <Text style={{ fontSize: 13, color: c.muted }}>/{cap}</Text>
             </Text>,
             'Seats filled',
           ],

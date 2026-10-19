@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { Pressable, Text, TextInput, View, type StyleProp, type TextInputProps, type TextStyle, type ViewStyle } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
-import { c, f, gutter } from './theme';
+import { c, f, gutter, radius, shadow } from './theme';
 
-// Components ported 1:1 from the prototype's CSS classes.
+// Shared components: the prototype's type and labels with soft, rounded, shadowed surfaces.
 
 const SLOP = { top: 8, bottom: 8, left: 4, right: 4 }; // small controls keep a 44pt touch area
 
@@ -71,7 +71,7 @@ export const Stack = ({ children, gap = 10, style }: { children: ReactNode; gap?
 );
 
 export const Card = ({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) => (
-  <View style={[{ backgroundColor: c.white, borderWidth: 1, borderColor: c.line, padding: 14 }, style]}>{children}</View>
+  <View style={[{ backgroundColor: c.white, borderRadius: radius.card, padding: 16, boxShadow: shadow.card }, style]}>{children}</View>
 );
 
 export const Row = ({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) => (
@@ -97,7 +97,7 @@ const TAGS: Record<TagKind, [string, string]> = {
 export function Tag({ kind, children }: { kind: TagKind; children: ReactNode }) {
   const [fg, bg] = TAGS[kind];
   return (
-    <View style={{ borderWidth: 1, borderColor: fg, backgroundColor: bg, paddingHorizontal: 7, paddingVertical: 3, alignSelf: 'center' }}>
+    <View style={{ borderWidth: 1, borderColor: fg, backgroundColor: bg, borderRadius: radius.tag, paddingHorizontal: 7, paddingVertical: 3, alignSelf: 'center' }}>
       <Text numberOfLines={1} style={{ fontFamily: f.bold, fontSize: 10.5, letterSpacing: 0.84, textTransform: 'uppercase', color: fg }}>
         {children}
       </Text>
@@ -129,6 +129,7 @@ export function Btn({
         backgroundColor: kind === 'solid' ? (pressed ? c.maroonDark : c.maroon) : kind === 'white' ? c.white : 'transparent',
         borderWidth: kind === 'out' ? 1.5 : 0,
         borderColor: c.black,
+        borderRadius: radius.btn,
         paddingVertical: sm ? 7 : 11,
         paddingHorizontal: sm ? 11 : 16,
         alignItems: 'center',
@@ -142,25 +143,27 @@ export function Btn({
   );
 }
 
-/** `.bar`: thin progress bar, maroon or black. */
+/** Thin rounded progress bar, maroon or black. */
 export const Bar = ({ pct, black }: { pct: number; black?: boolean }) => (
-  <View style={{ height: 5, backgroundColor: c.line }}>
-    <View style={{ height: 5, width: `${Math.min(100, pct)}%`, backgroundColor: black ? c.black : c.maroon }} />
+  <View style={{ height: 5, borderRadius: 3, backgroundColor: c.line, overflow: 'hidden' }}>
+    <View style={{ height: 5, borderRadius: 3, width: `${Math.min(100, pct)}%`, backgroundColor: black ? c.black : c.maroon }} />
   </View>
 );
 
-/** `.band`: black stats band. */
-export function Band({ items }: { items: [ReactNode, string][] }) {
+/** Stats row: numbers split by thin vertical lines, with thin lines above and below. */
+export function Band({ items, inset = true }: { items: [ReactNode, string][]; inset?: boolean }) {
   return (
-    <View style={{ backgroundColor: c.black, paddingVertical: 16, paddingHorizontal: gutter, flexDirection: 'row', gap: 8 }}>
-      {items.map(([n, l], i) => (
-        <View key={i} style={{ flex: 1 }}>
-          <Text style={{ fontFamily: f.bold, fontSize: 24, lineHeight: 26, color: c.white, fontVariant: ['tabular-nums'] }}>{n}</Text>
-          <Text style={{ fontFamily: f.regular, fontSize: 10.5, lineHeight: 14, letterSpacing: 1.05, textTransform: 'uppercase', color: 'rgba(255,255,255,0.75)', marginTop: 5 }}>
-            {l}
-          </Text>
-        </View>
-      ))}
+    <View style={{ paddingHorizontal: inset ? gutter : 0 }}>
+      <View style={{ flexDirection: 'row', borderTopWidth: 1, borderBottomWidth: 1, borderColor: c.line, paddingVertical: 14 }}>
+        {items.map(([n, l], i) => (
+          <View key={i} style={{ flex: 1, paddingLeft: i ? 12 : 0, borderLeftWidth: i ? 1 : 0, borderColor: c.line }}>
+            <Text style={{ fontFamily: f.bold, fontSize: 24, lineHeight: 28, color: c.head, fontVariant: ['tabular-nums'] }}>{n}</Text>
+            <Text style={{ fontFamily: f.regular, fontSize: 10.5, lineHeight: 14, letterSpacing: 1.05, textTransform: 'uppercase', color: c.muted, marginTop: 4 }}>
+              {l}
+            </Text>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -172,7 +175,14 @@ export function Chip({ children, on, onPress }: { children: string; on: boolean;
       accessibilityState={{ selected: on }}
       onPress={onPress}
       hitSlop={SLOP}
-      style={{ borderWidth: 1.5, borderColor: c.black, backgroundColor: on ? c.black : c.white, paddingVertical: 6, paddingHorizontal: 12 }}
+      style={{
+        borderWidth: 1,
+        borderColor: on ? c.black : c.field,
+        backgroundColor: on ? c.black : c.white,
+        borderRadius: radius.pill,
+        paddingVertical: 6,
+        paddingHorizontal: 13,
+      }}
     >
       <Text style={{ fontFamily: f.bold, fontSize: 12, letterSpacing: 0.96, textTransform: 'uppercase', color: on ? c.white : c.black }}>
         {children}
@@ -197,6 +207,7 @@ export function Field({ label, style, ...p }: TextInputProps & { label: string; 
         style={{
           borderWidth: 1,
           borderColor: focus ? c.maroon : c.field,
+          borderRadius: radius.field,
           backgroundColor: c.white,
           padding: 10,
           fontFamily: f.regular,
@@ -240,6 +251,7 @@ export function Check({ on, onChange, children }: { on: boolean; onChange: (v: b
           width: 18,
           height: 18,
           marginTop: 1,
+          borderRadius: radius.tag,
           borderWidth: 1.5,
           borderColor: on ? c.maroon : c.muted,
           backgroundColor: on ? c.maroon : c.white,

@@ -19,13 +19,22 @@ export const c = {
   blueSoft: '#e8ebff',
   idle: '#b6c0d1', // idle printer light
   bubble: '#e9e9eb', // SMS preview bubble
+  track: '#eef1f5', // pill-switch track
 };
 
 export const f = {
   regular: 'AtkinsonHyperlegible_400Regular',
   bold: 'AtkinsonHyperlegible_700Bold',
-  boldItalic: 'AtkinsonHyperlegible_700Bold_Italic', // logo only
+  boldItalic: 'AtkinsonHyperlegible_700Bold_Italic',
 };
 
-// Prototype spacing: 18 page gutter, 14 card padding, 10 stack gap.
+// Spacing: 18 page gutter, 16 card padding, 10 stack gap.
 export const gutter = 18;
+
+// Soft, floating surfaces (cards, top bar, tab bar).
+export const radius = { card: 16, bar: 20, btn: 8, field: 8, tag: 4, pill: 999 };
+export const shadow = {
+  card: '0 1px 2px rgba(17,24,39,0.04), 0 4px 14px rgba(17,24,39,0.07)',
+  float: '0 2px 6px rgba(17,24,39,0.06), 0 8px 24px rgba(17,24,39,0.10)',
+  pill: '0 1px 3px rgba(17,24,39,0.12)',
+};

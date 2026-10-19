@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useApp } from '@/lib/state';
 import { BackLink, Band, Bar, Body, Btn, Card, Choice, Empty, Eyebrow, Field, H2, H3, Icon, Lead, Meta, Pad, Row, Score, Sec, Stack, Tag } from '@/ui/kit';
-import { c, f } from '@/ui/theme';
+import { c, f, radius, shadow } from '@/ui/theme';
 
 export function Mentors() {
   const { s, set, go, toast } = useApp();
@@ -223,8 +223,8 @@ function MoreItem({ icon, title, meta, onPress }: { icon: 'clock' | 'msg' | 'hea
         gap: 12,
         padding: 14,
         backgroundColor: pressed ? c.bg : c.white,
-        borderWidth: 1,
-        borderColor: c.line,
+        borderRadius: radius.card,
+        boxShadow: shadow.card,
       })}
     >
       <Icon name={icon} color={c.maroon} size={22} />
@@ -239,6 +239,7 @@ function MoreItem({ icon, title, meta, onPress }: { icon: 'clock' | 'msg' | 'hea
 
 const BandPair = () => (
   <Band
+    inset={false}
     items={[
       ['1,037', "3D-printer hours, Summer '26"],
       ['300+', 'Mentor hours awarded'],
